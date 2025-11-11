@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autor - Panel principal</title>
+    <link rel="stylesheet" href="../styles/styles_general.css">
+    <link rel="stylesheet" href="../styles/styles_author.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo-text">PT</div>
+                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <div class="container">
+                <ul class="nav-list">
+                    <li><a href="../Index.html">INICIO</a></li>
+                    <li><a href="#">MIS DOCUMENTOS</a></li>
+                    <li><a href="#">AYUDA</a></li>
+                    <li class="login"><a href="../webpages/login.html">CERRAR SESIÓN</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container author-main">
+        <section class="grid">
+            <!-- Upload card -->
+            <article class="card upload-card" aria-labelledby="upload-title">
+                <h2 id="upload-title">Subir documento</h2>
+                <p class="muted">PDF por ahora. Proporciona un título y, si es corrección, elige el espacio de trabajo.</p>
+
+                <form id="upload-form" class="upload-form" action="../php/upload_document.php" method="post" enctype="multipart/form-data" novalidate>
+                    <div class="field">
+                        <label for="doc-title">Título del documento</label>
+                        <input id="doc-title" name="title" type="text" required placeholder="Ej. Informe de resultados">
+                    </div>
+
+                    <div class="field">
+                        <label for="workspace">Espacio de trabajo</label>
+                        <select id="workspace" name="workspace">
+                            <option value="nuevo" selected>Nuevo documento</option>
+                            <option value="ws_123">Proyecto A (ejemplo)</option>
+                            <option value="ws_456">Proyecto B (ejemplo)</option>
+                        </select>
+                        <small class="hint">Si es corrección, selecciona el espacio de trabajo correspondiente.</small>
+                    </div>
+
+                    <div class="dropzone" id="dropzone" aria-label="Soltar PDF aquí o usar el botón Adjuntar">
+                        <input id="file" name="file" type="file" accept="application/pdf" hidden>
+                        <div class="dz-inner">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 5 17 10"></polyline>
+                                <line x1="12" y1="5" x2="12" y2="16"></line>
+                            </svg>
+                            <p><strong>Arrastra tu PDF</strong> o</p>
+                            <button type="button" id="pick-file" class="btn-secondary">Adjuntar</button>
+                            <div id="file-info" class="file-info" aria-live="polite"></div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn-primary">Enviar</button>
+                        <p class="muted small">Al enviar: se guarda en la base de datos y se notifica al revisor de forma anónima.</p>
+                    </div>
+                </form>
+            </article>
+
+            <!-- Documents list card -->
+            <article class="card docs-card" aria-labelledby="docs-title">
+                <div class="docs-header">
+                    <h2 id="docs-title">Mis documentos</h2>
+                    <div class="filters">
+                        <label class="sr-only" for="q">Buscar</label>
+                        <input id="q" type="search" placeholder="Buscar por título...">
+                    </div>
+                </div>
+
+                <ul class="docs-list">
+                    <li class="doc-item">
+                        <div class="thumb" aria-hidden="true"></div>
+                        <div class="meta">
+                            <div class="title_docs-list">Informe de resultados</div>
+                            <div class="sub">Subido: 2025-11-01</div>
+                        </div>
+                        <span class="badge badge-pending">En revisión</span>
+                        <a class="link" href="#" aria-label="Abrir bitácora de Informe de resultados">Bitácora</a>
+                    </li>
+                    <li class="doc-item">
+                        <div class="thumb" aria-hidden="true"></div>
+                        <div class="meta">
+                            <div class="title_docs-list">Protocolo de estudio</div>
+                            <div class="sub">Subido: 2025-10-12</div>
+                        </div>
+                        <span class="badge badge-ok">Aceptado</span>
+                        <a class="link" href="#" aria-label="Abrir bitácora de Protocolo de estudio">Bitácora</a>
+                    </li>
+                    <li class="doc-item">
+                        <div class="thumb" aria-hidden="true"></div>
+                        <div class="meta">
+                           <div class="title_docs-list">Anexo metodológico</div>
+                            <div class="sub">Subido: 2025-09-20</div>
+                        </div>
+                        <span class="badge badge-minor">Fallas menores</span>
+                        <a class="link" href="#" aria-label="Abrir bitácora de Anexo metodológico">Bitácora</a>
+                    </li>
+                </ul>
+            </article>
+        </section>
+    </main>
+
+    <script>
+    (function () {
+        // Drag & drop and file picker
+        const drop = document.getElementById('dropzone');
+        const input = document.getElementById('file');
+        const pick = document.getElementById('pick-file');
+        const info = document.getElementById('file-info');
+
+        function setInfo(file) {
+            if (!file) { info.textContent = ''; return; }
+            const kb = (file.size / 1024).toFixed(1);
+            info.textContent = file.name + ' · ' + kb + ' KB';
+        }
+        ['dragenter', 'dragover'].forEach(evt => {
+            drop.addEventListener(evt, e => {
+                e.preventDefault(); e.stopPropagation();
+                drop.classList.add('is-dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            drop.addEventListener(evt, e => {
+                e.preventDefault(); e.stopPropagation();
+                drop.classList.remove('is-dragover');
+            });
+        });
+        drop.addEventListener('drop', e => {
+            const file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (file) {
+                input.files = e.dataTransfer.files;
+                setInfo(file);
+            }
+        });
+        pick.addEventListener('click', () => input.click());
+        input.addEventListener('change', () => setInfo(input.files[0]));
+    })();
+    </script>
+</body>
+</html>
+

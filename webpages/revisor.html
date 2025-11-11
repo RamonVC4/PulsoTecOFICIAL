@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisor - Panel principal</title>
+    <link rel="stylesheet" href="../styles/styles_general.css">
+    <link rel="stylesheet" href="../styles/styles_revisor.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo-text">PT</div>
+                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <div class="container">
+                <ul class="nav-list">
+                    <li><a href="../Index.html">INICIO</a></li>
+                    <li><a href="#">DOCUMENTOS</a></li>
+                    <li><a href="#">AYUDA</a></li>
+                    <li class="login"><a href="./login.html">CERRAR SESIÓN</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container revisor-main">
+        <section class="grid">
+            <!-- Queue / lists -->
+            <aside class="card queue-card" aria-labelledby="queue-title">
+                <div class="queue-header">
+                    <h2 id="queue-title">Documentos</h2>
+                    <div class="tabs" role="tablist" aria-label="Listas de documentos">
+                        <button id="tab-disponibles" class="tab is-active" role="tab" aria-selected="true" data-target="panel-disponibles">Disponibles</button>
+                        <button id="tab-pendientes" class="tab" role="tab" aria-selected="false" data-target="panel-pendientes">Mis pendientes</button>
+                        <button id="tab-revisados" class="tab" role="tab" aria-selected="false" data-target="panel-revisados">Revisados</button>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <label class="sr-only" for="search">Buscar</label>
+                    <input id="search" type="search" placeholder="Buscar por título o fecha...">
+                </div>
+
+                <div class="panels">
+                    <!-- Disponibles -->
+                    <ul id="panel-disponibles" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-disponibles">
+                        <li class="doc-item" data-id="doc-1001">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Ensayo clínico fase I</div>
+                                <div class="sub">Subido: 2025-11-05</div>
+                            </div>
+                            <button class="btn-tertiary take-btn" data-action="take">Revisar</button>
+                        </li>
+                        <li class="doc-item" data-id="doc-1002">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Protocolo de bioseguridad</div>
+                                <div class="sub">Subido: 2025-11-03</div>
+                            </div>
+                            <button class="btn-tertiary take-btn" data-action="take">Revisar</button>
+                        </li>
+                    </ul>
+
+                    <!-- Pendientes -->
+                    <ul id="panel-pendientes" class="docs-list panel" role="tabpanel" aria-labelledby="tab-pendientes">
+                        <li class="doc-item" data-id="doc-2001">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Reporte de laboratorio</div>
+                                <div class="sub">Asignado: 2025-11-01</div>
+                            </div>
+                            <button class="btn-tertiary open-btn" data-action="open">Continuar</button>
+                        </li>
+                    </ul>
+
+                    <!-- Revisados -->
+                    <ul id="panel-revisados" class="docs-list panel" role="tabpanel" aria-labelledby="tab-revisados">
+                        <li class="doc-item" data-id="doc-3001">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Guía de procedimientos</div>
+                                <div class="sub">Revisado: 2025-10-22 · Estado: Aceptado</div>
+                            </div>
+                            <a class="link" href="#" aria-label="Ver bitácora">Bitácora</a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Work area -->
+            <article class="card work-card" aria-labelledby="work-title">
+                <h2 id="work-title">Revisión</h2>
+
+                <div class="work-empty" id="work-empty">
+                    Selecciona un documento para previsualizarlo y llenar la rúbrica.
+                </div>
+
+                <div class="work-content" id="work-content" hidden>
+                    <div class="work-head">
+                        <div class="doc-title" id="active-title">Título del documento</div>
+                        <div class="work-actions">
+                            <button type="button" class="btn-secondary" id="download-btn">Descargar</button>
+                        </div>
+                    </div>
+
+                    <div class="preview-rubric">
+
+                        <!-- CORREGIR -->
+
+
+                        <div class="preview" id="preview">
+                            <!-- Placeholder preview -->
+                            <div class="preview-box">Preview del PDF</div>
+                        </div>
+
+                        <form id="rubric-form" class="rubric" action="../php/save_rubric.php" method="post" novalidate>
+                            <input type="hidden" name="documentId" id="rubric-doc-id" value="">
+                            <div class="rubric-grid">
+                                <div class="rubric-item">
+                                    <label>Claridad</label>
+                                    <select name="claridad" required>
+                                        <option value="">Selecciona...</option>
+                                        <option>Aceptable</option>
+                                        <option>Fallas menores</option>
+                                        <option>Fallas graves</option>
+                                        <option>Rechazado</option>
+                                    </select>
+                                </div>
+                                <div class="rubric-item">
+                                    <label>Metodología</label>
+                                    <select name="metodologia" required>
+                                        <option value="">Selecciona...</option>
+                                        <option>Aceptable</option>
+                                        <option>Fallas menores</option>
+                                        <option>Fallas graves</option>
+                                        <option>Rechazado</option>
+                                    </select>
+                                </div>
+                                <div class="rubric-item">
+                                    <label>Originalidad</label>
+                                    <select name="originalidad" required>
+                                        <option value="">Selecciona...</option>
+                                        <option>Aceptable</option>
+                                        <option>Fallas menores</option>
+                                        <option>Fallas graves</option>
+                                        <option>Rechazado</option>
+                                    </select>
+                                </div>
+                                <div class="rubric-item rubric-span">
+                                    <label>Comentarios</label>
+                                    <textarea name="comentarios" rows="4" placeholder="Observaciones para el autor..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="rubric-actions">
+                                <button type="button" id="save-draft" class="btn-secondary">Guardar y continuar después</button>
+                                <button type="submit" formaction="../php/submit_rubric.php" class="btn-primary">Enviar revisión</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+    (function () {
+        const $ = (sel, root=document) => root.querySelector(sel);
+        const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+        // Tabs
+        $$('.tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                $$('.tabs .tab').forEach(t => t.classList.remove('is-active'));
+                tab.classList.add('is-active');
+                $$('.panel').forEach(p => p.classList.remove('is-active'));
+                $('#'+tab.dataset.target).classList.add('is-active');
+            });
+        });
+
+        // Selecting docs
+        function openDoc(li) {
+            const id = li.getAttribute('data-id');
+            const titleEl = li.querySelector('.title, .title-panels');
+            const title = titleEl ? titleEl.textContent : 'Documento';
+            $('#active-title').textContent = title;
+            $('#rubric-doc-id').value = id;
+            $('#work-empty').hidden = true;
+            $('#work-content').hidden = false;
+        }
+
+        $$('.docs-list').forEach(list => {
+            list.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-action]');
+                if (!btn) return;
+                const li = e.target.closest('.doc-item');
+                if (!li) return;
+                openDoc(li);
+            });
+        });
+
+        // Draft save to localStorage (demo only)
+        $('#save-draft').addEventListener('click', () => {
+            const form = $('#rubric-form');
+            const data = new FormData(form);
+            const obj = {};
+            for (const [k,v] of data.entries()) obj[k] = v;
+            localStorage.setItem('rubricDraft:'+obj.documentId, JSON.stringify(obj));
+            alert('Borrador guardado localmente.');
+        });
+
+        // Simple download placeholder
+        $('#download-btn').addEventListener('click', () => {
+            alert('Descarga simulada. Conecta al archivo real en backend.');
+        });
+    })();
+    </script>
+</body>
+</html>
+
