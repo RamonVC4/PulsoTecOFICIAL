@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager - Panel principal</title>
+    <link rel="stylesheet" href="../styles/styles_general.css">
+    <link rel="stylesheet" href="../styles/styles_manager.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo-text">PT</div>
+                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <div class="container">
+                <ul class="nav-list">
+                    <li><a href="../Index.html">INICIO</a></li>
+                    <li><a href="#">TABLERO</a></li>
+                    <li><a href="#">AYUDA</a></li>
+                    <li class="login"><a href="./login.html">CERRAR SESIÓN</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container manager-main">
+        <section class="grid">
+            <!-- Left column: lists -->
+            <aside class="card list-card" aria-labelledby="lists-title">
+                <div class="lists-head">
+                    <h2 id="lists-title">Documentos</h2>
+                    <div class="tabs" role="tablist" aria-label="Listas de documentos">
+                        <button id="tab-pend" class="tab is-active" role="tab" aria-selected="true" data-target="panel-pend">Sin revisar</button>
+                        <button id="tab-rev" class="tab" role="tab" aria-selected="false" data-target="panel-rev">Revisados</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <input id="search" type="search" placeholder="Buscar por título, autor o revisor...">
+                </div>
+
+                <ul id="panel-pend" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-pend">
+                    <li class="doc-item" data-id="mx-101">
+                        <div class="thumb" aria-hidden="true"></div>
+                        <div class="meta">
+                            <div class="title-panel-pend">Ensayo de biomateriales</div>
+                            <div class="sub">Autor: Anónimo A · Fecha: 2025-11-08</div>
+                        </div>
+                        <span class="badge badge-pending">Sin revisar</span>
+                        <button class="btn-tertiary open-btn" data-action="open">Abrir</button>
+                    </li>
+                    <li class="doc-item" data-id="mx-102">
+                        <div class="thumb" aria-hidden="true"></div>
+                        <div class="meta">
+                            <div class="title-panel-pend">Protocolo anestesia</div>
+                            <div class="sub">Autor: Anónimo B · Fecha: 2025-11-06</div>
+                        </div>
+                        <span class="badge badge-pending">Sin revisar</span>
+                        <button class="btn-tertiary open-btn" data-action="open">Abrir</button>
+                    </li>
+                </ul>
+
+                <ul id="panel-rev" class="docs-list panel" role="tabpanel" aria-labelledby="tab-rev">
+                    <li class="doc-item" data-id="mx-090">
+                        <div class="thumb" aria-hidden="true"></div>
+                        <div class="meta">
+                            <div class="title-panel-rev">Protocolo de microbiología</div>
+                            <div class="sub">Autor: Anónimo C · Revisado: 2025-10-29</div>
+                        </div>
+                        <span class="badge badge-ok">Aceptado</span>
+                        <button class="btn-tertiary open-btn" data-action="open">Ver</button>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Right column: detail -->
+            <article class="card detail-card" aria-labelledby="detail-title">
+                <h2 id="detail-title">Detalle</h2>
+
+                <div class="detail-empty" id="detail-empty">
+                    Selecciona un documento para ver sus datos, interacciones y enviar correos.
+                </div>
+
+                <div class="detail-content" id="detail-content" hidden>
+                    <section class="doc-meta">
+                        <div><strong>Título:</strong> <span id="d-title">—</span></div>
+                        <div class="meta-grid">
+                            <div><strong>Autor:</strong> <span id="d-author">—</span></div>
+                            <div><strong>Revisores:</strong> <span id="d-reviewers">—</span></div>
+                            <div><strong>Estado:</strong> <span id="d-status" class="badge">—</span></div>
+                            <div><strong>Fecha:</strong> <span id="d-date">—</span></div>
+                        </div>
+                    </section>
+
+                    <section class="preview-email">
+                        <div class="preview">
+                            <div class="preview-box">Preview del PDF</div>
+                            <div class="preview-actions">
+                                <button class="btn-secondary" id="btn-download">Descargar</button>
+                            </div>
+                        </div>
+                        <div class="email">
+                            <h3>Enviar correo</h3>
+                            <form id="email-form" action="../php/send_email.php" method="post" novalidate>
+                                <div class="field">
+                                    <label for="to">Destinatario</label>
+                                    <select id="to" name="to" required>
+                                        <option value="">Selecciona...</option>
+                                        <option value="autor">Autor</option>
+                                        <option value="revisor">Revisor</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="subject">Asunto</label>
+                                    <input id="subject" name="subject" type="text" placeholder="Asunto del correo" required>
+                                </div>
+                                <div class="field">
+                                    <label for="message">Mensaje</label>
+                                    <textarea id="message" name="message" rows="6" placeholder="Escribe tu mensaje..."></textarea>
+                                </div>
+                                <div class="actions">
+                                    <button class="btn-primary" type="submit">Enviar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+                    <section class="interactions">
+                        <div class="interactions-head">
+                            <h3>Interacciones</h3>
+                            <div class="filters">
+                                <select id="filter-type">
+                                    <option value="all" selected>Todo</option>
+                                    <option value="system">Sistema</option>
+                                    <option value="reviewer">Revisor</option>
+                                    <option value="author">Autor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <ul id="interactions-list" class="interactions-list">
+                            <li class="event system">[Sistema] Documento subido por el autor. 2025-11-06 10:12</li>
+                            <li class="event reviewer">[Revisor] Toma el documento para revisión. 2025-11-06 12:22</li>
+                            <li class="event system">[Sistema] Rúbrica guardada (borrador). 2025-11-06 13:40</li>
+                        </ul>
+                    </section>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+    (function () {
+        const $ = (s, r=document) => r.querySelector(s);
+        const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+        // Tabs
+        $$('.tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                $$('.tabs .tab').forEach(t => t.classList.remove('is-active'));
+                tab.classList.add('is-active');
+                $$('.panel').forEach(p => p.classList.remove('is-active'));
+                $('#'+tab.dataset.target).classList.add('is-active');
+            });
+        });
+
+        // Open a document in the detail panel
+        function openDoc(li) {
+            const id = li.getAttribute('data-id');
+            const titleEl = li.querySelector('.title, .title-panels') || li.querySelector('.meta .title');
+            const title = titleEl ? titleEl.textContent : 'Documento';
+            const statusEl = li.querySelector('.badge');
+
+            $('#d-title').textContent = title;
+            $('#d-author').textContent = 'Anónimo';
+            $('#d-reviewers').textContent = 'Revisor A, Revisor B, Revisor C';
+            $('#d-status').textContent = statusEl ? statusEl.textContent : '—';
+            $('#d-date').textContent = new Date().toISOString().slice(0,10);
+
+            $('#detail-empty').hidden = true;
+            $('#detail-content').hidden = false;
+        }
+        $$('.docs-list').forEach(list => {
+            list.addEventListener('click', e => {
+                const btn = e.target.closest('[data-action="open"]');
+                if (!btn) return;
+                const li = e.target.closest('.doc-item');
+                if (!li) return;
+                openDoc(li);
+            });
+        });
+
+        // Download placeholder
+        $('#btn-download').addEventListener('click', () => {
+            alert('Descarga simulada. Conectar al archivo real en backend.');
+        });
+    })();
+    </script>
+</body>
+</html>
+
