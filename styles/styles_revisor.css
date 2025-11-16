@@ -201,6 +201,11 @@
     box-shadow: var(--shadow-soft);
 }
 
+.new-card {
+    border: 1px solid rgba(37, 99, 235, 0.24);
+    box-shadow: 0 24px 44px rgba(37, 99, 235, 0.16);
+}
+
 .card-head {
     display: flex;
     align-items: flex-start;
@@ -222,6 +227,29 @@
     gap: 14px;
 }
 
+.doc-queue {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    justify-content: center;
+}
+
+.doc-queue[data-variant="card"] {
+    align-items: center;
+}
+
+.doc-queue[data-variant="card"] .doc-row {
+    width: min(640px, 100%);
+}
+
+.doc-queue[data-variant="card"] + .doc-empty {
+    align-self: center;
+    max-width: 640px;
+    width: 100%;
+}
+
+
 .doc-row {
     display: flex;
     align-items: stretch;
@@ -232,6 +260,12 @@
     border-radius: 14px;
     padding: 18px 20px;
     box-shadow: 0 12px 26px rgba(15, 59, 92, 0.08);
+}
+
+.doc-row.is-new {
+    border-left: 5px solid var(--info);
+    border-color: rgba(37, 99, 235, 0.28);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0));
 }
 
 .doc-row.is-hot {
@@ -259,8 +293,10 @@
     gap: 6px;
 }
 
-.doc-meta span::after {
-    content: '';
+.doc-summary {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--muted);
 }
 
 .doc-actions {
@@ -280,6 +316,11 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     background: rgba(37, 99, 235, 0.15);
+    color: var(--info);
+}
+
+.badge-info {
+    background: rgba(37, 99, 235, 0.16);
     color: var(--info);
 }
 
@@ -326,6 +367,12 @@
 .board-tabs .tab.is-active {
     background: rgba(37, 99, 235, 0.12);
     color: var(--info);
+}
+
+.panels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .panel {
@@ -381,6 +428,26 @@
 
 .link:hover {
     text-decoration: underline;
+}
+
+.doc-empty {
+    margin-top: 12px;
+    padding: 18px;
+    border: 1px dashed rgba(59, 79, 116, 0.22);
+    border-radius: 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.doc-empty.is-panel {
+    margin-top: 8px;
+    border-style: solid;
+    background: rgba(59, 79, 116, 0.05);
+}
+
+.board-card {
+    grid-column: 1 / -1;
 }
 
 /* Review session layout */
@@ -694,6 +761,10 @@
         grid-template-columns: 1fr;
     }
 
+    .board-card {
+        grid-column: auto;
+    }
+
     .session-layout {
         flex-direction: column;
     }
@@ -743,6 +814,10 @@
     .doc-item .btn-tertiary {
         grid-column: 1 / -1;
         justify-self: flex-start;
+    }
+
+    .doc-empty {
+        text-align: left;
     }
 }
 

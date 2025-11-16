@@ -68,7 +68,7 @@
                         <h3>Evaluación de Artículo de Revista PulsoTec</h3>
                         <button type="button" class="btn-close" id="close-rubric" aria-label="Cerrar rúbrica">×</button>
                     </div>
-                    <p class="muted small">Marque con una opción por criterio. Si alguna pregunta no aplica, puede dejarla en blanco.</p>
+                    <!-- <p class="muted small">Marque con una opción por criterio. Si alguna pregunta no aplica, puede dejarla en blanco.</p> -->
 
                     <section class="rubric-section">
                         <h4>I. Según la revisión que hizo del documento, conteste los siguientes criterios</h4>
@@ -228,7 +228,6 @@
                         <div class="comments-area">
                             <label for="comentarios-autores">Comentarios para los autores (Con el fin de mejorar la calidad del manuscrito)</label>
                             <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales."></textarea>
-                            <p class="muted small">Nota: Puede continuar en otra hoja si es necesario.</p>
                         </div>
                     </section>
 
@@ -249,6 +248,14 @@
         const params = new URLSearchParams(window.location.search);
         const docId = params.get('doc') || 'doc-sin-id';
         const docMap = {
+            'doc-2101': {
+                title: 'Ensayo de biosensores portátiles',
+                meta: 'Asignado el 07 nov 2025 · Clave DOC-2101'
+            },
+            'doc-2102': {
+                title: 'Informe de datos clínicos 2025',
+                meta: 'Asignado el 06 nov 2025 · Clave DOC-2102'
+            },
             'doc-2001': {
                 title: 'Reporte de laboratorio',
                 meta: 'Asignado el 01 nov 2025 · Clave DOC-2001'
