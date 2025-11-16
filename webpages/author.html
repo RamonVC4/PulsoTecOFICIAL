@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="../styles/styles_general.css">
     <link rel="stylesheet" href="../styles/styles_author.css">
 </head>
+
+
+
+
+
 <body>
+
+    <!-- TITULO Y NAV INICIAL -->
     <header class="site-header">
         <div class="header-top">
             <div class="container">
@@ -27,13 +34,20 @@
         </nav>
     </header>
 
+
+
     <main class="container author-main">
+
+        <!-- MIS PROYECTOS TITULO -->
         <section class="author-intro">
             <h2>Mis proyectos</h2>
             <p class="muted">Organiza tus entregas en proyectos. Cada proyecto resguarda la versión original del documento y la versión revisada después de recibir comentarios.</p>
         </section>
 
+
         <section class="author-grid">
+
+            <!-- INICIAR NUEVO PROYECTO -->
             <article class="card new-project-card" aria-labelledby="new-project-title">
                 <header class="card-head">
                     <h2 id="new-project-title">Iniciar nuevo proyecto</h2>
@@ -86,6 +100,7 @@
                 </form>
             </article>
 
+            <!-- LISTADO DE PROYECTOS DEL AUTOR -->
             <div class="project-board" aria-live="polite">
                 <div class="project-board-tools">
                     <label class="sr-only" for="project-search">Buscar proyectos:</label>
@@ -324,6 +339,14 @@
         </section>
     </main>
 
+
+
+
+
+
+
+
+
     <script>
     (function () {
         const dropzones = document.querySelectorAll('[data-dropzone]');
@@ -401,11 +424,12 @@
             const end = start + pageSize;
             const visibleSet = new Set(filteredCards.slice(start, end));
 
+
             allCards.forEach(card => {
                 card.hidden = !visibleSet.has(card);
             });
 
-            emptyState.hidden = total > 0;
+            emptyState.hidden = (total > 0 || !searchInput.value.trim());
             pagination.hidden = total <= pageSize;
             pageIndicator.textContent = total ? currentPage + ' / ' + totalPages : '0 / 0';
             prevBtn.disabled = currentPage <= 1;
