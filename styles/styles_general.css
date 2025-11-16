@@ -18,6 +18,14 @@ body {
     margin: 0 auto;
     padding: 0 16px;
 }
+
+
+[hidden] {
+    display: none !important;
+}
+
+
+
 /* Top header strip */
 .header-top {
     background: #ffffff;
