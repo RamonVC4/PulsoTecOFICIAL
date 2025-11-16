@@ -19,7 +19,7 @@
             <div class="container">
                 <ul class="nav-list">
                     <li><a href="../Index.html">INICIO</a></li>
-                    <li><a href="#">MIS DOCUMENTOS</a></li>
+                    <li><a href="#">MIS PROYECTOS</a></li>
                     <li><a href="#">AYUDA</a></li>
                     <li class="login"><a href="../webpages/login.html">CERRAR SESIÓN</a></li>
                 </ul>
@@ -28,126 +28,428 @@
     </header>
 
     <main class="container author-main">
-        <section class="grid">
-            <!-- Upload card -->
-            <article class="card upload-card" aria-labelledby="upload-title">
-                <h2 id="upload-title">Subir documento</h2>
-                <p class="muted">PDF por ahora. Proporciona un título y, si es corrección, elige el espacio de trabajo.</p>
+        <section class="author-intro">
+            <h2>Mis proyectos</h2>
+            <p class="muted">Organiza tus entregas en proyectos. Cada proyecto resguarda la versión original del documento y la versión revisada después de recibir comentarios.</p>
+        </section>
 
-                <form id="upload-form" class="upload-form" action="../php/upload_document.php" method="post" enctype="multipart/form-data" novalidate>
+        <section class="author-grid">
+            <article class="card new-project-card" aria-labelledby="new-project-title">
+                <header class="card-head">
+                    <h2 id="new-project-title">Iniciar nuevo proyecto</h2>
+                    <p class="muted">Genera un espacio de trabajo y sube la primera versión de tu documento. Podrás adjuntar la revisión cuando recibas retroalimentación.</p>
+                </header>
+
+                <form id="new-project-form" class="stack" action="../php/upload_document.php" method="post" enctype="multipart/form-data" novalidate>
                     <div class="field">
-                        <label for="doc-title">Título del documento</label>
-                        <input id="doc-title" name="title" type="text" required placeholder="Ej. Informe de resultados">
+                        <label for="project-title">Nombre del proyecto</label>
+                        <input id="project-title" name="project_title" type="text" required placeholder="Ej. Evaluación de impacto tecnológico">
                     </div>
 
                     <div class="field">
-                        <label for="workspace">Espacio de trabajo</label>
-                        <select id="workspace" name="workspace">
-                            <option value="nuevo" selected>Nuevo documento</option>
-                            <option value="ws_123">Proyecto A (ejemplo)</option>
-                            <option value="ws_456">Proyecto B (ejemplo)</option>
+                        <label for="project-area">Área de conocimiento</label>
+                        <select id="project-area" name="project_area" required>
+                            <option value="" disabled selected>Selecciona un área</option>
+                            <option value="salud">Salud</option>
+                            <option value="ingenieria">Ingeniería</option>
+                            <option value="energia">Energía</option>
+                            <option value="educacion">Educación</option>
                         </select>
-                        <small class="hint">Si es corrección, selecciona el espacio de trabajo correspondiente.</small>
                     </div>
 
-                    <div class="dropzone" id="dropzone" aria-label="Soltar PDF aquí o usar el botón Adjuntar">
-                        <input id="file" name="file" type="file" accept="application/pdf" hidden>
-                        <div class="dz-inner">
-                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 5 17 10"></polyline>
-                                <line x1="12" y1="5" x2="12" y2="16"></line>
-                            </svg>
-                            <p><strong>Arrastra tu PDF</strong> o</p>
-                            <button type="button" id="pick-file" class="btn-secondary">Adjuntar</button>
-                            <div id="file-info" class="file-info" aria-live="polite"></div>
+                    <div class="field">
+                        <label for="project-description">Descripción breve</label>
+                        <textarea id="project-description" name="project_description" placeholder="Explica de forma breve el objetivo del proyecto."></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="project-file">Entrega inicial (PDF)</label>
+                        <div class="dropzone" data-dropzone>
+                            <input id="project-file" name="initial_file" type="file" accept="application/pdf" hidden required>
+                            <div class="dz-inner">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 5 17 10"></polyline>
+                                    <line x1="12" y1="5" x2="12" y2="16"></line>
+                                </svg>
+                                <p><strong>Arrastra tu PDF</strong> o</p>
+                                <button type="button" class="btn-secondary" data-dropzone-trigger>Seleccionar archivo</button>
+                                <div class="file-info" data-dropzone-info aria-live="polite"></div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="actions">
-                        <button type="submit" class="btn-primary">Enviar</button>
-                        <p class="muted small">Al enviar: se guarda en la base de datos y se notifica al revisor de forma anónima.</p>
+                        <button type="submit" class="btn-primary">Crear proyecto</button>
+                        <p class="muted small">El proyecto se crea con la versión inicial y queda listo para seguimiento y revisiones.</p>
                     </div>
                 </form>
             </article>
 
-            <!-- Documents list card -->
-            <article class="card docs-card" aria-labelledby="docs-title">
-                <div class="docs-header">
-                    <h2 id="docs-title">Mis documentos</h2>
-                    <div class="filters">
-                        <label class="sr-only" for="q">Buscar</label>
-                        <input id="q" type="search" placeholder="Buscar por título...">
+            <div class="project-board" aria-live="polite">
+                <div class="project-board-tools">
+                    <label class="sr-only" for="project-search">Buscar proyectos:</label>
+                    <div class="project-board-search">
+                        <span class="project-board-search__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"></circle>
+                                <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+                            </svg>
+                        </span>
+                        <input id="project-search" type="search" placeholder="Buscar por título, autor o fecha...">
                     </div>
                 </div>
 
-                <ul class="docs-list">
-                    <li class="doc-item">
-                        <div class="thumb" aria-hidden="true"></div>
-                        <div class="meta">
-                            <div class="title_docs-list">Informe de resultados</div>
-                            <div class="sub">Subido: 2025-11-01</div>
+                <div class="project-list" data-page-size="5">
+                    <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 id="project-01-title" class="project-title">Estudio de biomateriales</h3>
+                                <p class="project-description">Evaluación preclínica de nuevos compuestos para implantes asistidos por IA.</p>
+                            </div>
+                            <span class="project-status">En revisión</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-ready">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-success">Recibida</span>
+                                </header>
+                                <p class="muted small">Subido el 1 nov 2025 · 2.1 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión inicial del proyecto Estudio de biomateriales">Descargar PDF</a>
+                            </section>
+
+                            <section class="version version-revised is-await">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-pending">Pendiente</span>
+                                </header>
+                                <p class="muted small">Adjunta la corrección cuando recibas las observaciones del comité revisor.</p>
+                                <div class="step-actions">
+                                    <button type="button" class="btn-outline">Subir corrección</button>
+                                </div>
+                            </section>
                         </div>
-                        <span class="badge badge-pending">En revisión</span>
-                        <a class="link" href="#" aria-label="Abrir bitácora de Informe de resultados">Bitácora</a>
-                    </li>
-                    <li class="doc-item">
-                        <div class="thumb" aria-hidden="true"></div>
-                        <div class="meta">
-                            <div class="title_docs-list">Protocolo de estudio</div>
-                            <div class="sub">Subido: 2025-10-12</div>
+                    </article>
+
+                    <article class="card project-card is-approved" data-title="Protocolo de telemedicina rural" data-author="Dr. Martínez" data-date="2025-10-28" aria-labelledby="project-02-title">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 id="project-02-title" class="project-title">Protocolo de telemedicina rural</h3>
+                                <p class="project-description">Implementación de estaciones portátiles para consulta remota en comunidades aisladas.</p>
+                            </div>
+                            <span class="project-status">Aceptado</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-ready">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-neutral">Histórico</span>
+                                </header>
+                                <p class="muted small">Subido el 12 oct 2025 · 1.8 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión inicial del proyecto Protocolo de telemedicina rural">Descargar PDF</a>
+                            </section>
+
+                            <section class="version version-revised is-ready">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-success">Aceptada</span>
+                                </header>
+                                <p class="muted small">Actualizado el 28 oct 2025 · 1.6 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión revisada del proyecto Protocolo de telemedicina rural">Descargar PDF</a>
+                            </section>
                         </div>
-                        <span class="badge badge-ok">Aceptado</span>
-                        <a class="link" href="#" aria-label="Abrir bitácora de Protocolo de estudio">Bitácora</a>
-                    </li>
-                    <li class="doc-item">
-                        <div class="thumb" aria-hidden="true"></div>
-                        <div class="meta">
-                           <div class="title_docs-list">Anexo metodológico</div>
-                            <div class="sub">Subido: 2025-09-20</div>
+                    </article>
+
+                    <article class="card project-card is-draft" data-title="Análisis de eficiencia energética" data-author="Ing. Ramírez" data-date="2025-11-06" aria-labelledby="project-03-title">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 id="project-03-title" class="project-title">Análisis de eficiencia energética</h3>
+                                <p class="project-description">Diagnóstico de sistemas HVAC para campus universitarios.</p>
+                            </div>
+                            <span class="project-status">Borrador</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-await">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-pending">Pendiente</span>
+                                </header>
+                                <p class="muted small">Aún no has subido la versión inicial. Prepara el documento para crear el proyecto.</p>
+                                <div class="step-actions">
+                                    <button type="button" class="btn-outline">Adjuntar versión inicial</button>
+                                </div>
+                            </section>
+
+                            <section class="version version-revised is-await">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-muted">En espera</span>
+                                </header>
+                                <p class="muted small">La versión revisada se habilitará una vez que cargues la entrega inicial.</p>
+                            </section>
                         </div>
-                        <span class="badge badge-minor">Fallas menores</span>
-                        <a class="link" href="#" aria-label="Abrir bitácora de Anexo metodológico">Bitácora</a>
-                    </li>
-                </ul>
-            </article>
+                    </article>
+
+                    <article class="card project-card is-review" data-title="Evaluación de algoritmos educativos" data-author="Equipo EdTech" data-date="2025-09-22">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 class="project-title">Evaluación de algoritmos educativos</h3>
+                                <p class="project-description">Comparativa de modelos adaptativos para personalizar contenidos en aula híbrida.</p>
+                            </div>
+                            <span class="project-status">En revisión</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-ready">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-success">Recibida</span>
+                                </header>
+                                <p class="muted small">Subido el 22 sep 2025 · 3.2 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión inicial de Evaluación de algoritmos educativos">Descargar PDF</a>
+                            </section>
+
+                            <section class="version version-revised is-await">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-pending">Pendiente</span>
+                                </header>
+                                <p class="muted small">Responde el dictamen del 30 oct para avanzar a la siguiente fase.</p>
+                            </section>
+                        </div>
+                    </article>
+
+                    <article class="card project-card is-approved" data-title="Guía de monitoreo cardiaco" data-author="Dra. Solís" data-date="2025-08-18">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 class="project-title">Guía de monitoreo cardiaco</h3>
+                                <p class="project-description">Lineamientos para seguimiento remoto de pacientes con dispositivos portables.</p>
+                            </div>
+                            <span class="project-status">Aceptado</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-ready">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-neutral">Histórico</span>
+                                </header>
+                                <p class="muted small">Subido el 18 ago 2025 · 2.4 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión inicial de Guía de monitoreo cardiaco">Descargar PDF</a>
+                            </section>
+
+                            <section class="version version-revised is-ready">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-success">Aceptada</span>
+                                </header>
+                                <p class="muted small">Actualizado el 2 oct 2025 · 2.0 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión revisada de Guía de monitoreo cardiaco">Descargar PDF</a>
+                            </section>
+                        </div>
+                    </article>
+
+                    <article class="card project-card is-draft" data-title="Plataforma de bienestar laboral" data-author="Colectivo NEXO" data-date="2025-11-07">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 class="project-title">Plataforma de bienestar laboral</h3>
+                                <p class="project-description">Diseño de plataforma para medir clima organizacional en industrias creativas.</p>
+                            </div>
+                            <span class="project-status">Borrador</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-await">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-pending">Pendiente</span>
+                                </header>
+                                <p class="muted small">Carga el documento inicial antes del 14 nov para evitar retrasos.</p>
+                            </section>
+
+                            <section class="version version-revised is-await">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-muted">En espera</span>
+                                </header>
+                                <p class="muted small">Se habilitará cuando completes la primera entrega.</p>
+                            </section>
+                        </div>
+                    </article>
+
+                    <article class="card project-card is-review" data-title="Mapa de riesgo sísmico" data-author="Unidad Geofísica" data-date="2025-07-30">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 class="project-title">Mapa de riesgo sísmico</h3>
+                                <p class="project-description">Conformación de mapas predictivos con sensores de baja potencia en zonas urbanas.</p>
+                            </div>
+                            <span class="project-status">En revisión</span>
+                        </header>
+
+                        <div class="version-grid">
+                            <section class="version version-initial is-ready">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-success">Recibida</span>
+                                </header>
+                                <p class="muted small">Subido el 30 jul 2025 · 4.1 MB</p>
+                                <a class="link" href="#" aria-label="Descargar la versión inicial de Mapa de riesgo sísmico">Descargar PDF</a>
+                            </section>
+
+                            <section class="version version-revised is-await">
+                                <header>
+                                    <h4>Versión revisada</h4>
+                                    <span class="chip chip-pending">Pendiente</span>
+                                </header>
+                                <p class="muted small">Revisión intermedia solicitada para 20 nov.</p>
+                            </section>
+                        </div>
+                    </article>
+                </div>
+
+                <div id="project-empty" class="project-empty" hidden>
+                    <p>No encontramos proyectos que coincidan con tu búsqueda.</p>
+                </div>
+
+                <div class="project-pagination" id="project-pagination">
+                    <button type="button" class="btn-secondary project-page-btn" id="project-prev" aria-label="Proyectos anteriores">Anterior</button>
+                    <span class="project-page-indicator" id="project-page-indicator">1 / 1</span>
+                    <button type="button" class="btn-secondary project-page-btn" id="project-next" aria-label="Proyectos siguientes">Siguiente</button>
+                </div>
+            </div>
         </section>
     </main>
 
     <script>
     (function () {
-        // Drag & drop and file picker
-        const drop = document.getElementById('dropzone');
-        const input = document.getElementById('file');
-        const pick = document.getElementById('pick-file');
-        const info = document.getElementById('file-info');
+        const dropzones = document.querySelectorAll('[data-dropzone]');
 
-        function setInfo(file) {
-            if (!file) { info.textContent = ''; return; }
-            const kb = (file.size / 1024).toFixed(1);
-            info.textContent = file.name + ' · ' + kb + ' KB';
-        }
-        ['dragenter', 'dragover'].forEach(evt => {
-            drop.addEventListener(evt, e => {
-                e.preventDefault(); e.stopPropagation();
-                drop.classList.add('is-dragover');
-            });
-        });
-        ['dragleave', 'drop'].forEach(evt => {
-            drop.addEventListener(evt, e => {
-                e.preventDefault(); e.stopPropagation();
-                drop.classList.remove('is-dragover');
-            });
-        });
-        drop.addEventListener('drop', e => {
-            const file = e.dataTransfer.files && e.dataTransfer.files[0];
-            if (file) {
-                input.files = e.dataTransfer.files;
-                setInfo(file);
+        dropzones.forEach(function (zone) {
+            const input = zone.querySelector('input[type="file"]');
+            const trigger = zone.querySelector('[data-dropzone-trigger]');
+            const info = zone.querySelector('[data-dropzone-info]');
+
+            if (!input) { return; }
+
+            function setInfo(file) {
+                if (!info) { return; }
+                if (!file) { info.textContent = ''; return; }
+                var sizeInKb = file.size / 1024;
+                var formatted = sizeInKb < 1024 ? sizeInKb.toFixed(1) + ' KB' : (sizeInKb / 1024).toFixed(2) + ' MB';
+                info.textContent = file.name + ' · ' + formatted;
             }
+
+            ['dragenter', 'dragover'].forEach(function (eventName) {
+                zone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    zone.classList.add('is-dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(function (eventName) {
+                zone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    zone.classList.remove('is-dragover');
+                });
+            });
+
+            zone.addEventListener('drop', function (event) {
+                if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+                    var file = event.dataTransfer.files[0];
+                    input.files = event.dataTransfer.files;
+                    setInfo(file);
+                }
+            });
+
+            if (trigger) {
+                trigger.addEventListener('click', function () {
+                    input.click();
+                });
+            }
+
+            input.addEventListener('change', function () {
+                setInfo(input.files && input.files[0]);
+            });
         });
-        pick.addEventListener('click', () => input.click());
-        input.addEventListener('change', () => setInfo(input.files[0]));
+        const board = document.querySelector('.project-list');
+        if (!board) { return; }
+
+        const pageSize = Number(board.dataset.pageSize) || 5;
+        const allCards = Array.from(board.querySelectorAll('.project-card'));
+        const searchInput = document.getElementById('project-search');
+        const emptyState = document.getElementById('project-empty');
+        const pagination = document.getElementById('project-pagination');
+        const prevBtn = document.getElementById('project-prev');
+        const nextBtn = document.getElementById('project-next');
+        const pageIndicator = document.getElementById('project-page-indicator');
+
+        let filteredCards = allCards.slice();
+        let currentPage = 1;
+
+        function updateVisibility() {
+            const total = filteredCards.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            currentPage = Math.min(currentPage, totalPages);
+
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const visibleSet = new Set(filteredCards.slice(start, end));
+
+            allCards.forEach(card => {
+                card.hidden = !visibleSet.has(card);
+            });
+
+            emptyState.hidden = total > 0;
+            pagination.hidden = total <= pageSize;
+            pageIndicator.textContent = total ? currentPage + ' / ' + totalPages : '0 / 0';
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+        }
+
+        function applySearch(value) {
+            const term = value.trim().toLowerCase();
+            if (!term) {
+                filteredCards = allCards.slice();
+            } else {
+                filteredCards = allCards.filter(card => {
+                    const title = (card.dataset.title || card.querySelector('.project-title')?.textContent || '').toLowerCase();
+                    const author = (card.dataset.author || '').toLowerCase();
+                    const date = (card.dataset.date || '').toLowerCase();
+                    return title.includes(term) || author.includes(term) || date.includes(term);
+                });
+            }
+            currentPage = 1;
+            updateVisibility();
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', event => {
+                applySearch(event.target.value);
+            });
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage <= 1) { return; }
+            currentPage -= 1;
+            updateVisibility();
+            board.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(filteredCards.length / pageSize));
+            if (currentPage >= totalPages) { return; }
+            currentPage += 1;
+            updateVisibility();
+            board.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        updateVisibility();
     })();
     </script>
 </body>

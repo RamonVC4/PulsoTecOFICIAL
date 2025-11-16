@@ -28,53 +28,129 @@
     </header>
 
     <main class="container revisor-main">
-        <section class="grid">
-            <!-- Queue / lists -->
-            <aside class="card queue-card" aria-labelledby="queue-title">
-                <div class="queue-header">
-                    <h2 id="queue-title">Documentos</h2>
-                    <div class="tabs" role="tablist" aria-label="Listas de documentos">
-                        <button id="tab-disponibles" class="tab is-active" role="tab" aria-selected="true" data-target="panel-disponibles">Disponibles</button>
-                        <button id="tab-pendientes" class="tab" role="tab" aria-selected="false" data-target="panel-pendientes">Mis pendientes</button>
-                        <button id="tab-revisados" class="tab" role="tab" aria-selected="false" data-target="panel-revisados">Revisados</button>
+        <section class="revisor-overview">
+            <div class="overview-copy">
+                <h2>Panel de revisión</h2>
+                <p class="muted">Gestiona tus solicitudes y prioriza las revisiones que ya aceptaste. Mantén tu bandeja limpia antes de tomar nuevos documentos.</p>
+            </div>
+            <div class="overview-metrics">
+                <article class="metric-card is-critical" aria-label="Revisiones pendientes">
+                    <span class="metric-label">Pendientes</span>
+                    <span class="metric-value">3</span>
+                    <p class="metric-sub">2 con fecha límite en 48&nbsp;h</p>
+                </article>
+                <article class="metric-card is-info" aria-label="Documentos disponibles">
+                    <span class="metric-label">Disponibles</span>
+                    <span class="metric-value">5</span>
+                    <p class="metric-sub">Selecciona solo si puedes concluirlos</p>
+                </article>
+                <article class="metric-card is-success" aria-label="Revisiones entregadas">
+                    <span class="metric-label">Entregadas</span>
+                    <span class="metric-value">18</span>
+                    <p class="metric-sub">Última revisión enviada hace 4 días</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="revisor-board">
+            <article class="card focus-card" aria-labelledby="focus-title">
+                <header class="card-head">
+                    <div>
+                        <h3 id="focus-title">Revisiones pendientes</h3>
+                        <p class="muted">Realiza la evaluación en la nueva vista dedicada. Podrás consultar el PDF y abrir la rúbrica en paralelo.</p>
                     </div>
+                    <span class="badge badge-critical">Prioridad alta</span>
+                </header>
+
+                <ul class="doc-queue focus-list">
+                    <li class="doc-row is-hot">
+                        <div class="doc-info">
+                            <h4 class="doc-title">Reporte de laboratorio</h4>
+                            <p class="doc-meta"><span>Asignado: 01 nov 2025</span> · <span>Entrega: 12 nov</span></p>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn-primary" data-route="review-session.html?doc=doc-2001">Reanudar revisión</button>
+                        </div>
+                    </li>
+                    <li class="doc-row">
+                        <div class="doc-info">
+                            <h4 class="doc-title">Ensayo clínico fase I</h4>
+                            <p class="doc-meta"><span>Asignado: 05 nov 2025</span> · <span>Entrega: 15 nov</span></p>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn-outline" data-route="review-session.html?doc=doc-2002">Continuar</button>
+                        </div>
+                    </li>
+                    <li class="doc-row">
+                        <div class="doc-info">
+                            <h4 class="doc-title">Propuesta de telemedicina rural</h4>
+                            <p class="doc-meta"><span>Asignado: 06 nov 2025</span> · <span>Entrega: 18 nov</span></p>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn-outline" data-route="review-session.html?doc=doc-2003">Continuar</button>
+                        </div>
+                    </li>
+                </ul>
+            </article>
+
+            <aside class="card board-card" aria-labelledby="board-title">
+                <header class="card-head">
+                    <div>
+                        <h3 id="board-title">Bandeja de documentos</h3>
+                        <p class="muted">Consulta los documentos disponibles y tu historial reciente.</p>
+                    </div>
+                    <button class="btn-secondary" type="button">Exportar resumen</button>
+                </header>
+
+                <div class="board-tools">
+                    <label class="sr-only" for="search">Buscar documentos</label>
+                    <input id="search" type="search" placeholder="Buscar por título, autor o fecha...">
                 </div>
 
-                <div class="filters">
-                    <label class="sr-only" for="search">Buscar</label>
-                    <input id="search" type="search" placeholder="Buscar por título o fecha...">
+                <div class="tabs board-tabs" role="tablist" aria-label="Listas de documentos">
+                    <button id="tab-pendientes" class="tab is-active" role="tab" aria-selected="true" data-target="panel-pendientes">Mis pendientes</button>
+                    <button id="tab-disponibles" class="tab" role="tab" aria-selected="false" data-target="panel-disponibles">Disponibles</button>
+                    <button id="tab-revisados" class="tab" role="tab" aria-selected="false" data-target="panel-revisados">Revisados</button>
                 </div>
 
                 <div class="panels">
-                    <!-- Disponibles -->
-                    <ul id="panel-disponibles" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-disponibles">
-                        <li class="doc-item" data-id="doc-1001">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Ensayo clínico fase I</div>
-                                <div class="sub">Subido: 2025-11-05</div>
-                            </div>
-                            <button class="btn-tertiary take-btn" data-action="take">Revisar</button>
-                        </li>
-                        <li class="doc-item" data-id="doc-1002">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Protocolo de bioseguridad</div>
-                                <div class="sub">Subido: 2025-11-03</div>
-                            </div>
-                            <button class="btn-tertiary take-btn" data-action="take">Revisar</button>
-                        </li>
-                    </ul>
-
                     <!-- Pendientes -->
-                    <ul id="panel-pendientes" class="docs-list panel" role="tabpanel" aria-labelledby="tab-pendientes">
+                    <ul id="panel-pendientes" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-pendientes">
                         <li class="doc-item" data-id="doc-2001">
                             <div class="thumb" aria-hidden="true"></div>
                             <div class="meta">
                                 <div class="title-panels">Reporte de laboratorio</div>
-                                <div class="sub">Asignado: 2025-11-01</div>
+                                <div class="sub">Asignado: 2025-11-01 · Estado: En curso</div>
                             </div>
-                            <button class="btn-tertiary open-btn" data-action="open">Continuar</button>
+                            <button class="btn-tertiary" data-route="review-session.html?doc=doc-2001">Reanudar</button>
+                        </li>
+                        <li class="doc-item" data-id="doc-2002">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Ensayo clínico fase I</div>
+                                <div class="sub">Asignado: 2025-11-05 · Estado: En curso</div>
+                            </div>
+                            <button class="btn-tertiary" data-route="review-session.html?doc=doc-2002">Continuar</button>
+                        </li>
+                    </ul>
+
+                    <!-- Disponibles -->
+                    <ul id="panel-disponibles" class="docs-list panel" role="tabpanel" aria-labelledby="tab-disponibles">
+                        <li class="doc-item" data-id="doc-1001">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Protocolo de bioseguridad</div>
+                                <div class="sub">Subido: 2025-11-03 · Tiempo estimado: 4 h</div>
+                            </div>
+                            <button class="btn-tertiary" data-action="take" data-route="review-session.html?doc=doc-1001">Tomar revisión</button>
+                        </li>
+                        <li class="doc-item" data-id="doc-1002">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Informe de campo</div>
+                                <div class="sub">Subido: 2025-11-04 · Tiempo estimado: 3 h</div>
+                            </div>
+                            <button class="btn-tertiary" data-action="take" data-route="review-session.html?doc=doc-1002">Tomar revisión</button>
                         </li>
                     </ul>
 
@@ -84,87 +160,21 @@
                             <div class="thumb" aria-hidden="true"></div>
                             <div class="meta">
                                 <div class="title-panels">Guía de procedimientos</div>
-                                <div class="sub">Revisado: 2025-10-22 · Estado: Aceptado</div>
+                                <div class="sub">Revisado: 2025-10-22 · Dictamen: Aceptado</div>
+                            </div>
+                            <a class="link" href="#" aria-label="Ver bitácora">Bitácora</a>
+                        </li>
+                        <li class="doc-item" data-id="doc-3002">
+                            <div class="thumb" aria-hidden="true"></div>
+                            <div class="meta">
+                                <div class="title-panels">Manual de laboratorio</div>
+                                <div class="sub">Revisado: 2025-10-10 · Dictamen: Cambios menores</div>
                             </div>
                             <a class="link" href="#" aria-label="Ver bitácora">Bitácora</a>
                         </li>
                     </ul>
                 </div>
             </aside>
-
-            <!-- Work area -->
-            <article class="card work-card" aria-labelledby="work-title">
-                <h2 id="work-title">Revisión</h2>
-
-                <div class="work-empty" id="work-empty">
-                    Selecciona un documento para previsualizarlo y llenar la rúbrica.
-                </div>
-
-                <div class="work-content" id="work-content" hidden>
-                    <div class="work-head">
-                        <div class="doc-title" id="active-title">Título del documento</div>
-                        <div class="work-actions">
-                            <button type="button" class="btn-secondary" id="download-btn">Descargar</button>
-                        </div>
-                    </div>
-
-                    <div class="preview-rubric">
-
-                        <!-- CORREGIR -->
-
-
-                        <div class="preview" id="preview">
-                            <!-- Placeholder preview -->
-                            <div class="preview-box">Preview del PDF</div>
-                        </div>
-
-                        <form id="rubric-form" class="rubric" action="../php/save_rubric.php" method="post" novalidate>
-                            <input type="hidden" name="documentId" id="rubric-doc-id" value="">
-                            <div class="rubric-grid">
-                                <div class="rubric-item">
-                                    <label>Claridad</label>
-                                    <select name="claridad" required>
-                                        <option value="">Selecciona...</option>
-                                        <option>Aceptable</option>
-                                        <option>Fallas menores</option>
-                                        <option>Fallas graves</option>
-                                        <option>Rechazado</option>
-                                    </select>
-                                </div>
-                                <div class="rubric-item">
-                                    <label>Metodología</label>
-                                    <select name="metodologia" required>
-                                        <option value="">Selecciona...</option>
-                                        <option>Aceptable</option>
-                                        <option>Fallas menores</option>
-                                        <option>Fallas graves</option>
-                                        <option>Rechazado</option>
-                                    </select>
-                                </div>
-                                <div class="rubric-item">
-                                    <label>Originalidad</label>
-                                    <select name="originalidad" required>
-                                        <option value="">Selecciona...</option>
-                                        <option>Aceptable</option>
-                                        <option>Fallas menores</option>
-                                        <option>Fallas graves</option>
-                                        <option>Rechazado</option>
-                                    </select>
-                                </div>
-                                <div class="rubric-item rubric-span">
-                                    <label>Comentarios</label>
-                                    <textarea name="comentarios" rows="4" placeholder="Observaciones para el autor..."></textarea>
-                                </div>
-                            </div>
-
-                            <div class="rubric-actions">
-                                <button type="button" id="save-draft" class="btn-secondary">Guardar y continuar después</button>
-                                <button type="submit" formaction="../php/submit_rubric.php" class="btn-primary">Enviar revisión</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </article>
         </section>
     </main>
 
@@ -173,50 +183,31 @@
         const $ = (sel, root=document) => root.querySelector(sel);
         const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-        // Tabs
-        $$('.tabs .tab').forEach(tab => {
+        // Tabs para la bandeja
+        $$('.board-tabs .tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                $$('.tabs .tab').forEach(t => t.classList.remove('is-active'));
+                $$('.board-tabs .tab').forEach(t => t.classList.remove('is-active'));
                 tab.classList.add('is-active');
-                $$('.panel').forEach(p => p.classList.remove('is-active'));
-                $('#'+tab.dataset.target).classList.add('is-active');
+                $$('.panel').forEach(panel => panel.classList.remove('is-active'));
+                $('#' + tab.dataset.target).classList.add('is-active');
             });
         });
 
-        // Selecting docs
-        function openDoc(li) {
-            const id = li.getAttribute('data-id');
-            const titleEl = li.querySelector('.title, .title-panels');
-            const title = titleEl ? titleEl.textContent : 'Documento';
-            $('#active-title').textContent = title;
-            $('#rubric-doc-id').value = id;
-            $('#work-empty').hidden = true;
-            $('#work-content').hidden = false;
-        }
+        // Navegación hacia la vista de revisión
+        $$('.docs-list, .focus-list').forEach(list => {
+            list.addEventListener('click', event => {
+                const button = event.target.closest('[data-route]');
+                if (!button) return;
+                const route = button.getAttribute('data-route');
+                if (!route) return;
 
-        $$('.docs-list').forEach(list => {
-            list.addEventListener('click', (e) => {
-                const btn = e.target.closest('[data-action]');
-                if (!btn) return;
-                const li = e.target.closest('.doc-item');
-                if (!li) return;
-                openDoc(li);
+                if (button.dataset.action === 'take') {
+                    const confirmMsg = 'Al tomar este documento se asignará a tu bandeja de pendientes. ¿Deseas continuar?';
+                    if (!window.confirm(confirmMsg)) return;
+                }
+
+                window.location.href = route;
             });
-        });
-
-        // Draft save to localStorage (demo only)
-        $('#save-draft').addEventListener('click', () => {
-            const form = $('#rubric-form');
-            const data = new FormData(form);
-            const obj = {};
-            for (const [k,v] of data.entries()) obj[k] = v;
-            localStorage.setItem('rubricDraft:'+obj.documentId, JSON.stringify(obj));
-            alert('Borrador guardado localmente.');
-        });
-
-        // Simple download placeholder
-        $('#download-btn').addEventListener('click', () => {
-            alert('Descarga simulada. Conecta al archivo real en backend.');
         });
     })();
     </script>
