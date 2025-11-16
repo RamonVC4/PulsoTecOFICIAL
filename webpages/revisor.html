@@ -34,70 +34,56 @@
                 <p class="muted">Gestiona tus solicitudes y prioriza las revisiones que ya aceptaste. Mantén tu bandeja limpia antes de tomar nuevos documentos.</p>
             </div>
             <div class="overview-metrics">
-                <article class="metric-card is-critical" aria-label="Revisiones pendientes">
+                <article class="metric-card is-critical" aria-label="Revisiones en curso">
                     <span class="metric-label">Pendientes</span>
-                    <span class="metric-value">3</span>
-                    <p class="metric-sub">2 con fecha límite en 48&nbsp;h</p>
+                    <span class="metric-value" data-metric="pending-count">0</span>
+                    <p class="metric-sub" data-metric="pending-next">Sin entregas próximas</p>
                 </article>
-                <article class="metric-card is-info" aria-label="Documentos disponibles">
-                    <span class="metric-label">Disponibles</span>
-                    <span class="metric-value">5</span>
-                    <p class="metric-sub">Selecciona solo si puedes concluirlos</p>
+                <article class="metric-card is-info" aria-label="Nuevos documentos asignados">
+                    <span class="metric-label">Nuevos</span>
+                    <span class="metric-value" data-metric="new-count">0</span>
+                    <p class="metric-sub" data-metric="new-info">Coordinación no ha asignado nuevos documentos</p>
                 </article>
                 <article class="metric-card is-success" aria-label="Revisiones entregadas">
                     <span class="metric-label">Entregadas</span>
-                    <span class="metric-value">18</span>
-                    <p class="metric-sub">Última revisión enviada hace 4 días</p>
+                    <span class="metric-value" data-metric="completed-count">0</span>
+                    <p class="metric-sub" data-metric="completed-info">Aún sin revisiones entregadas</p>
                 </article>
             </div>
         </section>
 
         <section class="revisor-board">
+            <article class="card new-card" aria-labelledby="new-title">
+                <header class="card-head">
+                    <div>
+                        <h3 id="new-title">Nuevos asignados</h3>
+                        <p class="muted">El área de coordinación te asignó estos documentos. Confirma la recepción para moverlos a tu bandeja.</p>
+                    </div>
+                    <span class="badge badge-info">Nuevos</span>
+                </header>
+
+                <ul class="doc-queue" data-sync="new" data-variant="card" data-empty="empty-new"></ul>
+                <div class="doc-empty" id="empty-new" hidden>No tienes nuevos documentos pendientes de confirmar.</div>
+            </article>
+
             <article class="card focus-card" aria-labelledby="focus-title">
                 <header class="card-head">
                     <div>
                         <h3 id="focus-title">Revisiones pendientes</h3>
-                        <p class="muted">Realiza la evaluación en la nueva vista dedicada. Podrás consultar el PDF y abrir la rúbrica en paralelo.</p>
+                        <p class="muted">Accede a tus documentos en curso y continúa con la evaluación cuando lo necesites.</p>
                     </div>
                     <span class="badge badge-critical">Prioridad alta</span>
                 </header>
 
-                <ul class="doc-queue focus-list">
-                    <li class="doc-row is-hot">
-                        <div class="doc-info">
-                            <h4 class="doc-title">Reporte de laboratorio</h4>
-                            <p class="doc-meta"><span>Asignado: 01 nov 2025</span> · <span>Entrega: 12 nov</span></p>
-                        </div>
-                        <div class="doc-actions">
-                            <button class="btn-primary" data-route="review-session.html?doc=doc-2001">Reanudar revisión</button>
-                        </div>
-                    </li>
-                    <li class="doc-row">
-                        <div class="doc-info">
-                            <h4 class="doc-title">Ensayo clínico fase I</h4>
-                            <p class="doc-meta"><span>Asignado: 05 nov 2025</span> · <span>Entrega: 15 nov</span></p>
-                        </div>
-                        <div class="doc-actions">
-                            <button class="btn-outline" data-route="review-session.html?doc=doc-2002">Continuar</button>
-                        </div>
-                    </li>
-                    <li class="doc-row">
-                        <div class="doc-info">
-                            <h4 class="doc-title">Propuesta de telemedicina rural</h4>
-                            <p class="doc-meta"><span>Asignado: 06 nov 2025</span> · <span>Entrega: 18 nov</span></p>
-                        </div>
-                        <div class="doc-actions">
-                            <button class="btn-outline" data-route="review-session.html?doc=doc-2003">Continuar</button>
-                        </div>
-                    </li>
-                </ul>
+                <ul class="doc-queue focus-list" data-sync="pending" data-variant="card" data-limit="3" data-empty="empty-pending"></ul>
+                <div class="doc-empty" id="empty-pending" hidden>Cuando confirmes o avances un documento aparecerá aquí.</div>
             </article>
 
             <aside class="card board-card" aria-labelledby="board-title">
                 <header class="card-head">
                     <div>
                         <h3 id="board-title">Bandeja de documentos</h3>
-                        <p class="muted">Consulta los documentos disponibles y tu historial reciente.</p>
+                        <p class="muted">Consulta los documentos recién asignados, tus revisiones en curso y el historial.</p>
                     </div>
                     <button class="btn-secondary" type="button">Exportar resumen</button>
                 </header>
@@ -108,71 +94,20 @@
                 </div>
 
                 <div class="tabs board-tabs" role="tablist" aria-label="Listas de documentos">
-                    <button id="tab-pendientes" class="tab is-active" role="tab" aria-selected="true" data-target="panel-pendientes">Mis pendientes</button>
-                    <button id="tab-disponibles" class="tab" role="tab" aria-selected="false" data-target="panel-disponibles">Disponibles</button>
+                    <button id="tab-nuevos" class="tab is-active" role="tab" aria-selected="true" data-target="panel-nuevos">Nuevos</button>
+                    <button id="tab-pendientes" class="tab" role="tab" aria-selected="false" data-target="panel-pendientes">En curso</button>
                     <button id="tab-revisados" class="tab" role="tab" aria-selected="false" data-target="panel-revisados">Revisados</button>
                 </div>
 
                 <div class="panels">
-                    <!-- Pendientes -->
-                    <ul id="panel-pendientes" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-pendientes">
-                        <li class="doc-item" data-id="doc-2001">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Reporte de laboratorio</div>
-                                <div class="sub">Asignado: 2025-11-01 · Estado: En curso</div>
-                            </div>
-                            <button class="btn-tertiary" data-route="review-session.html?doc=doc-2001">Reanudar</button>
-                        </li>
-                        <li class="doc-item" data-id="doc-2002">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Ensayo clínico fase I</div>
-                                <div class="sub">Asignado: 2025-11-05 · Estado: En curso</div>
-                            </div>
-                            <button class="btn-tertiary" data-route="review-session.html?doc=doc-2002">Continuar</button>
-                        </li>
-                    </ul>
+                    <ul id="panel-nuevos" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-nuevos" data-sync="new" data-variant="table" data-empty="empty-panel-new"></ul>
+                    <div class="doc-empty is-panel" id="empty-panel-new" hidden>Sin nuevos documentos asignados por el momento.</div>
 
-                    <!-- Disponibles -->
-                    <ul id="panel-disponibles" class="docs-list panel" role="tabpanel" aria-labelledby="tab-disponibles">
-                        <li class="doc-item" data-id="doc-1001">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Protocolo de bioseguridad</div>
-                                <div class="sub">Subido: 2025-11-03 · Tiempo estimado: 4 h</div>
-                            </div>
-                            <button class="btn-tertiary" data-action="take" data-route="review-session.html?doc=doc-1001">Tomar revisión</button>
-                        </li>
-                        <li class="doc-item" data-id="doc-1002">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Informe de campo</div>
-                                <div class="sub">Subido: 2025-11-04 · Tiempo estimado: 3 h</div>
-                            </div>
-                            <button class="btn-tertiary" data-action="take" data-route="review-session.html?doc=doc-1002">Tomar revisión</button>
-                        </li>
-                    </ul>
+                    <ul id="panel-pendientes" class="docs-list panel" role="tabpanel" aria-labelledby="tab-pendientes" data-sync="pending" data-variant="table" data-empty="empty-panel-pending"></ul>
+                    <div class="doc-empty is-panel" id="empty-panel-pending" hidden>No tienes documentos en curso.</div>
 
-                    <!-- Revisados -->
-                    <ul id="panel-revisados" class="docs-list panel" role="tabpanel" aria-labelledby="tab-revisados">
-                        <li class="doc-item" data-id="doc-3001">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Guía de procedimientos</div>
-                                <div class="sub">Revisado: 2025-10-22 · Dictamen: Aceptado</div>
-                            </div>
-                            <a class="link" href="#" aria-label="Ver bitácora">Bitácora</a>
-                        </li>
-                        <li class="doc-item" data-id="doc-3002">
-                            <div class="thumb" aria-hidden="true"></div>
-                            <div class="meta">
-                                <div class="title-panels">Manual de laboratorio</div>
-                                <div class="sub">Revisado: 2025-10-10 · Dictamen: Cambios menores</div>
-                            </div>
-                            <a class="link" href="#" aria-label="Ver bitácora">Bitácora</a>
-                        </li>
-                    </ul>
+                    <ul id="panel-revisados" class="docs-list panel" role="tabpanel" aria-labelledby="tab-revisados" data-sync="completed" data-variant="table" data-empty="empty-panel-completed"></ul>
+                    <div class="doc-empty is-panel" id="empty-panel-completed" hidden>Aún no hay revisiones concluidas.</div>
                 </div>
             </aside>
         </section>
@@ -193,22 +128,264 @@
             });
         });
 
-        // Navegación hacia la vista de revisión
-        $$('.docs-list, .focus-list').forEach(list => {
-            list.addEventListener('click', event => {
-                const button = event.target.closest('[data-route]');
-                if (!button) return;
-                const route = button.getAttribute('data-route');
-                if (!route) return;
+        const locale = 'es-MX';
+        const dateOptionsLong = { day: '2-digit', month: 'long', year: 'numeric' };
+        const dateOptionsShort = { day: '2-digit', month: 'short', year: 'numeric' };
 
-                if (button.dataset.action === 'take') {
-                    const confirmMsg = 'Al tomar este documento se asignará a tu bandeja de pendientes. ¿Deseas continuar?';
-                    if (!window.confirm(confirmMsg)) return;
+        const state = {
+            new: [
+                {
+                    id: 'doc-2101',
+                    title: 'Ensayo de biosensores portátiles',
+                    summary: 'Validación de prototipo clínico para monitoreo en tiempo real.',
+                    assigned: '2025-11-07',
+                    due: '2025-11-16',
+                    route: 'review-session.html?doc=doc-2101'
+                },
+                {
+                    id: 'doc-2102',
+                    title: 'Informe de datos clínicos 2025',
+                    summary: 'Análisis de cohorte multicéntrica con IA para estratificación de riesgo.',
+                    assigned: '2025-11-06',
+                    due: '2025-11-18',
+                    route: 'review-session.html?doc=doc-2102'
                 }
+            ],
+            pending: [
+                {
+                    id: 'doc-2001',
+                    title: 'Reporte de laboratorio',
+                    summary: 'Resultados de cultivos celulares y correlaciones in vitro.',
+                    assigned: '2025-11-01',
+                    due: '2025-11-12',
+                    route: 'review-session.html?doc=doc-2001'
+                },
+                {
+                    id: 'doc-2002',
+                    title: 'Ensayo clínico fase I',
+                    summary: 'Seguimiento de seguridad para dispositivo neuroestimulador.',
+                    assigned: '2025-11-05',
+                    due: '2025-11-15',
+                    route: 'review-session.html?doc=doc-2002'
+                },
+                {
+                    id: 'doc-2003',
+                    title: 'Propuesta de telemedicina rural',
+                    summary: 'Plan operativo para estaciones portátiles en comunidades aisladas.',
+                    assigned: '2025-11-06',
+                    due: '2025-11-18',
+                    route: 'review-session.html?doc=doc-2003'
+                }
+            ],
+            completed: [
+                {
+                    id: 'doc-3001',
+                    title: 'Guía de procedimientos',
+                    verdict: 'Aceptado',
+                    completed: '2025-10-22',
+                    logRoute: '#'
+                },
+                {
+                    id: 'doc-3002',
+                    title: 'Manual de laboratorio',
+                    verdict: 'Cambios menores',
+                    completed: '2025-10-10',
+                    logRoute: '#'
+                }
+            ]
+        };
 
-                window.location.href = route;
+        const metrics = {
+            pending: $('[data-metric="pending-count"]'),
+            pendingInfo: $('[data-metric="pending-next"]'),
+            new: $('[data-metric="new-count"]'),
+            newInfo: $('[data-metric="new-info"]'),
+            completed: $('[data-metric="completed-count"]'),
+            completedInfo: $('[data-metric="completed-info"]')
+        };
+
+        function parseDate(value) {
+            return new Date(value + 'T00:00:00');
+        }
+
+        function formatDateLong(value) {
+            return parseDate(value).toLocaleDateString(locale, dateOptionsLong);
+        }
+
+        function formatDateShort(value) {
+            return parseDate(value).toLocaleDateString(locale, dateOptionsShort);
+        }
+
+        function getSortKey(type) {
+            if (type === 'completed') return 'completed';
+            return 'assigned';
+        }
+
+        function renderAll() {
+            ['new', 'pending', 'completed'].forEach(renderType);
+            updateMetrics();
+        }
+
+        function renderType(type) {
+            const lists = document.querySelectorAll(`[data-sync="${type}"]`);
+            if (!lists.length) return;
+
+            const source = state[type]
+                .slice()
+                .sort((a, b) => parseDate(b[getSortKey(type)]) - parseDate(a[getSortKey(type)]));
+
+            lists.forEach(list => {
+                const limit = Number(list.dataset.limit) || source.length;
+                const variant = list.dataset.variant || 'table';
+                const items = source.slice(0, limit);
+
+                list.innerHTML = '';
+
+                items.forEach(item => {
+                    list.appendChild(createListItem(type, item, variant));
+                });
+
+                const emptyId = list.dataset.empty;
+                if (emptyId) {
+                    const emptyElement = document.getElementById(emptyId);
+                    if (emptyElement) {
+                        emptyElement.hidden = source.length > 0;
+                    }
+                }
             });
+        }
+
+        function createListItem(type, item, variant) {
+            if (variant === 'card') {
+                const li = document.createElement('li');
+                li.className = 'doc-row' + (type === 'new' ? ' is-new' : '');
+                li.dataset.id = item.id;
+                const summary = item.summary ? `<p class="doc-summary">${item.summary}</p>` : '';
+                const dueInfo = item.due ? `<span>Entrega: ${formatDateLong(item.due)}</span>` : '';
+                const actions = type === 'new'
+                    ? `
+                        <button class="btn-primary" data-action="start" data-id="${item.id}" data-route="${item.route}">Comenzar revisión</button>
+                        <button class="btn-outline" data-action="ack" data-id="${item.id}">Mover a bandeja</button>
+                    `
+                    : `
+                        <button class="btn-outline" data-action="open" data-id="${item.id}" data-route="${item.route}">Continuar</button>
+                    `;
+                li.innerHTML = `
+                    <div class="doc-info">
+                        <h4 class="doc-title">${item.title}</h4>
+                        <p class="doc-meta">
+                            <span>Asignado: ${formatDateLong(item.assigned)}</span>
+                            ${dueInfo ? ' · ' + dueInfo : ''}
+                        </p>
+                        ${summary}
+                    </div>
+                    <div class="doc-actions">
+                        ${actions}
+                    </div>
+                `;
+                return li;
+            }
+
+            const li = document.createElement('li');
+            li.className = 'doc-item';
+            li.dataset.id = item.id;
+
+            let sub = '';
+            let actionMarkup = '';
+
+            if (type === 'new' || type === 'pending') {
+                sub = `Asignado: ${formatDateShort(item.assigned)} · Entrega: ${formatDateShort(item.due)}`;
+                const label = type === 'new' ? 'Registrar y abrir' : 'Continuar';
+                const action = type === 'new' ? 'start' : 'open';
+                const buttonClass = type === 'new' ? 'btn-tertiary' : 'btn-tertiary';
+                actionMarkup = `<button class="${buttonClass}" data-action="${action}" data-id="${item.id}" data-route="${item.route}">${label}</button>`;
+            } else {
+                sub = `Revisado: ${formatDateShort(item.completed)} · Dictamen: ${item.verdict}`;
+                actionMarkup = `<a class="link" href="${item.logRoute || '#'}" aria-label="Ver bitácora de ${item.title}">Bitácora</a>`;
+            }
+
+            li.innerHTML = `
+                <div class="thumb" aria-hidden="true"></div>
+                <div class="meta">
+                    <div class="title-panels">${item.title}</div>
+                    <div class="sub">${sub}</div>
+                </div>
+                ${actionMarkup}
+            `;
+
+            return li;
+        }
+
+        function updateMetrics() {
+            if (metrics.pending) metrics.pending.textContent = state.pending.length;
+            if (metrics.new) metrics.new.textContent = state.new.length;
+            if (metrics.completed) metrics.completed.textContent = state.completed.length;
+
+            if (metrics.pendingInfo) {
+                if (!state.pending.length) {
+                    metrics.pendingInfo.textContent = 'Sin entregas próximas';
+                } else {
+                    const nextDue = state.pending.slice().sort((a, b) => parseDate(a.due) - parseDate(b.due))[0];
+                    metrics.pendingInfo.textContent = `Próxima entrega: ${formatDateShort(nextDue.due)}`;
+                }
+            }
+
+            if (metrics.newInfo) {
+                metrics.newInfo.textContent = state.new.length
+                    ? `Coordinación asignó ${state.new.length} documento(s) reciente(s)`
+                    : 'Coordinación no ha asignado nuevos documentos';
+            }
+
+            if (metrics.completedInfo) {
+                if (!state.completed.length) {
+                    metrics.completedInfo.textContent = 'Aún sin revisiones entregadas';
+                } else {
+                    const latest = state.completed
+                        .slice()
+                        .sort((a, b) => parseDate(b.completed) - parseDate(a.completed))[0];
+                    metrics.completedInfo.textContent = `Última revisión: ${formatDateShort(latest.completed)}`;
+                }
+            }
+        }
+
+        function moveToPending(id) {
+            const index = state.new.findIndex(item => item.id === id);
+            if (index === -1) return;
+            const [item] = state.new.splice(index, 1);
+            state.pending.push(item);
+            renderAll();
+        }
+
+        document.addEventListener('click', event => {
+            const button = event.target.closest('[data-action]');
+            if (!button) return;
+            const action = button.dataset.action;
+            const id = button.dataset.id;
+            if (!id) return;
+
+            if (action === 'ack') {
+                moveToPending(id);
+                return;
+            }
+
+            if (action === 'start') {
+                moveToPending(id);
+                const route = button.dataset.route;
+                if (route) {
+                    window.location.href = route;
+                }
+                return;
+            }
+
+            if (action === 'open') {
+                const route = button.dataset.route;
+                if (route) {
+                    window.location.href = route;
+                }
+            }
         });
+
+        renderAll();
     })();
     </script>
 </body>
