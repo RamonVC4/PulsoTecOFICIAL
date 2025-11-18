@@ -29,8 +29,8 @@
 
                 <div id="tabpanel" class="form-fields" role="tabpanel" tabindex="-1">
                     <div class="field">
-                        <label for="username">Usuario</label>
-                        <input id="username" name="username" type="text" inputmode="text" autocomplete="username" required placeholder="Ingresa tu usuario">
+                        <label for="correo">Correo</label>
+                        <input id="correo" name="correo" type="text" inputmode="text" autocomplete="correo" required placeholder="Ingresa tu correo">
                     </div>
 
                     <div class="field password-field">
@@ -80,18 +80,28 @@
         }
     })();
 
-    function goToPage() {
-        const selected = document.querySelector('input[name="role"]:checked');
-        if (!selected) return;
+    async function goToPage() {
+        //consigo los datos
+        const role = document.querySelector('input[name="role"]:checked')?.value;
+        const correo = document.getElementById('correo').value;
+        const password = document.getElementById('password').value;
 
-        const routes = {
-            autor: '../webpages/author.html',
-            manager: '../webpages/manager.html',
-            revisor: '../webpages/revisor.html'
-        };
+        //hago un fetch a php
+        const res = await fetch("../php/login.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ correo, password, role }),
+            credentials: "same-origin" // para enviar cookies de la sesion
+        });
 
-        const url = routes[selected.value];
-        window.location.href = url;
+        const data = await res.json();
+
+        if (!data.success) {
+            alert("Datos incorrectos, por favor verifique los campos.");
+            return;
+        }
+
+        window.location.href = data.redirect;
     }
 
 
