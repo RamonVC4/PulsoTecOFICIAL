@@ -13,7 +13,7 @@ switch ($role) {
         $table = 'autor';
         break;
     case 'manager':
-        $table = 'managers';
+        $table = 'manager';
         break;
     case 'revisor':
         $table = 'revisor';

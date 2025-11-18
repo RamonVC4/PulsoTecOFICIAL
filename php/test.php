@@ -13,14 +13,15 @@ if ($conn->connect_error) {
 }
 
 // Datos a insertar
-$correo = "usuario@example.com";
-$contra = "miPassword123";
+$usuario = "manager";
+$correo = "$usuario@example.com";
+$contra = "123456";
 
 // Hashear la contraseña antes de guardarla
 $hashContra = password_hash($contra, PASSWORD_DEFAULT);
 
 // Preparar la consulta
-$stmt = $conn->prepare("INSERT INTO autor (correo, contra) VALUES (?, ?)");
+$stmt = $conn->prepare("INSERT INTO $usuario (correo, contra) VALUES (?, ?)");
 $stmt->bind_param("ss", $correo, $hashContra);
 
 // Ejecutar

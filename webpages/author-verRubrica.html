@@ -252,10 +252,13 @@
             if (!jsonStr) return;
 
             const datosEnJSON = JSON.parse(jsonStr);
+            console.log(datosEnJSON);
             const formObj = JSON.parse(datosEnJSON.datosRubrica);
+            console.log(formObj);
 
             form = document.getElementById('rubric-form');
 
+            console.log(form);
            for (const [key, value] of Object.entries(formObj)) {
                 const field = form.elements[key];
                 if (!field) continue;
@@ -295,58 +298,11 @@
     <script>
     //esta funcion se ejecuta al cargar la pagina
     document.addEventListener('DOMContentLoaded', () => {
-        cargarTabla(); // llama a la función que obtiene los proyectos y los renderiza<script>
-            const formFueraDeLaFunc = document.getElementById('rubric-form');
-        // Función para validar el formulario
-        const validarForm = () => {
-            const form = document.getElementById('rubric-form');
-            const submitBtn = form.querySelector('button.btn-primary');
-            const allRadios = form.querySelectorAll('input[type="radio"]');
-            const globalScore = form.querySelector('input[name="calificacion_global"]');
-
-            let todosRadiosCompletos = true;
-            let dictamenSeleccionado = false;
-
-            // Validar que todos los grupos de radio de los aspectos tengan una opción seleccionada
-            const gruposRadio = {};
-            allRadios.forEach(radio => {
-                gruposRadio[radio.name] = gruposRadio[radio.name] || [];
-                gruposRadio[radio.name].push(radio);
-            });
-
-            for (const grupo of Object.values(gruposRadio)) {
-                if (!grupo.some(r => r.checked)) {
-                    todosRadiosCompletos = false;
-                    break;
-                }
-            }
-
-            // Validar que se haya elegido un dictamen
-            dictamenSeleccionado = Array.from(allRadios)
-                .some(r => r.name === 'dictamen' && r.checked);
-
-            // Validar calificación global
-            const scoreVal = parseFloat(globalScore.value);
-            const scoreValido = !isNaN(scoreVal) && scoreVal >= 1 && scoreVal <= 10;
-
-            // guardar el estado de la verificacion
-            tablaLlena = (todosRadiosCompletos && dictamenSeleccionado && scoreValido);
-        };
-
-        // Escuchar cambios en el formulario
-        formFueraDeLaFunc.addEventListener('change', validarForm);
-        formFueraDeLaFunc.addEventListener('input', validarForm);
-
-        // Ejecutar al cargar por si hay datos prellenados
-        validarForm();
+        cargarTabla(); // llama a la función que obtiene los proyectos y los renderiza
     });
     </script>
     <script>
         async function terminarRevision(terminado) {
-            if (terminado && !tablaLlena){
-                alert('Por favor, complete todos los campos obligatorios antes de enviar el dictamen.');
-                return;
-            }
             //guardamos la form como json
             const form = document.getElementById('rubric-form');
             const data = new FormData(form);
@@ -372,7 +328,6 @@
             const result = await response.json();
             if (result.success) {
                 alert('Dictamen enviado con éxito.');
-                //window.location.href = './revisor.html'; //TODO
             } else {
                 alert('Error al enviar el dictamen: ' + result.message);
             }

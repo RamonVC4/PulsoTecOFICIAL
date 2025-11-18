@@ -53,18 +53,19 @@
         </section>
 
         <section class="revisor-board">
-            <article class="card new-card" aria-labelledby="new-title">
+            <!-- <article class="card new-card" aria-labelledby="new-title">
                 <header class="card-head">
                     <div>
-                        <h3 id="new-title">Nuevos asignados</h3>
-                        <p class="muted">El área de coordinación te asignó estos documentos. Confirma la recepción para moverlos a tu bandeja.</p>
+                        <h3 id="new-title">Nuevos asignados</h3> -->
+                        <!-- esto de bandeja para que es? -->
+                        <!-- <p class="muted">El área de coordinación te asignó estos documentos. Confirma la recepción para moverlos a tu bandeja.</p>
                     </div>
                     <span class="badge badge-info">Nuevos</span>
                 </header>
 
                 <ul class="doc-queue" data-sync="new" data-variant="card" data-empty="empty-new"></ul>
                 <div class="doc-empty" id="empty-new" hidden>No tienes nuevos documentos pendientes de confirmar.</div>
-            </article>
+            </article> -->
 
             <article class="card focus-card" aria-labelledby="focus-title">
                 <header class="card-head">
@@ -79,7 +80,7 @@
                 <div class="doc-empty" id="empty-pending" hidden>Cuando confirmes o avances un documento aparecerá aquí.</div>
             </article>
 
-            <aside class="card board-card" aria-labelledby="board-title">
+            <!-- <aside class="card board-card" aria-labelledby="board-title">
                 <header class="card-head">
                     <div>
                         <h3 id="board-title">Bandeja de documentos</h3>
@@ -109,7 +110,7 @@
                     <ul id="panel-revisados" class="docs-list panel" role="tabpanel" aria-labelledby="tab-revisados" data-sync="completed" data-variant="table" data-empty="empty-panel-completed"></ul>
                     <div class="doc-empty is-panel" id="empty-panel-completed" hidden>Aún no hay revisiones concluidas.</div>
                 </div>
-            </aside>
+            </aside> -->
         </section>
     </main>
 
@@ -132,68 +133,98 @@
         const dateOptionsLong = { day: '2-digit', month: 'long', year: 'numeric' };
         const dateOptionsShort = { day: '2-digit', month: 'short', year: 'numeric' };
 
-        const state = {
-            new: [
-                {
-                    id: 'doc-2101',
-                    title: 'Ensayo de biosensores portátiles',
-                    summary: 'Validación de prototipo clínico para monitoreo en tiempo real.',
-                    assigned: '2025-11-07',
-                    due: '2025-11-16',
-                    route: 'review-session.html?doc=doc-2101'
-                },
-                {
-                    id: 'doc-2102',
-                    title: 'Informe de datos clínicos 2025',
-                    summary: 'Análisis de cohorte multicéntrica con IA para estratificación de riesgo.',
-                    assigned: '2025-11-06',
-                    due: '2025-11-18',
-                    route: 'review-session.html?doc=doc-2102'
-                }
-            ],
-            pending: [
-                {
-                    id: 'doc-2001',
-                    title: 'Reporte de laboratorio',
-                    summary: 'Resultados de cultivos celulares y correlaciones in vitro.',
-                    assigned: '2025-11-01',
-                    due: '2025-11-12',
-                    route: 'review-session.html?doc=doc-2001'
-                },
-                {
-                    id: 'doc-2002',
-                    title: 'Ensayo clínico fase I',
-                    summary: 'Seguimiento de seguridad para dispositivo neuroestimulador.',
-                    assigned: '2025-11-05',
-                    due: '2025-11-15',
-                    route: 'review-session.html?doc=doc-2002'
-                },
-                {
-                    id: 'doc-2003',
-                    title: 'Propuesta de telemedicina rural',
-                    summary: 'Plan operativo para estaciones portátiles en comunidades aisladas.',
-                    assigned: '2025-11-06',
-                    due: '2025-11-18',
-                    route: 'review-session.html?doc=doc-2003'
-                }
-            ],
-            completed: [
-                {
-                    id: 'doc-3001',
-                    title: 'Guía de procedimientos',
-                    verdict: 'Aceptado',
-                    completed: '2025-10-22',
-                    logRoute: '#'
-                },
-                {
-                    id: 'doc-3002',
-                    title: 'Manual de laboratorio',
-                    verdict: 'Cambios menores',
-                    completed: '2025-10-10',
-                    logRoute: '#'
-                }
-            ]
+        // const state = {
+        //     new: [
+        //         {
+        //             id: 'doc-2101',
+        //             title: 'Ensayo de biosensores portátiles',
+        //             summary: 'Validación de prototipo clínico para monitoreo en tiempo real.',
+        //             assigned: '2025-11-07',
+        //             due: '2025-11-16',
+        //             route: 'review-session.html?doc=doc-2101'
+        //         },
+        //         {
+        //             id: 'doc-2102',
+        //             title: 'Informe de datos clínicos 2025',
+        //             summary: 'Análisis de cohorte multicéntrica con IA para estratificación de riesgo.',
+        //             assigned: '2025-11-06',
+        //             due: '2025-11-18',
+        //             route: 'review-session.html?doc=doc-2102'
+        //         }
+        //     ],
+        //     pending: [
+        //         {
+        //             id: 'doc-2001',
+        //             title: 'Reporte de laboratorio',
+        //             summary: 'Resultados de cultivos celulares y correlaciones in vitro.',
+        //             assigned: '2025-11-01',
+        //             due: '2025-11-12',
+        //             route: 'review-session.html?doc=doc-2001'
+        //         },
+        //         {
+        //             id: 'doc-2002',
+        //             title: 'Ensayo clínico fase I',
+        //             summary: 'Seguimiento de seguridad para dispositivo neuroestimulador.',
+        //             assigned: '2025-11-05',
+        //             due: '2025-11-15',
+        //             route: 'review-session.html?doc=doc-2002'
+        //         },
+        //         {
+        //             id: 'doc-2003',
+        //             title: 'Propuesta de telemedicina rural',
+        //             summary: 'Plan operativo para estaciones portátiles en comunidades aisladas.',
+        //             assigned: '2025-11-06',
+        //             due: '2025-11-18',
+        //             route: 'review-session.html?doc=doc-2003'
+        //         }
+        //     ],
+        //     completed: [
+        //         {
+        //             id: 'doc-3001',
+        //             title: 'Guía de procedimientos',
+        //             verdict: 'Aceptado',
+        //             completed: '2025-10-22',
+        //             logRoute: '#'
+        //         },
+        //         {
+        //             id: 'doc-3002',
+        //             title: 'Manual de laboratorio',
+        //             verdict: 'Cambios menores',
+        //             completed: '2025-10-10',
+        //             logRoute: '#'
+        //         }
+        //     ]
+        // };
+        state = {
+            new: [],
+            pending: [],
+            completed: []
         };
+
+        pendingProjects = fetch('../php/revisor_getProyectos.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Aquí se procesa la información recibida
+                console.log('Proyectos recibidos:', data.proyectos);
+                data.proyectos.forEach(proy => {
+                    //Solo defino los campos que de verdad uso, no todos los que definió G
+                    state.pending.push({
+                        title: proy.nombre,
+                        assigned: proy.entregas[0].fechaEntrega,//TODO, esta será puesta manualmente por el manager
+                        due: proy.fechaLimite,
+                        route: `review-session.html?doc=${proy.entregas[proy.entregas.length-1].pdfPath}`,
+                    });
+                });
+                renderAll();
+            } else {
+                console.error('Error al obtener proyectos:', data.message);
+            }
+        })
 
         const metrics = {
             pending: $('[data-metric="pending-count"]'),

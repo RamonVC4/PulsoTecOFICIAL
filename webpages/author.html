@@ -117,7 +117,8 @@
                 </div>
 
                 <div class="project-list" data-page-size="5">
-                    <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
+                    <!-- comenté los placeholders -->
+                    <!-- <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
                         <header class="project-card__header">
                             <div>
                                 <h3 id="project-01-title" class="project-title">Estudio de biomateriales</h3>
@@ -324,7 +325,7 @@
                                 <p class="muted small">Revisión intermedia solicitada para 20 nov.</p>
                             </section>
                         </div>
-                    </article>
+                    </article> -->
                 </div>
 
                 <div id="project-empty" class="project-empty" hidden>
@@ -345,7 +346,107 @@
 
 
 
+    <script>
+    //esta funcion se ejecuta al cargar la pagina
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProjects(); // llama a la función que obtiene los proyectos y los renderiza
+    });
+    </script>
+    <script>
+    //esta funcion renderiza los proyectos en el HTML
+    function renderProjects(projects) {
+        const board = document.querySelector('.project-list');
+        board.innerHTML = ''; // quita los proyectos placeholder
 
+        console.log(projects);
+        projects.forEach(proj => {
+            const card = document.createElement('article');
+            card.className = 'card project-card';
+            card.dataset.title = proj.nombre;
+            card.dataset.author = 'Yo'; // or whatever author name
+
+            //si hay mas de una entrega, se le pone como fecha de entrega la del segundo y se ponen las dos cards
+            console.log(proj);
+            if (proj.entregas.length > 1) {
+                card.dataset.date = proj.entregas[1].fechaEntrega;
+                card.innerHTML = `
+                <header class="project-card__header">
+                    <div>
+                        <h3 class="project-title">${proj.nombre}</h3>
+                        <p class="project-description">Proyecto cargado el ${proj.entregas[0].fechaEntrega}</p>
+                    </div>
+                    <span class="project-status">${proj.entregas[0].aceptado ? 'Aceptado' : 'En revisión'}</span>
+                </header>
+                <div class="version-grid">
+                    <section class="version version-initial ${proj.entregas[0].entregado ? 'is-ready' : 'is-await'}">
+                        <header>
+                            <h4>Versión inicial</h4>
+                            <span class="chip ${proj.entregas[0].entregado ? 'chip-success' : 'chip-pending'}">
+                                ${proj.entregas[0].entregado ? 'Recibida' : 'Pendiente'}
+                            </span>
+                        </header>
+                        <p class="muted small">Subido el ${proj.entregas[0].fechaEntrega}</p>
+                        ${proj.entregas[0].pdfPath ? `<a class="link" href="${proj.entregas[0].pdfPath}" target="_blank">Descargar PDF</a>` : ''}
+                    </section>
+
+                    <section class="version version-revised ${proj.entregas[1].entregado ? 'is-ready' : 'is-await'}">
+                        <header>
+                            <h4>Versión revisada</h4>
+                            <span class="chip ${proj.entregas[1].aceptado ? 'chip-success' : 'chip-pending'}">
+                                ${proj.entregas[1].aceptado ? 'Aceptada' : 'Pendiente'}
+                            </span>
+                        </header>
+                        ${proj.entregas[1].pdfPath ? `<a class="link" href="${proj.entregas[1].pdfPath}" target="_blank">Descargar PDF</a>` : ''}
+                    </section>
+                </div>
+            `;
+            }else{//si solo hay una entrega, solo se pone esa entrega
+                card.innerHTML = `
+                <header class="project-card__header">
+                    <div>
+                        <h3 class="project-title">${proj.nombre}</h3>
+                        <p class="project-description">Proyecto cargado el ${proj.entregas[0].fechaEntrega}</p>
+                    </div>
+                    <span class="project-status">${proj.entregas[0].aceptado ? 'Aceptado' : 'En revisión'}</span>
+                </header>
+                <div class="version-grid">
+                    <section class="version version-initial ${proj.entregas[0].entregado ? 'is-ready' : 'is-await'}">
+                        <header>
+                            <h4>Versión inicial</h4>
+                            <span class="chip ${proj.entregas[0].entregado ? 'chip-success' : 'chip-pending'}">
+                                ${proj.entregas[0].entregado ? 'Recibida' : 'Pendiente'}
+                            </span>
+                        </header>
+                        <p class="muted small">Subido el ${proj.entregas[0].fechaEntrega}</p>
+                        ${proj.entregas[0].pdfPath ? `<a class="link" href="${proj.entregas[0].pdfPath}" target="_blank">Descargar PDF</a>` : ''}
+                    </section>
+                </div>
+            `;
+            }
+            
+            
+            board.appendChild(card);
+        });
+    }
+
+    //esta funcion obtiene los proyectos del autor
+    async function loadProjects() {
+        try {
+            const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
+            //const dataNoJSON = await res.text();
+            //console.log(dataNoJSON);
+            const data = await res.json();
+            if (!data.success) {
+                console.error(data.message);
+                return;
+            }
+            console.log(data);
+            renderProjects(data.proyectos);
+        } catch (error) {
+            console.error("Error al cargar proyectos:", error);
+        }
+    }
+    </script>
     <script>
         async function crearProyecto(){
             //consigo los datos
@@ -380,6 +481,7 @@
                 alert(data.message);
                 return;
             }else{
+                loadProjects(); // recarga los proyectos para mostrar el nuevo
                 alert("Proyecto creado con éxito.");
             }
         }
