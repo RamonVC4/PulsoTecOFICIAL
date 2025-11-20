@@ -38,7 +38,6 @@ if ($respuestas['dictamen'] !== "aceptar_sin_cambios"){
         }
 
         $rowDeProyecto = $resultEntrega->fetch_assoc();
-        var_dump($rowDeProyecto);
     }else{
         //si esta es la segunda entrega, actualizo los estados en NO ACEPTADO
         $stmtProyecto = $conn->prepare("UPDATE entrega SET aceptado = 0 WHERE idProyecto = ? AND aceptado IS NULL");//si es la segunda entrega, solo habra uno con NULL
@@ -47,7 +46,7 @@ if ($respuestas['dictamen'] !== "aceptar_sin_cambios"){
     }
 }else{
     //guardo en el proyecto que ya fue aceptado
-    $stmtProyecto = $conn->prepare("UPDATE entrega SET aceptado = 1 WHERE idProyecto = ? AND aceptado = NULL");//si es la primera entrega, solo habra uno y tendra NULL, si no es, habra dos, pero solo la segunda todavia tendrá NULL
+    $stmtProyecto = $conn->prepare("UPDATE entrega SET aceptado = 1 WHERE idProyecto = ? AND aceptado is NULL");//si es la primera entrega, solo habra uno y tendra NULL, si no es, habra dos, pero solo la segunda todavia tendrá NULL
     $stmtProyecto->bind_param("i", $idProyecto);
     $stmtProyecto->execute();
 }

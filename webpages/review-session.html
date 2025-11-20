@@ -384,6 +384,7 @@
         const $ = (sel, root = document) => root.querySelector(sel);
         const params = new URLSearchParams(window.location.search);
         const docId = params.get('doc') || 'doc-sin-id';
+        const docTitle = params.get('title') || 'Documento sin título';
         const docMap = {
             'doc-2101': {
                 title: 'Ensayo de biosensores portátiles',
@@ -416,7 +417,7 @@
         };
 
         const docData = docMap[docId] || {
-            title: 'Documento sin título',
+            title: docTitle,
             meta: 'Asignado recientemente · Clave ' + docId.toUpperCase()
         };
 
