@@ -348,9 +348,68 @@
 
     <script>
     //esta funcion se ejecuta al cargar la pagina
-    document.addEventListener('DOMContentLoaded', () => {
-        loadProjects(); // llama a la función que obtiene los proyectos y los renderiza
-    });
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProjects(); // llama a la función que obtiene los proyectos y los renderiza
+        });
+    </script>
+    <script>
+        //helper par poder construir elementos como lego
+        function el(tag, options = {}) {
+        const node = document.createElement(tag);
+
+        if (options.class) node.className = options.class;
+        if (options.text) node.textContent = options.text;
+        if (options.html) node.innerHTML = options.html; 
+        if (options.attrs) {
+            for (const [k, v] of Object.entries(options.attrs)) {
+                node.setAttribute(k, v);
+            }
+        }
+        if (options.children) {
+            options.children.forEach(child => node.appendChild(child));
+        }
+
+        return node;
+    }
+    </script>
+    <script>
+        //helper para construir las card de las entregas
+        function makeEntrega(entrega, titulo, isInitial) {
+            const section = el("section", {
+                class: `version ${isInitial ? "version-initial" : "version-revised"} ${entrega.entregado ? "is-ready" : "is-await"}`
+            });
+
+            const header = el("header", {
+                children: [
+                    el("h4", { text: titulo }),
+                    el("span", {
+                        class: `chip ${entrega.entregado ? "chip-success" : "chip-pending"}`,
+                        text: entrega.entregado ? (entrega.aceptado ? "Aceptada" : "Recibida") : "Pendiente"
+                    })
+                ]
+            });
+
+            const fecha = el("p", {
+                class: "muted small",
+                text: entrega.entregado
+                    ? `Subido el ${entrega.fechaEntrega}`
+                    : "Pendiente de subir."
+            });
+
+            section.append(header, fecha);
+
+            if (entrega.pdfPath) {
+                section.appendChild(
+                    el("a", {
+                        class: "link",
+                        text: "Descargar PDF",
+                        attrs: { href: entrega.pdfPath, target: "_blank" }
+                    })
+                );
+            }
+
+            return section;
+        }
     </script>
     <script>
     //esta funcion renderiza los proyectos en el HTML
@@ -360,81 +419,61 @@
 
         console.log(projects);
         projects.forEach(proj => {
-            const card = document.createElement('article');
-            card.className = 'card project-card';
-            card.dataset.title = proj.nombre;
-            card.dataset.author = 'Yo'; // or whatever author name
+            const card = el("article", {
+                class: "card project-card",
+                attrs: {
+                    "data-title": proj.nombre,
+                }
+            });
 
-            //si hay mas de una entrega, se le pone como fecha de entrega la del segundo y se ponen las dos cards
-            console.log(proj);
+            const e = proj.entregas[0];
+
+            const header = el("header", { class: "project-card__header" });
+
+            const headerInfo = el("div", {
+                children: [
+                    el("h3", { class: "project-title", text: proj.nombre }),
+                    el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
+                ]
+            });
+
+            const status = el("span", {
+                class: `project-status ${e.aceptado ? 'chip-success' : ""}`,
+                text: e.aceptado ? "Aceptado" : "En revisión"
+            });
+
+            header.append(headerInfo, status);
+
+            const grid = el("div", { class: "version-grid" });
+            grid.appendChild(makeEntrega(e, "Versión inicial", true));
+
+            // Usa la segunda entrega como fecha si existe
             if (proj.entregas.length > 1) {
+                //le pongo la date
                 card.dataset.date = proj.entregas[1].fechaEntrega;
-                card.innerHTML = `
-                <header class="project-card__header">
-                    <div>
-                        <h3 class="project-title">${proj.nombre}</h3>
-                        <p class="project-description">Proyecto cargado el ${proj.entregas[0].fechaEntrega}</p>
-                    </div>
-                    <span class="project-status">${proj.entregas[0].aceptado ? 'Aceptado' : 'En revisión'}</span>
-                </header>
-                <div class="version-grid">
-                    <section class="version version-initial ${proj.entregas[0].entregado ? 'is-ready' : 'is-await'}">
-                        <header>
-                            <h4>Versión inicial</h4>
-                            <span class="chip ${proj.entregas[0].entregado ? 'chip-success' : 'chip-pending'}">
-                                ${proj.entregas[0].entregado ? 'Recibida' : 'Pendiente'}
-                            </span>
-                        </header>
-                        <p class="muted small">Subido el ${proj.entregas[0].fechaEntrega}</p>
-                        ${proj.entregas[0].pdfPath ? `<a class="link" href="${proj.entregas[0].pdfPath}" target="_blank">Descargar PDF</a>` : ''}
-                    </section>
 
-                    <section class="version version-revised ${proj.entregas[1].entregado ? 'is-ready' : 'is-await'}">
-                        <header>
-                            <h4>Versión revisada</h4>
-                            <span class="chip ${proj.entregas[1].aceptado ? 'chip-success' : 'chip-pending'}">
-                                ${proj.entregas[1].aceptado ? 'Aceptada' : 'Pendiente'}
-                            </span>
-                        </header>
-                        ${proj.entregas[1].pdfPath ? `<a class="link" href="${proj.entregas[1].pdfPath}" target="_blank">Descargar PDF</a>` : ''}
-                    </section>
-                </div>
-            `;
-            }else{//si solo hay una entrega, solo se pone esa entrega
-                card.innerHTML = `
-                <header class="project-card__header">
-                    <div>
-                        <h3 class="project-title">${proj.nombre}</h3>
-                        <p class="project-description">Proyecto cargado el ${proj.entregas[0].fechaEntrega}</p>
-                    </div>
-                    <span class="project-status">${proj.entregas[0].aceptado ? 'Aceptado' : 'En revisión'}</span>
-                </header>
-                <div class="version-grid">
-                    <section class="version version-initial ${proj.entregas[0].entregado ? 'is-ready' : 'is-await'}">
-                        <header>
-                            <h4>Versión inicial</h4>
-                            <span class="chip ${proj.entregas[0].entregado ? 'chip-success' : 'chip-pending'}">
-                                ${proj.entregas[0].entregado ? 'Recibida' : 'Pendiente'}
-                            </span>
-                        </header>
-                        <p class="muted small">Subido el ${proj.entregas[0].fechaEntrega}</p>
-                        ${proj.entregas[0].pdfPath ? `<a class="link" href="${proj.entregas[0].pdfPath}" target="_blank">Descargar PDF</a>` : ''}
-                    </section>
-                </div>
-            `;
+                const status = el("span", {
+                    class: `project-status ${proj.entregas[0].aceptado ? 'chip-success' : ""}`,
+                    text: proj.entregas[0].aceptado ? "Aceptado" : "En revisión"
+                });
+
+                header.append(headerInfo, status);
+
+                // creo la carta de la otra entrega
+                grid.appendChild(makeEntrega(proj.entregas[1], "Versión revisada", false));
+
             }
-            
-            
-            board.appendChild(card);
-        });
+
+            card.append(header, grid);
+            document.querySelector('.project-list').appendChild(card); // o donde vayan tus cards
+    });
+
     }
 
     //esta funcion obtiene los proyectos del autor
     async function loadProjects() {
         try {
             const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
-            //const dataNoJSON = await res.text();
-            //console.log(dataNoJSON);
             const data = await res.json();
             if (!data.success) {
                 console.error(data.message);

@@ -80,7 +80,7 @@
                 <div class="doc-empty" id="empty-pending" hidden>Cuando confirmes o avances un documento aparecerá aquí.</div>
             </article>
 
-            <!-- <aside class="card board-card" aria-labelledby="board-title">
+            <aside class="card board-card" aria-labelledby="board-title">
                 <header class="card-head">
                     <div>
                         <h3 id="board-title">Bandeja de documentos</h3>
@@ -110,7 +110,7 @@
                     <ul id="panel-revisados" class="docs-list panel" role="tabpanel" aria-labelledby="tab-revisados" data-sync="completed" data-variant="table" data-empty="empty-panel-completed"></ul>
                     <div class="doc-empty is-panel" id="empty-panel-completed" hidden>Aún no hay revisiones concluidas.</div>
                 </div>
-            </aside> -->
+            </aside>
         </section>
     </main>
 
@@ -213,13 +213,31 @@
                 console.log('Proyectos recibidos:', data.proyectos);
                 data.proyectos.forEach(proy => {
                     //Solo defino los campos que de verdad uso, no todos los que definió G
-                    state.pending.push({
-                        title: proy.nombre,
-                        assigned: proy.entregas[0].fechaEntrega,//TODO, esta será puesta manualmente por el manager
-                        due: proy.fechaLimite,
-                        route: `review-session.html?doc=${proy.entregas[proy.entregas.length-1].pdfPath}`,
-                    });
+                    //los meto a pending, new o completed segun corresponda
+                    //TODO LO SIGUIENTE ES UNSAFE, TENGO QUE CAMBIARLO PARA QUE USE SESSION DE PHP MEJOR
+                    const ruta = `review-session.html?doc=${proy.entregas[proy.entregas.length-1].pdfPath}&title=${proy.nombre}`;
+                    switch (proy.entregas[proy.entregas.length-1].aceptado) {
+                        case null:
+                            state.pending.push({
+                                title: proy.nombre,
+                                assigned: proy.entregas[0].fechaEntrega,//TODO, esta será puesta manualmente por el manager
+                                due: proy.fechaLimite,
+                                route: ruta,
+                            });
+                            break;
+                        
+                        case 1:
+                            state.completed.push({
+                                title: proy.nombre,
+                                completed: '2025-10-10',//TODO, mejor le quito esto luego
+                                logRoute: ruta,
+                                verdict: proy.entregas[proy.entregas.length-1].aceptado ? 'Aceptado' : 'Rechazado',
+                            });
+                            break;
+                    }
+                    
                 });
+                console.log(state);
                 renderAll();
             } else {
                 console.error('Error al obtener proyectos:', data.message);
