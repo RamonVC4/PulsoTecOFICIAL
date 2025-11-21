@@ -405,6 +405,13 @@
     color: var(--muted);
 }
 
+.chip-denied {
+    background: rgba(239, 68, 68, 0.16);
+    color: #ef4444;
+}
+
+
+
 .step-actions {
     margin-top: 12px;
 }
