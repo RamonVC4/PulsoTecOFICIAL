@@ -27,6 +27,9 @@
         </nav>
     </header>
 
+
+
+    
     <main class="container revisor-main">
         <section class="revisor-overview">
             <div class="overview-copy">
@@ -89,17 +92,22 @@
                     <button class="btn-secondary" type="button">Exportar resumen</button>
                 </header>
 
+
+                <!-- BUSCADOR DE DOCUMENTOS -->
                 <div class="board-tools">
                     <label class="sr-only" for="search">Buscar documentos</label>
                     <input id="search" type="search" placeholder="Buscar por título, autor o fecha...">
                 </div>
 
+
+                <!-- TABS PARA LAS LISTAS DE DOCUMENTOS -->
                 <div class="tabs board-tabs" role="tablist" aria-label="Listas de documentos">
                     <button id="tab-nuevos" class="tab is-active" role="tab" aria-selected="true" data-target="panel-nuevos">Nuevos</button>
                     <button id="tab-pendientes" class="tab" role="tab" aria-selected="false" data-target="panel-pendientes">En curso</button>
                     <button id="tab-revisados" class="tab" role="tab" aria-selected="false" data-target="panel-revisados">Revisados</button>
                 </div>
 
+                <!-- PÁNELES DE AVISOS DE "NO DOCUMENTOS ENCONTRADOS" -->
                 <div class="panels">
                     <ul id="panel-nuevos" class="docs-list panel is-active" role="tabpanel" aria-labelledby="tab-nuevos" data-sync="new" data-variant="table" data-empty="empty-panel-new"></ul>
                     <div class="doc-empty is-panel" id="empty-panel-new" hidden>Sin nuevos documentos asignados por el momento.</div>
@@ -110,6 +118,8 @@
                     <ul id="panel-revisados" class="docs-list panel" role="tabpanel" aria-labelledby="tab-revisados" data-sync="completed" data-variant="table" data-empty="empty-panel-completed"></ul>
                     <div class="doc-empty is-panel" id="empty-panel-completed" hidden>Aún no hay revisiones concluidas.</div>
                 </div>
+
+
             </aside>
         </section>
     </main>
@@ -129,72 +139,12 @@
             });
         });
 
+        
+
         const locale = 'es-MX';
         const dateOptionsLong = { day: '2-digit', month: 'long', year: 'numeric' };
         const dateOptionsShort = { day: '2-digit', month: 'short', year: 'numeric' };
 
-        // const state = {
-        //     new: [
-        //         {
-        //             id: 'doc-2101',
-        //             title: 'Ensayo de biosensores portátiles',
-        //             summary: 'Validación de prototipo clínico para monitoreo en tiempo real.',
-        //             assigned: '2025-11-07',
-        //             due: '2025-11-16',
-        //             route: 'review-session.html?doc=doc-2101'
-        //         },
-        //         {
-        //             id: 'doc-2102',
-        //             title: 'Informe de datos clínicos 2025',
-        //             summary: 'Análisis de cohorte multicéntrica con IA para estratificación de riesgo.',
-        //             assigned: '2025-11-06',
-        //             due: '2025-11-18',
-        //             route: 'review-session.html?doc=doc-2102'
-        //         }
-        //     ],
-        //     pending: [
-        //         {
-        //             id: 'doc-2001',
-        //             title: 'Reporte de laboratorio',
-        //             summary: 'Resultados de cultivos celulares y correlaciones in vitro.',
-        //             assigned: '2025-11-01',
-        //             due: '2025-11-12',
-        //             route: 'review-session.html?doc=doc-2001'
-        //         },
-        //         {
-        //             id: 'doc-2002',
-        //             title: 'Ensayo clínico fase I',
-        //             summary: 'Seguimiento de seguridad para dispositivo neuroestimulador.',
-        //             assigned: '2025-11-05',
-        //             due: '2025-11-15',
-        //             route: 'review-session.html?doc=doc-2002'
-        //         },
-        //         {
-        //             id: 'doc-2003',
-        //             title: 'Propuesta de telemedicina rural',
-        //             summary: 'Plan operativo para estaciones portátiles en comunidades aisladas.',
-        //             assigned: '2025-11-06',
-        //             due: '2025-11-18',
-        //             route: 'review-session.html?doc=doc-2003'
-        //         }
-        //     ],
-        //     completed: [
-        //         {
-        //             id: 'doc-3001',
-        //             title: 'Guía de procedimientos',
-        //             verdict: 'Aceptado',
-        //             completed: '2025-10-22',
-        //             logRoute: '#'
-        //         },
-        //         {
-        //             id: 'doc-3002',
-        //             title: 'Manual de laboratorio',
-        //             verdict: 'Cambios menores',
-        //             completed: '2025-10-10',
-        //             logRoute: '#'
-        //         }
-        //     ]
-        // };
         state = {
             new: [],
             pending: [],

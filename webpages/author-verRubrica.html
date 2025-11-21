@@ -57,17 +57,37 @@
             </section>
 
             <aside class="rubric-panel" id="rubric-panel" aria-label="Rúbrica de evaluación">
+
+                <!-- FORMULARIO DE RÚBRICA -->
                 <form id="rubric-form" class="rubric-form" method="post" novalidate>
                     <input type="hidden" name="documentId" id="rubric-doc-id" value="">
 
+                    <!-- CABECERA -->
                     <div class="rubric-head">
                         <h3>Evaluación de Artículo de Revista PulsoTec</h3>
                         <button type="button" class="btn-close" id="close-rubric" aria-label="Cerrar rúbrica">×</button>
                     </div>
-                    <!-- <p class="muted small">Marque con una opción por criterio. Si alguna pregunta no aplica, puede dejarla en blanco.</p> -->
+                    
 
+
+
+                    <!-- RÚBRICA -->
+                    <!-- RECOMENDACIONES INICIALES -->
+                    <section class="rubric-section">
+                        <h4>I. Criterios Iniciales</h4>
+                        <fieldset class="recommendations">
+                            <legend>Seleccione aquellas que apliquen al documento</legend>
+                            <label class="check-pill"><input type="checkbox" name="observaciones[]" value="extension"><span>No cumple con la extensión (12 a 20 cuartillas)</span></label>
+                            <label class="check-pill"><input type="checkbox" name="observaciones[]" value="formato_revista"><span>No cumple con el formato y estructura de la revista</span></label>
+                            <label class="check-pill"><input type="checkbox" name="observaciones[]" value="errores_tipograficos"><span>Abundantes errores tipográficos, de ortografía y gramaticales</span></label>
+                            <label class="check-pill"><input type="checkbox" name="observaciones[]" value="referencias"><span>No cumple con el formato de las referencias</span></label>
+                        </fieldset>
+                    </section>
+
+                    <!-- ASPECTOS A EVALUAR -->
                     <section class="rubric-section">
                         <h4>I. Según la revisión que hizo del documento, conteste los siguientes criterios</h4>
+                        <p class="muted small">Marque con una opción por criterio. Los criterios no evaluados se ponderarán con una calificación de cero.</p>
                         <div class="table-wrapper">
                             <table class="rubric-table">
                                 <thead>
@@ -199,6 +219,7 @@
                         </div>
                     </section>
 
+                    <!-- DICTAMEN -->
                     <section class="rubric-section">
                         <h4>II. Según su dictamen, el trabajo debería ser</h4>
                         <div class="recommendations-grid">
@@ -209,16 +230,10 @@
                                 <label class="check-pill"><input type="radio" name="dictamen" value="aceptar_sujeto_correcciones"><span>Aceptar sujeto a correcciones (según observaciones)</span></label>
                                 <label class="check-pill"><input type="radio" name="dictamen" value="no_recomendar"><span>No se recomienda publicar (justificar debidamente)</span></label>
                             </fieldset>
-                            <fieldset class="recommendations">
-                                <legend>Observaciones específicas</legend>
-                                <label class="check-pill"><input type="checkbox" name="observaciones[]" value="extension"><span>No cumple con la extensión (12 a 20 cuartillas)</span></label>
-                                <label class="check-pill"><input type="checkbox" name="observaciones[]" value="formato_revista"><span>No cumple con el formato y estructura de la revista</span></label>
-                                <label class="check-pill"><input type="checkbox" name="observaciones[]" value="errores_tipograficos"><span>Abundantes errores tipográficos, de ortografía y gramaticales</span></label>
-                                <label class="check-pill"><input type="checkbox" name="observaciones[]" value="referencias"><span>No cumple con el formato de las referencias</span></label>
-                            </fieldset>
                         </div>
                     </section>
 
+                    <!-- JUSTIFICACIÓN -->
                     <section class="rubric-section">
                         <h4>III. Justifique su decisión</h4>
                         <div class="comments-area">
@@ -226,7 +241,14 @@
                             <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales."></textarea>
                         </div>
                     </section>
+
+                    <!-- BOTONES -->
+                    <div class="rubric-actions">
+                        <button type="button" id="save-draft" onclick="terminarRevision(false)" class="btn-secondary">Guardar borrador</button>
+                        <button type="button" onclick="terminarRevision(true)" class="btn-primary">Enviar dictamen</button>
+                    </div>
                 </form>
+
             </aside>
         </div>
     </main>
