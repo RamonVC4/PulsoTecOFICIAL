@@ -68,11 +68,10 @@
                             <h2 id="projects-title">Proyectos recibidos</h2>
                             <p class="muted small">Selecciona un proyecto para administrar su asignación y revisar los detalles.</p>
                         </div>
-                        <button class="hide-button">
+                        <button class="hide-button" onclick="toggleProjects()">
                             <p>Ocultar</p>
                         </button>
                     </div>
-
 
 
                     <form class="projects-filterbar" id="project-filter-form" autocomplete="off">
@@ -185,33 +184,12 @@
             </article>
         </section>
 
-        <!-- esto lo agregamos luego -->
-        <section class="card history-card" aria-labelledby="history-title">
-            <header class="history-head">
-                <div>
-                    <h2 id="history-title">Historial de proyectos</h2>
-                    <p class="muted small">Consulta el estado global, avances de rúbrica y revisores asignados en cada etapa.</p>
-                </div>
-                <button class="btn-secondary" type="button" id="export-history">Exportar CSV</button>
-            </header>
-            <div class="history-table-wrapper">
-                <table class="history-table" id="history-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Código</th>
-                            <th scope="col">Proyecto</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Rúbrica</th>
-                            <th scope="col">Revisores</th>
-                            <th scope="col">Actualizado</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
+
+        <!-- QUEREMOS AGREGAR UN HISTORIAL (PARA FUTURO) -->
     </main>
 
+
+    <!-- script para el historial de proyectos -->
     <script>
     (function () {
         const MAX_REVIEWERS = 3;
@@ -525,17 +503,6 @@
             approveBtn: document.getElementById('approve-btn'),
             timelineSection: document.getElementById('timeline-section'),
             timelineList: document.getElementById('timeline-list'),
-            metrics: {
-                total: document.querySelector('[data-metric="projects-total"]'),
-                updated: document.querySelector('[data-metric="projects-updated"]'),
-                open: document.querySelector('[data-metric="projects-open"]'),
-                review: document.querySelector('[data-metric="projects-review"]'),
-                completed: document.querySelector('[data-metric="projects-completed"]'),
-                completedInfo: document.querySelector('[data-metric="projects-completed"]')?.nextElementSibling,
-                reviewInfo: document.querySelector('[data-metric="projects-review"]')?.nextElementSibling
-            },
-            historyTable: document.getElementById('history-table').querySelector('tbody'),
-            exportHistory: document.getElementById('export-history')
         };
 
         function formatDate(value, options = shortDate) {
@@ -1166,32 +1133,11 @@
             }
         }
 
-        function exportHistoryAsCSV() {
-            const header = ['Código', 'Proyecto', 'Estado', 'Rúbrica', 'Revisores', 'Actualizado'];
-            const rows = projects.map(project => {
-                const reviewerNames = getAssigned(project).map(id => getReviewer(id)?.name || '—').join('; ');
-                const rubric = project.rubric.status + (project.rubric.score && project.rubric.score !== '—' ? ` (${project.rubric.score})` : '');
-                const updated = project.rubric.updated || project.submitted;
-                return [project.id, project.title, project.stage, rubric, reviewerNames, updated];
-            });
-
-            const csvContent = [header, ...rows]
-                .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
-                .join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'historial_proyectos.csv';
-            link.click();
-            URL.revokeObjectURL(link.href);
-        }
-
         function renderAll() {
             renderProjects();
             renderAssignment();
-            renderHistory();
-            updateMetrics();
+            //renderHistory();
+            //updateMetrics();
         }
 
         elements.projectFilter.addEventListener('change', event => {
@@ -1246,10 +1192,27 @@
             renderProjects();
         });
 
-        elements.exportHistory.addEventListener('click', exportHistoryAsCSV);
-
         renderAll();
     })();
+    </script>
+
+
+
+
+
+
+
+    <!-- script para ocultar los proyectos -->
+    <script>
+        const hideButton = document.querySelector('.hide-button');
+
+        function toggleProjects() {
+            const projectsList = document.querySelector('.projects-list');
+            projectsList.style.display = projectsList.style.display === 'none' ? 'block' : 'none';
+            hideButton.textContent = projectsCard.style.display === 'none' ? 'Mostrar' : 'Ocultar';
+        }
+
+
     </script>
 </body>
 </html>
