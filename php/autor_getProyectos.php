@@ -20,6 +20,7 @@ while ($row = $result->fetch_assoc()) {
     while ($entregaRow = $entregaResult->fetch_assoc()) {
         //var_dump($entregaRow);
         $entregas[] = [
+            'id' => $entregaRow['id'],
             'pdfPath' => $entregaRow['pdfPath'],
             'entregado' => $entregaRow['entregado'],
             'aceptado' => $entregaRow['aceptado'],

@@ -408,6 +408,18 @@
                 );
             }
 
+            //meto para ver la rubrica 
+            if (entrega.aceptado != null) {
+                console.log("entro a ver rubrica");
+                section.appendChild(
+                    el("a", {
+                        class: "link",
+                        text: "Ver rubrica",
+                        attrs: { href: `./author-verRubrica.html?title=${titulo}&id=${entrega.id}` }
+                    })
+                );
+            }
+
             return section;
         }
     </script>
@@ -445,7 +457,7 @@
             header.append(headerInfo, status);
 
             const grid = el("div", { class: "version-grid" });
-            grid.appendChild(makeEntrega(e, "Versión inicial", true));
+            grid.appendChild(makeEntrega(e, proj.nombre, true));
 
             // Usa la segunda entrega como fecha si existe
             if (proj.entregas.length > 1) {
@@ -460,7 +472,7 @@
                 header.append(headerInfo, status);
 
                 // creo la carta de la otra entrega
-                grid.appendChild(makeEntrega(proj.entregas[1], "Versión revisada", false));
+                grid.appendChild(makeEntrega(proj.entregas[1], proj.nombre, false));
 
             }
 

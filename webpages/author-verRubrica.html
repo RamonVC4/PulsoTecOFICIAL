@@ -35,9 +35,8 @@
     <main class="container container-review review-session-main">
         <header class="session-head">
             <div class="session-context">
-                <a class="back-link" href="./revisor.html">← Regresar al panel</a>
+                <a class="back-link" href="./author.html">← Regresar al panel</a>
                 <h2 id="doc-title">Documento sin título</h2>
-                <p class="muted" id="doc-meta">Asignado el — · Clave —</p>
             </div>
             <div class="session-actions">
                 <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
@@ -227,11 +226,6 @@
                             <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales."></textarea>
                         </div>
                     </section>
-
-                    <div class="rubric-actions">
-                        <button type="button" id="save-draft" onclick="terminarRevision(false)" class="btn-secondary">Guardar borrador</button>
-                        <button type="button" onclick="terminarRevision(true)" class="btn-primary">Enviar dictamen</button>
-                    </div>
                 </form>
             </aside>
         </div>
@@ -240,10 +234,10 @@
 
     <script>
         async function cargarTabla() {
-            const dataDeBDD = await fetch('../php/revisor_getDatosRubrica.php', {
+            const dataDeBDD = await fetch('../php/autor_getDatosRubrica.php', {
                 method: 'POST',
                 body: JSON.stringify({
-                    pdfPath: (new URLSearchParams(window.location.search)).get('doc')
+                    idEntrega: (new URLSearchParams(window.location.search)).get('id')
                 }),
             });
             const jsonStr = await dataDeBDD.text();
@@ -252,13 +246,9 @@
             if (!jsonStr) return;
 
             const datosEnJSON = JSON.parse(jsonStr);
-            console.log(datosEnJSON);
             const formObj = JSON.parse(datosEnJSON.datosRubrica);
-            console.log(formObj);
 
-            form = document.getElementById('rubric-form');
-
-            console.log(form);
+            form = document.getElementById('rubric-form'); 
            for (const [key, value] of Object.entries(formObj)) {
                 const field = form.elements[key];
                 if (!field) continue;
@@ -284,99 +274,27 @@
                 }
             }
 
-            //desactivo la rubrica si ya esta terminada
-            if (datosEnJSON.terminado) {
-                const form = document.getElementById('rubric-form');
-                const botonEnviar = form.querySelector('button.btn-primary');
-                const botonBorrador = form.querySelector('button#save-draft');
-                Array.from(form.elements).forEach(el => el.disabled = true);
-                botonEnviar.disabled = true;
-                botonBorrador.disabled = true;
-            }
+            //desactivo la rubrica
+            Array.from(form.elements).forEach(el => el.disabled = true);
         }
     </script>
     <script>
     //esta funcion se ejecuta al cargar la pagina
     document.addEventListener('DOMContentLoaded', () => {
-        cargarTabla(); // llama a la función que obtiene los proyectos y los renderiza
+        cargarTabla(); 
     });
     </script>
-    <script>
-        async function terminarRevision(terminado) {
-            //guardamos la form como json
-            const form = document.getElementById('rubric-form');
-            const data = new FormData(form);
-            // Convert FormData to plain object
-            const formObj = {};
-            for (const [key, value] of data.entries()) {
-                if (formObj[key]) {
-                    // handle multiple values (checkboxes, multi-select)
-                    formObj[key] = [].concat(formObj[key], value);
-                } else {
-                    formObj[key] = value;
-                }
-            }
-
-            const params = new URLSearchParams(window.location.search);
-            pdfPath = params.get('doc');
-            // mandar con fetch
-            const response = await fetch(terminado ? '../php/revisor_terminarRevision.php' : '../php/revisor_guardarBorrador.php', {
-                method: 'POST',
-                body: JSON.stringify({formObj,pdfPath}),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                alert('Dictamen enviado con éxito.');
-            } else {
-                alert('Error al enviar el dictamen: ' + result.message);
-            }
-        }
-    </script>
-
     <script>
     (function () {
         const $ = (sel, root = document) => root.querySelector(sel);
         const params = new URLSearchParams(window.location.search);
-        const docId = params.get('doc') || 'doc-sin-id';
-        const docMap = {
-            'doc-2101': {
-                title: 'Ensayo de biosensores portátiles',
-                meta: 'Asignado el 07 nov 2025 · Clave DOC-2101'
-            },
-            'doc-2102': {
-                title: 'Informe de datos clínicos 2025',
-                meta: 'Asignado el 06 nov 2025 · Clave DOC-2102'
-            },
-            'doc-2001': {
-                title: 'Reporte de laboratorio',
-                meta: 'Asignado el 01 nov 2025 · Clave DOC-2001'
-            },
-            'doc-2002': {
-                title: 'Ensayo clínico fase I',
-                meta: 'Asignado el 05 nov 2025 · Clave DOC-2002'
-            },
-            'doc-2003': {
-                title: 'Propuesta de telemedicina rural',
-                meta: 'Asignado el 06 nov 2025 · Clave DOC-2003'
-            },
-            'doc-1001': {
-                title: 'Protocolo de bioseguridad',
-                meta: 'Asignado el 08 nov 2025 · Clave DOC-1001'
-            },
-            'doc-1002': {
-                title: 'Informe de campo',
-                meta: 'Asignado el 08 nov 2025 · Clave DOC-1002'
-            }
-        };
-
-        const docData = docMap[docId] || {
-            title: 'Documento sin título',
-            meta: 'Asignado recientemente · Clave ' + docId.toUpperCase()
+        const docId = params.get('id') || 'doc-sin-id';
+        const docTitle = params.get('title') || 'Documento sin título';
+        const docData = {
+            title: docTitle,
         };
 
         $('#doc-title').textContent = docData.title;
-        $('#doc-meta').textContent = docData.meta;
         $('#rubric-doc-id').value = docId;
 
         const layout = $('#session-layout');
