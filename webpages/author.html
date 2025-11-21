@@ -59,23 +59,6 @@
                         <label for="project-title">Nombre del proyecto</label>
                         <input id="project-title" name="project_title" type="text" required placeholder="Ej. Evaluación de impacto tecnológico">
                     </div>
-                    
-                    <!-- Comenté esto porque estoy seguro que solo lo dejaron ahi porque no le movieron a lo que generó GPT -->
-                    <!-- <div class="field">
-                        <label for="project-area">Área de conocimiento</label>
-                        <select id="project-area" name="project_area" required>
-                            <option value="" disabled selected>Selecciona un área</option>
-                            <option value="salud">Salud</option>
-                            <option value="ingenieria">Ingeniería</option>
-                            <option value="energia">Energía</option>
-                            <option value="educacion">Educación</option>
-                        </select>
-                    </div> -->
-
-                    <!-- <div class="field">
-                        <label for="project-description">Descripción breve</label>
-                        <textarea id="project-description" name="project_description" placeholder="Explica de forma breve el objetivo del proyecto."></textarea>
-                    </div> -->
 
                     <div class="field">
                         <label for="project-file">Entrega inicial (PDF)</label>
@@ -101,6 +84,8 @@
                 </form>
             </article>
 
+            
+
             <!-- LISTADO DE PROYECTOS DEL AUTOR -->
             <div class="project-board" aria-live="polite">
                 <div class="project-board-tools">
@@ -118,6 +103,40 @@
 
                 <div class="project-list" data-page-size="5">
                     <!-- comenté los placeholders -->
+
+                    <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
+                        <header class="project-card__header">
+                            <div>
+                                <h3 class="project-title">NOMBRE DEL PROYECTO</h3>
+                                <p class="project-description">Proyecto cargado el 20/10/2025</p>
+                            </div>
+                            <span class="project-status">ACEPTADO</span>
+                        </header>
+                        <div class="version-grid">
+                            <section class="version version-initial is-ready">
+                                <header>
+                                    <h4>Versión inicial</h4>
+                                    <span class="chip chip-denied">
+                                        No aceptado
+                                    </span>
+                                </header>
+                                <p class="muted small">Subido el 20/10/2025</p>
+                                <a class="link" href="${proj.entregas[0].pdfPath}" target="_blank">Descargar PDF</a>
+                            </section>
+        
+                            <section class="version version-revised ${proj.entregas[1].entregado ? 'is-ready' : 'is-await'}">
+                                <header>
+                                    <h4>Aún no has subido la versión revisada</h4>
+                                    <span class="chip chip-pending">
+                                        Pendiente
+                                    </span>
+                                </header>
+                                <button type="button" class="btn-outline">Subir corrección</button>
+                            </section>
+                        </div>
+                    </article>
+
+
                     <!-- <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
                         <header class="project-card__header">
                             <div>
@@ -148,9 +167,9 @@
                                 </div>
                             </section>
                         </div>
-                    </article>
+                    </article> -->
 
-                    <article class="card project-card is-approved" data-title="Protocolo de telemedicina rural" data-author="Dr. Martínez" data-date="2025-10-28" aria-labelledby="project-02-title">
+                    <!-- <article class="card project-card is-approved" data-title="Protocolo de telemedicina rural" data-author="Dr. Martínez" data-date="2025-10-28" aria-labelledby="project-02-title">
                         <header class="project-card__header">
                             <div>
                                 <h3 id="project-02-title" class="project-title">Protocolo de telemedicina rural</h3>
@@ -345,13 +364,15 @@
 
 
 
-
+    <!-- SCRIPT PARA CARGAR LOS PROYECTOS AL CARGAR LA PÁGINA -->
     <script>
     //esta funcion se ejecuta al cargar la pagina
     document.addEventListener('DOMContentLoaded', () => {
         loadProjects(); // llama a la función que obtiene los proyectos y los renderiza
     });
     </script>
+
+    <!-- SCRIPT PARA RENDERIZAR LOS PROYECTOS EN EL HTML -->
     <script>
     //esta funcion renderiza los proyectos en el HTML
     function renderProjects(projects) {
@@ -447,6 +468,8 @@
         }
     }
     </script>
+
+    <!-- SCRIPT PARA CREAR UN NUEVO PROYECTO -->
     <script>
         async function crearProyecto(){
             //consigo los datos
@@ -487,6 +510,8 @@
         }
     </script>
 
+
+    <!-- SCRIPT PARA EL BOARD DE PROYECTOS (PAGINACIÓN Y BÚSQUEDA)-->
     <script>
     (function () {
         const dropzones = document.querySelectorAll('[data-dropzone]');
