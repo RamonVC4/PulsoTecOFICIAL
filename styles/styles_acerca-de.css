@@ -1,0 +1,171 @@
+/* Prevenir overflow general */
+body {
+    overflow-x: hidden;
+}
+
+main.hero {
+    overflow-x: hidden;
+}
+
+.creator-item-div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    gap: 12px;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+
+
+.creator-item-div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px 0 rgba(15, 59, 92, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.creator-item-div img {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.creator-item-div:hover img {
+    transform: scale(1.1);
+}
+
+.creator-item-div a {
+    text-decoration: none;
+    color: var(--text-dark);
+    flex: 1;
+    text-align: center;
+    transition: color 0.3s ease;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+.creator-item-div:hover a {
+    color: var(--nav-blue);
+}
+
+
+
+
+
+.creator-name {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    margin-bottom: 0;
+    text-align: center;
+    color: var(--text-dark);
+}
+
+.github-logo {
+    width: 40px;
+    height: 40px;
+}
+
+.email-logo {
+    width: 40px;
+    height: 40px;
+}
+
+.phone-logo {
+    width: 40px;
+    height: 40px;
+}
+
+.linkedin-logo {
+    width: 40px;
+    height: 40px;
+}
+
+
+
+
+
+.container-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 40px;
+    overflow: visible;
+    padding: 40px 20px;
+}
+
+.container-flex .container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    overflow: visible;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+
+/* Reducir padding de card-head solo en acerca-de */
+.card-head {
+    margin-bottom: 0;
+    gap: 0px;
+    padding: 30px 30px;
+}
+
+.card-head h2 {
+    font-size: 40px;
+
+}
+
+.card-head p {
+    font-size: 16px;
+
+    margin: 0;
+}
+
+.creator-cards-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+.creator-card {
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 25px;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+.creator-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.creator-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+    margin-bottom: 20px;
+}
