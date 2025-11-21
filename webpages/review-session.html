@@ -37,7 +37,6 @@
             <div class="session-context">
                 <a class="back-link" href="./revisor.html">← Regresar al panel</a>
                 <h2 id="doc-title">Documento sin título</h2>
-                <p class="muted" id="doc-meta">Asignado el — · Clave —</p>
             </div>
             <div class="session-actions">
                 <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
@@ -296,7 +295,7 @@
     //esta funcion se ejecuta al cargar la pagina
     document.addEventListener('DOMContentLoaded', () => {
         cargarTabla(); // llama a la función que obtiene los proyectos y los renderiza<script>
-            const formFueraDeLaFunc = document.getElementById('rubric-form');
+        const formFueraDeLaFunc = document.getElementById('rubric-form');
         // Función para validar el formulario
         const validarForm = () => {
             const form = document.getElementById('rubric-form');
@@ -372,7 +371,7 @@
             const result = await response.json();
             if (result.success) {
                 alert('Dictamen enviado con éxito.');
-                //window.location.href = './revisor.html'; //TODO
+                window.location.href = './revisor.html'; //TODO
             } else {
                 alert('Error al enviar el dictamen: ' + result.message);
             }
@@ -385,44 +384,12 @@
         const params = new URLSearchParams(window.location.search);
         const docId = params.get('doc') || 'doc-sin-id';
         const docTitle = params.get('title') || 'Documento sin título';
-        const docMap = {
-            'doc-2101': {
-                title: 'Ensayo de biosensores portátiles',
-                meta: 'Asignado el 07 nov 2025 · Clave DOC-2101'
-            },
-            'doc-2102': {
-                title: 'Informe de datos clínicos 2025',
-                meta: 'Asignado el 06 nov 2025 · Clave DOC-2102'
-            },
-            'doc-2001': {
-                title: 'Reporte de laboratorio',
-                meta: 'Asignado el 01 nov 2025 · Clave DOC-2001'
-            },
-            'doc-2002': {
-                title: 'Ensayo clínico fase I',
-                meta: 'Asignado el 05 nov 2025 · Clave DOC-2002'
-            },
-            'doc-2003': {
-                title: 'Propuesta de telemedicina rural',
-                meta: 'Asignado el 06 nov 2025 · Clave DOC-2003'
-            },
-            'doc-1001': {
-                title: 'Protocolo de bioseguridad',
-                meta: 'Asignado el 08 nov 2025 · Clave DOC-1001'
-            },
-            'doc-1002': {
-                title: 'Informe de campo',
-                meta: 'Asignado el 08 nov 2025 · Clave DOC-1002'
-            }
-        };
 
-        const docData = docMap[docId] || {
+        const docData = {
             title: docTitle,
-            meta: 'Asignado recientemente · Clave ' + docId.toUpperCase()
         };
 
         $('#doc-title').textContent = docData.title;
-        $('#doc-meta').textContent = docData.meta;
         $('#rubric-doc-id').value = docId;
 
         const layout = $('#session-layout');

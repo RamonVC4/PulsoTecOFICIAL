@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 }
 
 // Datos a insertar
-$usuario = "manager";
+$usuario = "revisor";
 $correo = "$usuario@example.com";
 $contra = "123456";
 

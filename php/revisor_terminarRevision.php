@@ -11,7 +11,7 @@ $respuestasComoJSONString = json_encode($respuestas);
 $idProyecto = $_SESSION['idProyecto'];
 
 //actualizo las respuestas en la base de datos
-$stmtRevisorProyecto = $conn->prepare("UPDATE revisor_proyecto SET terminado = 0, datos = ? WHERE idRevisor = ? AND idProyecto = ?");//TODO CAMBIAR TERMINADO A 1
+$stmtRevisorProyecto = $conn->prepare("UPDATE revisor_proyecto SET terminado = 1, datos = ? WHERE idRevisor = ? AND idProyecto = ?");//TODO CAMBIAR TERMINADO A 1
 $stmtRevisorProyecto->bind_param("sii", $respuestasComoJSONString, $_SESSION['user_id'], $idProyecto);
 $stmtRevisorProyecto->execute();
 
@@ -43,6 +43,12 @@ if ($respuestas['dictamen'] !== "aceptar_sin_cambios"){
         $stmtProyecto = $conn->prepare("UPDATE entrega SET aceptado = 0 WHERE idProyecto = ? AND aceptado IS NULL");//si es la segunda entrega, solo habra uno con NULL
         $stmtProyecto->bind_param("i", $idProyecto);
         $stmtProyecto->execute();
+
+        //checo que si se haya creado bien
+        if($stmtProyecto->affected_rows == 0){
+            echo json_encode(['success' => false, 'message' => 'Error al crear la segunda entrega.']);
+            exit;
+        }
     }
 }else{
     //guardo en el proyecto que ya fue aceptado
