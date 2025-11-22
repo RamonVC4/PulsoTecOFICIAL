@@ -100,13 +100,13 @@
                         
 
                         <!-- CURP para revisor -->
-                        <div class="field" id="curpDiv" style="visibility: collapse;">
+                        <div class="field" id="curpDiv">
                             <label for="curp">CURP</label>
                             <input id="curp" name="curp" type="text" inputmode="text" autocomplete="curp" placeholder="Ingresa tu CURP">
                         </div>
 
                         <!-- agregar area de conocimiento para revisor -->
-                        <div class="field">
+                        <div class="field" id="areaConocimientoDiv">
                             <label for="area-conocimiento">Área de conocimiento</label>
                                 <select id="area-conocimiento" name="area-conocimiento" required>
                                     <option value="1">Ingeniería Química y Bioquímica</option>
@@ -124,19 +124,19 @@
                        
 
                         <!-- ORCID para autor -->
-                        <div class="field">
+                        <div class="field hidden" id="orcidDiv">
                             <label for="orcid">ORCID</label>
                             <input id="orcid" name="orcid" type="text" inputmode="text" autocomplete="orcid" required placeholder="Ingresa tu ORCID">
                         </div>
 
                         <!-- institucion para autor -->
-                        <div class="field">
+                        <div class="field hidden" id="institucionDiv">
                             <label for="institucion">Institución</label>
                             <input id="institucion" name="institucion" type="text" inputmode="text" autocomplete="institucion" required placeholder="Ingresa tu institución">
                         </div>
 
                         <!-- direccion de la institucion para autor -->
-                         <div class="field">
+                         <div class="field hidden" id="direccionDiv">
                             <label for="direccion">Dirección de la Institución</label>
             
                             <div class="direccion-field">
@@ -204,28 +204,94 @@
 </script>
 
 
-<!-- script para mostrar y ocultar los campos de -->
-<script>
-    addEventListener('DOMContentLoaded', () => {
+<!-- script para mostrar y ocultar los campos de revisor-->
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', () => {
         console.log('DOM cargado');
         document.querySelectorAll('input[name="role"]').forEach(input => input.addEventListener('change', () => {
         console.log(document.querySelector('input[name="role"]:checked').value);
-        if (document.querySelector('input[name="role"]:checked').value === 'revisor') {
+
+
+        const elements = {
+            curpDiv: document.querySelector('#curpDiv'),
+            areaConocimientoDiv: document.querySelector('#areaConocimientoDiv'),
+            orcidDiv: document.querySelector('#orcidDiv'),
+            institucionDiv: document.querySelector('#institucionDiv'),
+            direccionDiv: document.querySelector('#direccionDiv'),
+        }
+
+        const role = document.querySelector('input[name="role"]:checked').value;
+
+
+        if (role === 'revisor') {
             console.log('revisor');
-            const curpDiv = document.querySelector('#curpDiv');
-            curpDiv.classList.remove('hidden');
-            curpDiv.attributes['style'].value = 'visibility: visible;';
+
+            elements.curpDiv.classList.remove('hidden');
+            elements.areaConocimientoDiv.classList.remove('hidden');
+            elements.orcidDiv.classList.add('hidden');
+            elements.institucionDiv.classList.add('hidden');
+            elements.direccionDiv.classList.add('hidden');
+
         }else{
             console.log('autor');
-            const curpDiv = document.querySelector('#curpDiv');
-            curpDiv.classList.add('hidden');
-            curpDiv.attributes['style'].value = 'visibility: collapse;';
+
+            elements.curpDiv.classList.add('hidden');
+            elements.areaConocimientoDiv.classList.add('hidden');
+            elements.orcidDiv.classList.remove('hidden');
+            elements.institucionDiv.classList.remove('hidden');
+            elements.direccionDiv.classList.remove('hidden');
         }
         
         
         })); 
     })
+</script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM cargado');
+    
+        function updateVisibility() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+    
+            const elements = {
+                curpDiv: document.getElementById('curpDiv'),
+                areaConocimientoDiv: document.getElementById('areaConocimientoDiv'),
+                orcidDiv: document.getElementById('orcidDiv'),
+                institucionDiv: document.getElementById('institucionDiv'),
+                direccionDiv: document.getElementById('direccionDiv'),
+            };
+    
+            if (role === 'revisor') {
+                elements.curpDiv.classList.remove('hidden');
+                elements.areaConocimientoDiv.classList.remove('hidden');
+
+                elements.orcidDiv.classList.add('hidden');
+                elements.institucionDiv.classList.add('hidden');
+                elements.direccionDiv.classList.add('hidden');
+
+                console.log('Todo bien')
+            } else {
+                elements.curpDiv.classList.add('hidden');
+                elements.areaConocimientoDiv.classList.add('hidden');
+
+                elements.orcidDiv.classList.remove('hidden');
+                elements.institucionDiv.classList.remove('hidden');
+                elements.direccionDiv.classList.remove('hidden');
+                console.log('Todo bien')
+            }
+        }
+    
+        // Ejecuta la lógica una vez al cargar
+        updateVisibility();
+    
+        // Escucha cuando se cambia el rol
+        document.querySelectorAll('input[name="role"]').forEach(input =>
+            input.addEventListener('change', updateVisibility)
+        );
+    });
 </script>
+    
 
 <!-- script para registrar -->
 <script>
