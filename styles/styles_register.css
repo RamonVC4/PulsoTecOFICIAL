@@ -10,7 +10,9 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 
-
+.hidden{
+    display: none !important;
+}
 
 
 .return-to-index-header {
@@ -125,9 +127,7 @@ body.login-page {
 #role-autor:checked ~ .tabs .pill { transform: translateX(0%); }
 #role-revisor:checked ~ .tabs .pill { transform: translateX(100%); }
 
-.hidden{
-    display: none;
-}
+
 
 
 
@@ -205,8 +205,8 @@ body.login-page {
 .direccion-field {
     display: grid;
     grid-template-areas: "direccion direccion direccion direccion" 
-                            "calle calle calle calle" 
                             "numero numero colonia colonia" 
+                            "calle calle calle calle" 
                             "ciudad ciudad estado estado";
 
     gap: 10px;
