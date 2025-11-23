@@ -246,6 +246,7 @@
                             due: '2025-12-01', 
                             stage: stageName, 
                             rubric: { status: stageName, score: '—', updated: null },
+                            assignedCountReal: p.conteo_revisores,
                             slots: [null, null, null], 
                             entregas: p.entregas,
                             locked: stageName === "Aceptado",
@@ -713,7 +714,9 @@
         function renderProjects() {
             filteredProjects = projects
                 .filter(project => {
-                    const assignedCount = getAssigned(project).length;
+                    //const assignedCount = getAssigned(project).length; <--Viejo
+                    // (Si le diste clic y editaste, usamos getAssigned, si no, usamos el de PHP)
+                    const assignedCount = project.slots.filter(s => s).length || project.assignedCountReal || 0;
                     const hayQuery = project.title.toLowerCase().includes(projectQuery) ||
                         project.author.toLowerCase().includes(projectQuery) ||
                         project.area.toLowerCase().includes(projectQuery);
@@ -862,12 +865,13 @@
             const slots = getSlots(project);
             const locked = !!project.locked;
             const assignedIds = getAssigned(project);
-            //const availableReviewers = reviewers.filter(reviewer => !assignedIds.includes(reviewer.id));
-            // FILTRO MEJORADO:
+            
+            // Convertimos todo a String para asegurar que "1" sea igual a 1
             const availableReviewers = reviewers.filter(reviewer => {
-                const yaEstaAsignado = assignedIds.some(id => id == reviewer.id);
-                return !yaEstaAsignado; 
+                const estaOcupado = assignedIds.some(occupiedId => String(occupiedId) === String(reviewer.id));
+                return !estaOcupado; 
             });
+
             elements.slotsSection.hidden = false;
             elements.slotsGrid.innerHTML = '';
 
@@ -911,13 +915,40 @@
                         </div>
                     `;
                 } else {
+                    /*
                     const suggestionsMarkup = isOpen
                         ? `
                             <div class="slot-suggestions">
                                 <p class="muted tiny">${availableReviewers.length ? 'Ejemplos sugeridos de revisores disponibles:' : 'No hay revisores disponibles. Libera un espacio o registra nuevos revisores.'}</p>
+                                
                                 <ul>
                                     ${availableReviewers.map(reviewer => `
                                         <li class="slot-suggestion">
+                                            <div>
+                                                <strong>${reviewer.name}</strong>
+                                                <span class="muted tiny">${reviewer.email}</span>
+                                                <span class="muted tiny">${reviewer.expertise.join(' · ')}</span>
+                                            </div>
+                                            <button type="button" class="btn-secondary slot-assign-btn" data-id="${reviewer.id}" data-slot="${index}">Asignar</button>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        ` : '';*/
+                        // Dentro de renderSlots, en el bloque 'else' (cuando no hay revisor asignado):
+
+                    const suggestionsMarkup = isOpen
+                        ? `
+                            <div class="slot-suggestions">
+                                <p class="muted tiny">${availableReviewers.length ? 'Selecciona un revisor disponible:' : 'No hay revisores disponibles.'}</p>
+                                
+                                <div style="margin-bottom: 8px;">
+                                    <input type="text" class="reviewer-search-input" data-slot="${index}" placeholder="Buscar por nombre..." style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px;">
+                                </div>
+
+                                <ul class="reviewer-list-${index}">
+                                    ${availableReviewers.map(reviewer => `
+                                        <li class="slot-suggestion" data-name="${reviewer.name.toLowerCase()}" data-email="${reviewer.email.toLowerCase()}">
                                             <div>
                                                 <strong>${reviewer.name}</strong>
                                                 <span class="muted tiny">${reviewer.email}</span>
@@ -982,72 +1013,46 @@
                 });
             });
 
-            /*
             elements.slotsGrid.querySelectorAll('.slot-assign-btn').forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => { 
                     const reviewerId = button.dataset.id;
                     const slotIdx = Number(button.dataset.slot);
-                    const slots = getSlots(project);
-                    if (slots[slotIdx]) return;
-                    if (getAssigned(project).includes(reviewerId)) {
-                        showAssignmentNote('Este revisor ya está asignado a otro espacio.', true);
-                        return;
-                    }
-                    slots[slotIdx] = reviewerId;
-                    ensureReviewEntry(project, reviewerId);
-                    project.timeline.unshift({
-                        type: 'manager',
-                        message: `Se asignó a ${getReviewer(reviewerId)?.name || 'un revisor'}`,
-                        at: new Date().toISOString()
-                    });
-                    openSlotIndex = null;
-                    renderAll();
-                    showAssignmentNote(`Asignaste a ${getReviewer(reviewerId)?.name || 'revisor'}.`, false);
-                });
-            });
-            */
-            elements.slotsGrid.querySelectorAll('.slot-assign-btn').forEach(button => {
-            button.addEventListener('click', async () => { // <--- OJO: ASYNC
-                const reviewerId = button.dataset.id;
-                const slotIdx = Number(button.dataset.slot);
-                
-                button.disabled = true;
-                button.textContent = "...";
+                    
+                    button.disabled = true;
+                    button.textContent = "...";
 
-                const payload = {
-                    idProyecto: project.id,
-                    idRevisor: reviewerId,
-                    fechaLimite: '2025-12-31' 
-                };
+                    const payload = {
+                        idProyecto: project.id,
+                        idRevisor: reviewerId,
+                        fechaLimite: '2025-12-31' 
+                    };
 
-                try {
-                    // Enviamos a PHP
-                    const res = await fetch('../php/manager_asignarRevisor.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    try {
+                        const res = await fetch('../php/manager_asignarRevisor.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
 
-                    const data = await res.json();
+                        const data = await res.json();
 
-                    if (data.success) {
-                        alert("Asignado correctamente");
-                        openSlotIndex = null;
-                        setActiveProject(project.id); // Recargamos para ver el cambio real
-                    } else {
-                        alert("Error: " + data.message);
+                        if (data.success) {
+                            alert("Asignado correctamente");
+                            openSlotIndex = null;
+                            setActiveProject(project.id); 
+                        } else {
+                            alert("Error: " + data.message);
+                            button.disabled = false;
+                            button.textContent = "Asignar";
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert("Error de conexión");
                         button.disabled = false;
                         button.textContent = "Asignar";
                     }
-                } catch (error) {
-                    console.error(error);
-                    alert("Error de conexión");
-                    button.disabled = false;
-                    button.textContent = "Asignar";
-                }
+                });
             });
-        });
-            // --- FIN DE LO NUEVO ---
 
             elements.slotsGrid.querySelectorAll('.slot-remove').forEach(button => {
                 button.addEventListener('click', () => {
@@ -1061,6 +1066,30 @@
                     const reviewerId = button.dataset.reviewer;
                     window.location.href = `./review-session.html?doc=${projectId}&reviewer=${reviewerId}`;
                 });
+            });
+
+            // Busqueda por nombre para revisores
+            elements.slotsGrid.querySelectorAll('.reviewer-search-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const slotIndex = e.target.dataset.slot;
+                    const list = document.querySelector(`.reviewer-list-${slotIndex}`);
+                    
+                    // Buscamos todos los elementos de la lista (li)
+                    const items = list.querySelectorAll('.slot-suggestion');
+
+                    items.forEach(item => {
+                        const name = item.dataset.name;   // El nombre que guardamos en el data-attribute
+                        const email = item.dataset.email; // El email
+                        
+                        if (name.includes(term) || email.includes(term)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+                input.addEventListener('click', (e) => e.stopPropagation());
             });
         }
 
@@ -1171,6 +1200,7 @@
             });
         }
 
+        /*
         function renderSubmissions(project) {
             if (!project.submissions || !project.submissions.length) {
                 elements.submissionsSection.hidden = true;
@@ -1194,6 +1224,72 @@
                 `;
                 elements.submissionsGrid.appendChild(card);
             });
+        }*/
+
+        function renderSubmissions(project) {
+            // Damos prioridad a 'entregas'
+            const dataList = (project.entregas && project.entregas.length > 0) 
+                ? project.entregas 
+                : (project.submissions || []);
+
+            if (!dataList.length) {
+                elements.submissionsSection.hidden = true;
+                return;
+            }
+
+            elements.submissionsSection.hidden = false;
+            elements.submissionsGrid.innerHTML = '';
+
+            // Recorremos la lista de entregas
+            dataList.forEach((item, index) => {
+                const card = document.createElement('article');
+                card.className = 'submission-card';
+                const label = item.numeroEntrega ? `Entrega ${item.numeroEntrega}` : `Entrega ${index + 1}`;
+                
+                // Formateamos la fecha (si existe)
+                const dateVal = item.fechaEntrega || item.submitted;
+                const dateStr = dateVal ? formatDate(dateVal, longDate) : '—';
+                
+                // Obtenemos el path del PDF
+                const pdfUrl = item.pdfPath;
+
+                let statusText = "Pendiente";
+                let badgeClass = "";
+
+
+                if (item.aceptado == 1) {
+                    statusText = "Aceptado";
+                    badgeClass = "is-success";
+                } else if (item.aceptado == 0 && item.entregado == 1) { 
+                    statusText = "Revisión"; 
+                    badgeClass = "is-warning"; 
+                } else if (item.entregado == 1) {
+                    statusText = "Recibido";
+                    badgeClass = "is-info";
+                } else if (item.status) {
+                    statusText = item.status;
+                    badgeClass = statusVariant(item.status);
+                }
+
+                card.innerHTML = `
+                    <header>
+                        <strong>${label}</strong>
+                        <span class="submission-status ${badgeClass}">${statusText}</span>
+                    </header>
+                    <div class="submission-meta">
+                        <span>Registrado: ${dateStr}</span>
+                        
+                        ${ pdfUrl 
+                            ? `<a href="${pdfUrl}" target="_blank" class="btn-link" style="display:flex; align-items:center; gap:4px; margin-top:6px;">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>
+                                Ver documento
+                            </a>`
+                            : '<span class="muted small">Sin archivo adjunto</span>'
+                        }
+                    </div>
+                `;
+                elements.submissionsGrid.appendChild(card);
+            });
         }
 
         function renderApproval(project) {
@@ -1213,21 +1309,52 @@
             elements.approveBtn.onclick = () => approveProject(project.id);
         }
 
-        function approveProject(projectId) {
+        async function approveProject(projectId) {
             const project = getProject(projectId);
             if (!project || project.locked) return;
-            project.locked = true;
-            project.stage = 'Cerrado';
-            project.status = 'Aprobado';
-            project.rubric.status = 'Aprobado';
-            project.rubric.updated = new Date().toISOString().slice(0, 10);
-            project.timeline.unshift({
-                type: 'manager',
-                message: 'Proyecto aprobado y cerrado',
-                at: new Date().toISOString()
-            });
-            openSlotIndex = null;
-            renderAll();
+
+            // Confirmación de seguridad
+            if (!confirm("¿Estás seguro de aprobar este proyecto? Esta acción cerrará el proceso.")) {
+                return;
+            }
+
+            const btn = document.getElementById('approve-btn');
+            if(btn) {
+                btn.textContent = "Proyecto aprobado";
+                btn.disabled = true;
+            }
+
+            try {
+                // Enviamos la orden al backend
+                const response = await fetch('../php/manager_aprobarProyecto.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idProyecto: projectId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("¡Proyecto aprobado exitosamente!");
+                    
+                    // Actualizamos la lista
+                    await fetchProjects(); 
+                    setActiveProject(projectId); 
+                } else {
+                    alert("Error: " + data.message);
+                    if(btn) {
+                        btn.textContent = "Aprobar proyecto";
+                        btn.disabled = false;
+                    }
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("No se pudo conectar con el servidor.");
+                if(btn) {
+                    btn.textContent = "Aprobar proyecto";
+                    btn.disabled = false;
+                }
+            }
         }
 
         function renderTimeline(project) {
