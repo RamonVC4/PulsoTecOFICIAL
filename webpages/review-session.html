@@ -314,38 +314,16 @@
         const formFueraDeLaFunc = document.getElementById('rubric-form');
         // Función para validar el formulario
         const validarForm = () => {
-            const form = document.getElementById('rubric-form');
-            const submitBtn = form.querySelector('button.btn-primary');
-            const allRadios = form.querySelectorAll('input[type="radio"]');
-            const globalScore = form.querySelector('input[name="calificacion_global"]');
-
-            let todosRadiosCompletos = true;
-            let dictamenSeleccionado = false;
-
-            // Validar que todos los grupos de radio de los aspectos tengan una opción seleccionada
-            const gruposRadio = {};
-            allRadios.forEach(radio => {
-                gruposRadio[radio.name] = gruposRadio[radio.name] || [];
-                gruposRadio[radio.name].push(radio);
-            });
-
-            for (const grupo of Object.values(gruposRadio)) {
-                if (!grupo.some(r => r.checked)) {
-                    todosRadiosCompletos = false;
-                    break;
-                }
-            }
 
             // Validar que se haya elegido un dictamen
             dictamenSeleccionado = Array.from(allRadios)
                 .some(r => r.name === 'dictamen' && r.checked);
 
-            // Validar calificación global
-            const scoreVal = parseFloat(globalScore.value);
-            const scoreValido = !isNaN(scoreVal) && scoreVal >= 1 && scoreVal <= 10;
+            //Validar que se hayan escrito comentarios
+            comentariosEscritos = document.getElementById('comentarios-autores').value.trim() !== '';
 
             // guardar el estado de la verificacion
-            tablaLlena = (todosRadiosCompletos && dictamenSeleccionado && scoreValido);
+            tablaLlena = (dictamenSeleccionado && comentariosEscritos );
         };
 
         // Escuchar cambios en el formulario
