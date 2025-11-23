@@ -15,7 +15,17 @@ $result = $stmtProyectos->get_result();
 $proyectos = [];
 
 while ($row = $result->fetch_assoc()) {
-    // Busca las entregas (esto se queda igual)
+    
+    //CONTAR REVISORES
+    // Preguntamos a la BD cuantos revisores tiene este proyecto
+    $stmtCount = $conn->prepare("SELECT COUNT(*) as total FROM revisor_proyecto WHERE idProyecto = ?");
+    $stmtCount->bind_param("i", $row['id']);
+    $stmtCount->execute();
+    $resCount = $stmtCount->get_result();
+    $dataCount = $resCount->fetch_assoc();
+    $numRevisores = $dataCount['total'];
+
+    // Busca las entregas 
     $stmtEnt = $conn->prepare("SELECT e.id, e.numeroEntrega, e.pdfPath, e.entregado, e.aceptado, e.fechaLimite FROM entrega e WHERE e.idProyecto = ? ORDER BY numeroEntrega ASC");
     $stmtEnt->bind_param("i", $row['id']);
     $stmtEnt->execute();
@@ -32,7 +42,7 @@ while ($row = $result->fetch_assoc()) {
             'aceptado' => $ent['aceptado'],
             'fechaEntrega' => $ent['fechaLimite']
         ];
-        // Tu lógica de estado...
+        
         if ($ent['entregado'] == 1) {
             if ($ent['aceptado'] === 1) $ultimoEstado = "Aceptado";
             else if ($ent['aceptado'] === 0) $ultimoEstado = "Con Observaciones";
@@ -43,10 +53,11 @@ while ($row = $result->fetch_assoc()) {
     $proyectos[] = [
         'id' => $row['id'],
         'title' => $row['nombre'],
-        'author' => $row['correo'], // <--- AQUÍ YA USAMOS EL DATO REAL
+        'author' => $row['correo'], 
         'area' => 'Sistemas',
         'stage' => $ultimoEstado,
-        'entregas' => $entregas
+        'entregas' => $entregas,
+        'conteo_revisores' => $numRevisores
     ];
 }
 
