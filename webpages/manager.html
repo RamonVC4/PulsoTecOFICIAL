@@ -229,13 +229,14 @@
 
         async function fetchProjects() {
             try {
+                // Llamada al backend
                 const response = await fetch('../php/manager_getProyectos.php'); 
                 const data = await response.json();
 
                 if (data.success) {
+                    // Transformamos los datos 
                     projects = data.proyectos.map(p => {
                         let stageName = p.stage;
-
                         return {
                             id: p.id, 
                             title: p.title, 
@@ -248,15 +249,22 @@
                             slots: [null, null, null], 
                             entregas: p.entregas,
                             locked: stageName === "Aceptado",
-                            
-                            // --- ESTO ES LO QUE FALTABA ---
                             timeline: [], 
                             reviews: {}   
                         };
                     });
 
                     console.log("Proyectos cargados:", projects);
+                    
+                    // 1. Primero dibujamos la lista
                     renderAll(); 
+
+                    // ejecutamos 'setActiveProject' para que traiga sus detalles de la BD.
+                    if (projects.length > 0) {
+                        // El 'await' asegura que termine de cargar antes de dejarte interactuar
+                        await setActiveProject(projects[0].id);
+                    }
+
 
                 } else {
                     console.error('El servidor respondió con error:', data.message);
@@ -681,16 +689,23 @@
         function addTempReviewer(data) {
             if (typeof reviewers === 'undefined') reviewers = [];
 
-            // Buscamos si ya existe (usando == por si acaso)
             const existing = reviewers.find(r => r.id == data.revisor_id);
             
             if (!existing) {
+                // Truco visual: Si no tenemos nombre real, inventamos uno basado en el correo
+                // Ejemplo: "andrea.molina@..." -> "Andrea Molina"
+                let displayName = data.revisor_email;
+                if (data.revisor_email.includes('@')) {
+                    const parts = data.revisor_email.split('@')[0].split('.');
+                    // Capitalizamos la primera letra de cada parte
+                    displayName = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+                }
+
                 reviewers.push({
                     id: data.revisor_id, 
-                    name: data.revisor_email, 
+                    name: displayName, // Ahora mostrará "Andrea Molina" en vez del correo
                     email: data.revisor_email,
-                    // PROTECCIÓN AQUÍ: Si no hay expertise, ponemos uno por defecto
-                    expertise: ['Revisor Registrado'] 
+                    expertise: ['General'] 
                 });
             }
         }
@@ -759,11 +774,12 @@
             elements.projectsEmpty.hidden = totalItems > 0;
             updatePagination(totalPages, totalItems);
 
+            /*
             if (!activeProjectId && totalItems) {
                 projectPage = 0;
                 activeProjectId = filteredProjects[0].id;
                 renderAssignment();
-            }
+            }*/
 
             if (totalItems === 0) {
                 activeProjectId = null;
@@ -846,7 +862,12 @@
             const slots = getSlots(project);
             const locked = !!project.locked;
             const assignedIds = getAssigned(project);
-            const availableReviewers = reviewers.filter(reviewer => !assignedIds.includes(reviewer.id));
+            //const availableReviewers = reviewers.filter(reviewer => !assignedIds.includes(reviewer.id));
+            // FILTRO MEJORADO:
+            const availableReviewers = reviewers.filter(reviewer => {
+                const yaEstaAsignado = assignedIds.some(id => id == reviewer.id);
+                return !yaEstaAsignado; 
+            });
             elements.slotsSection.hidden = false;
             elements.slotsGrid.innerHTML = '';
 
@@ -1248,6 +1269,7 @@
             }
         }
 
+        /*
         function removeReviewer(projectId, slotIndex) {
             const project = getProject(projectId);
             if (!project || project.locked) return;
@@ -1265,6 +1287,61 @@
             });
             renderAll();
             showAssignmentNote(`Liberaste el espacio de ${reviewer?.name || 'revisor'}.`, false);
+        }*/
+        async function removeReviewer(projectId, slotIndex) {
+            // 1. Obtenemos el ID del revisor que está en ese espacio (slot)
+            const project = getProject(projectId);
+            const slots = getSlots(project);
+            const reviewerId = slots[slotIndex];
+
+            if (!reviewerId) return; // Si no hay nadie, no hacemos nada
+
+            // 2. Preguntamos confirmación (Opcional, pero recomendado)
+            if (!confirm("¿Estás seguro de que deseas eliminar a este revisor? Se perderán sus avances.")) {
+                return;
+            }
+
+            // 3. Enviamos la orden de borrar al Backend
+            try {
+                const payload = {
+                    idProyecto: projectId,
+                    idRevisor: reviewerId
+                };
+
+                const response = await fetch('../php/manager_eliminarRevisor.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // ÉXITO: Limpiamos visualmente y recargamos
+                    
+                    // Borramos del array local inmediatamente para que se sienta rápido
+                    project.slots[slotIndex] = null;
+                    delete project.reviews[reviewerId];
+                    
+                    // Agregamos al historial (timeline) visual
+                    project.timeline.unshift({
+                        type: 'manager',
+                        message: 'Se eliminó un revisor del proyecto',
+                        at: new Date().toISOString()
+                    });
+
+                    // Recargamos los datos reales de la BD para asegurar que todo esté sincrinizado
+                    setActiveProject(projectId);
+                    
+                    alert("Revisor eliminado correctamente.");
+                } else {
+                    alert("Error al eliminar: " + data.message);
+                }
+
+            } catch (error) {
+                console.error("Error de red:", error);
+                alert("No se pudo conectar con el servidor.");
+            }
         }
 
         function renderHistory() {
