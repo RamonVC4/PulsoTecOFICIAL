@@ -199,6 +199,23 @@
         const shortDate = { day: '2-digit', month: 'short', year: 'numeric' };
         const shortDateTime = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
 
+        // Variable global para los revisores
+        let reviewers = [];
+
+        async function fetchReviewers() {
+            try {
+                const response = await fetch('../php/manager_getRevisores.php');
+                const data = await response.json();
+                if (data.success) {
+                    reviewers = data.revisores;
+                    console.log("Revisores cargados:", reviewers);
+                }
+            } catch (error) {
+                console.error("Error cargando revisores:", error);
+            }
+        }
+
+        /*
         const reviewers = [
             { id: 'rev-01', name: 'Dra. Andrea Molina', email: 'andrea.molina@pulso-tec.mx', expertise: ['Biomateriales', 'Ensayos clínicos'] },
             { id: 'rev-02', name: 'Dr. Javier Solís', email: 'javier.solis@pulso-tec.mx', expertise: ['Dispositivos médicos', 'Regulación'] },
@@ -206,8 +223,49 @@
             { id: 'rev-04', name: 'Dra. Karla Hernández', email: 'karla.hernandez@pulso-tec.mx', expertise: ['Farmacología', 'Bioética'] },
             { id: 'rev-05', name: 'Ing. Diego Prado', email: 'diego.prado@pulso-tec.mx', expertise: ['Sensores', 'Analítica de datos'] },
             { id: 'rev-06', name: 'Dr. Salvador Nieto', email: 'salvador.nieto@pulso-tec.mx', expertise: ['Epidemiología', 'Metodología'] }
-        ];
+        ]; */
+        // Variable global para guardar los proyectos cargados
+        let projects = [];
 
+        async function fetchProjects() {
+            try {
+                const response = await fetch('../php/manager_getProyectos.php'); 
+                const data = await response.json();
+
+                if (data.success) {
+                    projects = data.proyectos.map(p => {
+                        let stageName = p.stage;
+
+                        return {
+                            id: p.id, 
+                            title: p.title, 
+                            author: p.author || 'Autor pendiente', 
+                            area: p.area || 'General', 
+                            submitted: p.submitted, 
+                            due: '2025-12-01', 
+                            stage: stageName, 
+                            rubric: { status: stageName, score: '—', updated: null },
+                            slots: [null, null, null], 
+                            entregas: p.entregas,
+                            locked: stageName === "Aceptado",
+                            
+                            // --- ESTO ES LO QUE FALTABA ---
+                            timeline: [], 
+                            reviews: {}   
+                        };
+                    });
+
+                    console.log("Proyectos cargados:", projects);
+                    renderAll(); 
+
+                } else {
+                    console.error('El servidor respondió con error:', data.message);
+                }
+            } catch (error) {
+                console.error('Error conectando con el backend:', error);
+            }
+        }
+/*
         const projects = [
             {
                 id: 'mx-101',
@@ -464,6 +522,7 @@
                 ]
             }
         ];
+        */
 
         let activeProjectId = null;
         let projectQuery = '';
@@ -550,7 +609,7 @@
             if (normalized.includes('finalizado') || normalized.includes('aceptado') || normalized.includes('cerrado')) return 'is-success';
             return 'is-neutral';
         }
-
+/*
         function setActiveProject(id) {
             activeProjectId = id;
             const indexOnList = filteredProjects.findIndex(project => project.id === id);
@@ -560,6 +619,75 @@
             openSlotIndex = null;
             renderProjects();
             renderAssignment();
+        }
+*/
+            // Variable global para guardar revisores temporales (para que se vean los nombres)
+            // Variable global auxiliar
+        if (typeof tempReviewers === 'undefined') var tempReviewers = {}; 
+
+        async function setActiveProject(id) {
+            activeProjectId = id;
+            
+            const localProject = filteredProjects.find(p => p.id === id);
+            
+            // Paginación
+            const indexOnList = filteredProjects.findIndex(project => project.id === id);
+            if (indexOnList !== -1) {
+                projectPage = Math.floor(indexOnList / PAGE_SIZE);
+            }
+            
+            // PEDIR DATOS A PHP
+            try {
+                const response = await fetch(`../php/manager_getDetalles.php?id=${id}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Limpiamos slots
+                    localProject.slots = [null, null, null]; 
+                    localProject.reviews = {}; 
+
+                    // Llenamos slots
+                    data.interacciones.forEach((interaccion, index) => {
+                        if (index < 3) {
+                            localProject.slots[index] = interaccion.revisor_id;
+
+                            localProject.reviews[interaccion.revisor_id] = {
+                                iterations: [{
+                                    submission: 1, 
+                                    status: interaccion.terminado ? 'Terminado' : 'En progreso', 
+                                    score: '—', 
+                                    updated: interaccion.fecha_limite, 
+                                    summary: 'Revisor asignado.'
+                                }]
+                            };
+                            
+                            // Registramos el nombre para que el HTML lo encuentre
+                            addTempReviewer(interaccion);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Error cargando detalles:", error);
+            }
+
+            openSlotIndex = null;
+            renderProjects();   
+            renderAssignment(); 
+        }
+
+        // ESTA FUNCIÓN DEBE ESTAR AFUERA, DISPONIBLE GLOBALMENTE
+        function addTempReviewer(data) {
+            if (typeof reviewers === 'undefined') reviewers = [];
+
+            const existing = reviewers.find(r => r.id == data.revisor_id);
+            if (!existing) {
+                reviewers.push({
+                    id: data.revisor_id, 
+                    name: data.revisor_email, 
+                    email: data.revisor_email,
+                    expertise: ['General']
+                });
+            }
         }
 
         function renderProjects() {
@@ -828,6 +956,7 @@
                 });
             });
 
+            /*
             elements.slotsGrid.querySelectorAll('.slot-assign-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const reviewerId = button.dataset.id;
@@ -850,6 +979,49 @@
                     showAssignmentNote(`Asignaste a ${getReviewer(reviewerId)?.name || 'revisor'}.`, false);
                 });
             });
+            */
+            elements.slotsGrid.querySelectorAll('.slot-assign-btn').forEach(button => {
+            button.addEventListener('click', async () => { // <--- OJO: ASYNC
+                const reviewerId = button.dataset.id;
+                const slotIdx = Number(button.dataset.slot);
+                
+                button.disabled = true;
+                button.textContent = "...";
+
+                const payload = {
+                    idProyecto: project.id,
+                    idRevisor: reviewerId,
+                    fechaLimite: '2025-12-31' 
+                };
+
+                try {
+                    // Enviamos a PHP
+                    const res = await fetch('../php/manager_asignarRevisor.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert("Asignado correctamente");
+                        openSlotIndex = null;
+                        setActiveProject(project.id); // Recargamos para ver el cambio real
+                    } else {
+                        alert("Error: " + data.message);
+                        button.disabled = false;
+                        button.textContent = "Asignar";
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Error de conexión");
+                    button.disabled = false;
+                    button.textContent = "Asignar";
+                }
+            });
+        });
+            // --- FIN DE LO NUEVO ---
 
             elements.slotsGrid.querySelectorAll('.slot-remove').forEach(button => {
                 button.addEventListener('click', () => {
@@ -1192,7 +1364,15 @@
             renderProjects();
         });
 
-        renderAll();
+        //renderAll();
+        //fetchProjects(); 
+        //fetchReviewers();
+        async function initManager() {
+        console.log("Iniciando sistema...");
+        await fetchReviewers(); // 1. Primero revisores
+        await fetchProjects();  // 2. Luego proyectos
+    }
+    initManager();
     })();
     </script>
 
