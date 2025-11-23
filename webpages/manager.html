@@ -597,7 +597,8 @@
         }
 
         function getReviewer(id) {
-            return reviewers.find(reviewer => reviewer.id === id);
+            // Usamos == (doble igual) para que el numero 1 sea igual al texto "1"
+            return reviewers.find(reviewer => reviewer.id == id); 
         }
 
         function statusClass(stage) {
@@ -676,16 +677,20 @@
         }
 
         // ESTA FUNCIÓN DEBE ESTAR AFUERA, DISPONIBLE GLOBALMENTE
+        // Función auxiliar para registrar revisores que vienen de la BD
         function addTempReviewer(data) {
             if (typeof reviewers === 'undefined') reviewers = [];
 
+            // Buscamos si ya existe (usando == por si acaso)
             const existing = reviewers.find(r => r.id == data.revisor_id);
+            
             if (!existing) {
                 reviewers.push({
                     id: data.revisor_id, 
                     name: data.revisor_email, 
                     email: data.revisor_email,
-                    expertise: ['General']
+                    // PROTECCIÓN AQUÍ: Si no hay expertise, ponemos uno por defecto
+                    expertise: ['Revisor Registrado'] 
                 });
             }
         }
