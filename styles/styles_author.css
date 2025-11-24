@@ -516,3 +516,61 @@
     }
 }
 
+/* Estilos para autocomplete de autores */
+.author-autocomplete {
+    position: relative;
+    flex: 1;
+}
+
+.author-autocomplete .field {
+    position: relative;
+}
+
+.author-autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(15, 59, 92, 0.15);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-top: 4px;
+    display: none;
+}
+
+.author-autocomplete-dropdown.is-visible {
+    display: block;
+}
+
+.author-autocomplete-item {
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid rgba(219, 227, 243, 0.5);
+}
+
+.author-autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.author-autocomplete-item:hover,
+.author-autocomplete-item.is-highlighted {
+    background: rgba(59, 79, 116, 0.08);
+}
+
+.author-autocomplete-item.is-selected {
+    background: rgba(59, 79, 116, 0.12);
+    font-weight: 600;
+}
+
+.author-autocomplete-empty {
+    padding: 12px 14px;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+}
+
