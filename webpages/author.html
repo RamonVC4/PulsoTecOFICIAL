@@ -60,6 +60,23 @@
                         <input id="project-title" name="project_title" type="text" required placeholder="Ej. Evaluación de impacto tecnológico">
                     </div>
 
+                    <!-- Crear un espacio para agregar autores (1 a 5), y que sólo uno sea el de correspondencia  -->
+                     <!-- quiero que se pongan por separado, que se busquen en la base de datos, y que haya un botón para agregar otro -->
+                    
+                     <div class="authors-container">
+                        <div class="author-item">
+                            <div class="author-autocomplete">
+                                <div class="field">
+                                    <label for="author-correspondencia">Nombre del autor</label>
+                                    <input id="author-correspondencia" name="author-name" type="text" required placeholder="Ej. Juan Pérez" autocomplete="off" data-author-input>
+                                    <div class="author-autocomplete-dropdown" data-autocomplete-dropdown></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" id="add-author-button" class="btn-secondary" onclick="agregarAutor()">+</button>
+                    </div>
+
                     <div class="field">
                         <label for="knowledge-area">Área de conocimiento</label>
 
@@ -155,214 +172,6 @@
                     </article>
 
 
-                    <!-- <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 id="project-01-title" class="project-title">Estudio de biomateriales</h3>
-                                <p class="project-description">Evaluación preclínica de nuevos compuestos para implantes asistidos por IA.</p>
-                            </div>
-                            <span class="project-status">En revisión</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-ready">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-success">Recibida</span>
-                                </header>
-                                <p class="muted small">Subido el 1 nov 2025 · 2.1 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión inicial del proyecto Estudio de biomateriales">Descargar PDF</a>
-                            </section>
-
-                            <section class="version version-revised is-await">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-pending">Pendiente</span>
-                                </header>
-                                <p class="muted small">Adjunta la corrección cuando recibas las observaciones del comité revisor.</p>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-outline">Subir corrección</button>
-                                </div>
-                            </section>
-                        </div>
-                    </article> -->
-
-                    <!-- <article class="card project-card is-approved" data-title="Protocolo de telemedicina rural" data-author="Dr. Martínez" data-date="2025-10-28" aria-labelledby="project-02-title">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 id="project-02-title" class="project-title">Protocolo de telemedicina rural</h3>
-                                <p class="project-description">Implementación de estaciones portátiles para consulta remota en comunidades aisladas.</p>
-                            </div>
-                            <span class="project-status">Aceptado</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-ready">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-neutral">Histórico</span>
-                                </header>
-                                <p class="muted small">Subido el 12 oct 2025 · 1.8 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión inicial del proyecto Protocolo de telemedicina rural">Descargar PDF</a>
-                            </section>
-
-                            <section class="version version-revised is-ready">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-success">Aceptada</span>
-                                </header>
-                                <p class="muted small">Actualizado el 28 oct 2025 · 1.6 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión revisada del proyecto Protocolo de telemedicina rural">Descargar PDF</a>
-                            </section>
-                        </div>
-                    </article>
-
-                    <article class="card project-card is-draft" data-title="Análisis de eficiencia energética" data-author="Ing. Ramírez" data-date="2025-11-06" aria-labelledby="project-03-title">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 id="project-03-title" class="project-title">Análisis de eficiencia energética</h3>
-                                <p class="project-description">Diagnóstico de sistemas HVAC para campus universitarios.</p>
-                            </div>
-                            <span class="project-status">Borrador</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-await">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-pending">Pendiente</span>
-                                </header>
-                                <p class="muted small">Aún no has subido la versión inicial. Prepara el documento para crear el proyecto.</p>
-                                <div class="step-actions">
-                                    <button type="button" class="btn-outline">Adjuntar versión inicial</button>
-                                </div>
-                            </section>
-
-                            <section class="version version-revised is-await">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-muted">En espera</span>
-                                </header>
-                                <p class="muted small">La versión revisada se habilitará una vez que cargues la entrega inicial.</p>
-                            </section>
-                        </div>
-                    </article>
-
-                    <article class="card project-card is-review" data-title="Evaluación de algoritmos educativos" data-author="Equipo EdTech" data-date="2025-09-22">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 class="project-title">Evaluación de algoritmos educativos</h3>
-                                <p class="project-description">Comparativa de modelos adaptativos para personalizar contenidos en aula híbrida.</p>
-                            </div>
-                            <span class="project-status">En revisión</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-ready">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-success">Recibida</span>
-                                </header>
-                                <p class="muted small">Subido el 22 sep 2025 · 3.2 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión inicial de Evaluación de algoritmos educativos">Descargar PDF</a>
-                            </section>
-
-                            <section class="version version-revised is-await">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-pending">Pendiente</span>
-                                </header>
-                                <p class="muted small">Responde el dictamen del 30 oct para avanzar a la siguiente fase.</p>
-                            </section>
-                        </div>
-                    </article>
-
-                    <article class="card project-card is-approved" data-title="Guía de monitoreo cardiaco" data-author="Dra. Solís" data-date="2025-08-18">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 class="project-title">Guía de monitoreo cardiaco</h3>
-                                <p class="project-description">Lineamientos para seguimiento remoto de pacientes con dispositivos portables.</p>
-                            </div>
-                            <span class="project-status">Aceptado</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-ready">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-neutral">Histórico</span>
-                                </header>
-                                <p class="muted small">Subido el 18 ago 2025 · 2.4 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión inicial de Guía de monitoreo cardiaco">Descargar PDF</a>
-                            </section>
-
-                            <section class="version version-revised is-ready">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-success">Aceptada</span>
-                                </header>
-                                <p class="muted small">Actualizado el 2 oct 2025 · 2.0 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión revisada de Guía de monitoreo cardiaco">Descargar PDF</a>
-                            </section>
-                        </div>
-                    </article>
-
-                    <article class="card project-card is-draft" data-title="Plataforma de bienestar laboral" data-author="Colectivo NEXO" data-date="2025-11-07">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 class="project-title">Plataforma de bienestar laboral</h3>
-                                <p class="project-description">Diseño de plataforma para medir clima organizacional en industrias creativas.</p>
-                            </div>
-                            <span class="project-status">Borrador</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-await">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-pending">Pendiente</span>
-                                </header>
-                                <p class="muted small">Carga el documento inicial antes del 14 nov para evitar retrasos.</p>
-                            </section>
-
-                            <section class="version version-revised is-await">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-muted">En espera</span>
-                                </header>
-                                <p class="muted small">Se habilitará cuando completes la primera entrega.</p>
-                            </section>
-                        </div>
-                    </article>
-
-                    <article class="card project-card is-review" data-title="Mapa de riesgo sísmico" data-author="Unidad Geofísica" data-date="2025-07-30">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 class="project-title">Mapa de riesgo sísmico</h3>
-                                <p class="project-description">Conformación de mapas predictivos con sensores de baja potencia en zonas urbanas.</p>
-                            </div>
-                            <span class="project-status">En revisión</span>
-                        </header>
-
-                        <div class="version-grid">
-                            <section class="version version-initial is-ready">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-success">Recibida</span>
-                                </header>
-                                <p class="muted small">Subido el 30 jul 2025 · 4.1 MB</p>
-                                <a class="link" href="#" aria-label="Descargar la versión inicial de Mapa de riesgo sísmico">Descargar PDF</a>
-                            </section>
-
-                            <section class="version version-revised is-await">
-                                <header>
-                                    <h4>Versión revisada</h4>
-                                    <span class="chip chip-pending">Pendiente</span>
-                                </header>
-                                <p class="muted small">Revisión intermedia solicitada para 20 nov.</p>
-                            </section>
-                        </div>
-                    </article> -->
                 </div>
 
                 <div id="project-empty" class="project-empty" hidden>
@@ -381,6 +190,279 @@
 
 
 
+
+    <!-- SCRIPT PARA AGREGAR UN NUEVO AUTOR -->
+    <script>
+        // Función para buscar autores en la BD (preparada para cuando se cree el endpoint)
+        async function buscarAutores(query) {
+            if (!query || query.length < 2) {
+                return [];
+            }
+
+            try {
+                // TODO: Reemplazar con el endpoint real cuando esté listo
+                // const res = await fetch(`../php/autor_buscarAutores.php?q=${encodeURIComponent(query)}`, {
+                //     credentials: "same-origin"
+                // });
+                // const data = await res.json();
+                // return data.autores || [];
+
+                // Datos de ejemplo para pruebas (eliminar cuando se conecte con la BD)
+                const autoresEjemplo = [
+                    { id: 1, nombre: 'Juan Pérez', correo: 'juan@example.com' },
+                    { id: 2, nombre: 'María García', correo: 'maria@example.com' },
+                    { id: 3, nombre: 'Carlos López', correo: 'carlos@example.com' },
+                    { id: 4, nombre: 'Ana Martínez', correo: 'ana@example.com' },
+                    { id: 5, nombre: 'Pedro Sánchez', correo: 'pedro@example.com' }
+                ];
+
+                // Filtrar por nombre o correo
+                const queryLower = query.toLowerCase();
+                return autoresEjemplo.filter(autor => 
+                    autor.nombre.toLowerCase().includes(queryLower) ||
+                    autor.correo.toLowerCase().includes(queryLower)
+                );
+            } catch (error) {
+                console.error('Error al buscar autores:', error);
+                return [];
+            }
+        }
+
+        // Función para inicializar el autocomplete en un input
+        function inicializarAutocomplete(input) {
+            const dropdown = input.parentElement.querySelector('[data-autocomplete-dropdown]');
+            if (!dropdown) return;
+
+            let selectedIndex = -1;
+            let autores = [];
+            let timeoutId = null;
+
+            // Función para mostrar el dropdown
+            function mostrarDropdown() {
+                dropdown.classList.add('is-visible');
+            }
+
+            // Función para ocultar el dropdown
+            function ocultarDropdown() {
+                dropdown.classList.remove('is-visible');
+                selectedIndex = -1;
+            }
+
+            // Función para renderizar los resultados
+            function renderizarResultados(resultados) {
+                dropdown.innerHTML = '';
+                autores = resultados;
+
+                if (resultados.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'author-autocomplete-empty';
+                    empty.textContent = 'No se encontraron autores';
+                    dropdown.appendChild(empty);
+                    return;
+                }
+
+                resultados.forEach((autor, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'author-autocomplete-item';
+                    item.textContent = `${autor.nombre} (${autor.correo})`;
+                    item.dataset.index = index;
+                    
+                    item.addEventListener('click', () => {
+                        input.value = autor.nombre;
+                        input.dataset.authorId = autor.id;
+                        ocultarDropdown();
+                    });
+
+                    item.addEventListener('mouseenter', () => {
+                        selectedIndex = index;
+                        actualizarHighlight();
+                    });
+
+                    dropdown.appendChild(item);
+                });
+            }
+
+            // Función para actualizar el highlight
+            function actualizarHighlight() {
+                const items = dropdown.querySelectorAll('.author-autocomplete-item');
+                items.forEach((item, index) => {
+                    item.classList.toggle('is-highlighted', index === selectedIndex);
+                });
+            }
+
+            // Event listener para el input
+            input.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                
+                // Limpiar timeout anterior
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+
+                // Si el input está vacío, ocultar dropdown
+                if (query.length < 2) {
+                    ocultarDropdown();
+                    return;
+                }
+
+                // Debounce: esperar 300ms después de que el usuario deje de escribir
+                timeoutId = setTimeout(async () => {
+                    const resultados = await buscarAutores(query);
+                    renderizarResultados(resultados);
+                    mostrarDropdown();
+                }, 300);
+            });
+
+            // Event listener para cuando el input recibe foco
+            input.addEventListener('focus', async () => {
+                const query = input.value.trim();
+                if (query.length >= 2) {
+                    const resultados = await buscarAutores(query);
+                    renderizarResultados(resultados);
+                    mostrarDropdown();
+                }
+            });
+
+            // Event listener para navegación con teclado
+            input.addEventListener('keydown', (e) => {
+                const items = dropdown.querySelectorAll('.author-autocomplete-item');
+                
+                if (!dropdown.classList.contains('is-visible') || items.length === 0) {
+                    return;
+                }
+
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                        actualizarHighlight();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        actualizarHighlight();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && autores[selectedIndex]) {
+                            input.value = autores[selectedIndex].nombre;
+                            input.dataset.authorId = autores[selectedIndex].id;
+                            ocultarDropdown();
+                        }
+                        break;
+                    case 'Escape':
+                        ocultarDropdown();
+                        break;
+                }
+            });
+
+            // Ocultar dropdown al hacer click fuera
+            document.addEventListener('click', (e) => {
+                if (!input.parentElement.contains(e.target)) {
+                    ocultarDropdown();
+                }
+            });
+        }
+
+        function agregarAutor() {
+            const authorsContainer = document.querySelector('.authors-container');
+            const addButton = authorsContainer.querySelector('#add-author-button');
+
+            // Contar solo los author-item, excluyendo el botón de agregar
+            const authorItems = authorsContainer.querySelectorAll('.author-item');
+            
+            if(authorItems.length >= 5) {
+                alert("No se pueden agregar más de 5 autores.");
+                return;
+            }
+
+            const authorItem = document.createElement('div');
+            authorItem.className = 'author-item';
+
+            const fieldWrapper = document.createElement('div');
+            fieldWrapper.style.display = 'flex';
+            fieldWrapper.style.gap = '10px';
+            fieldWrapper.style.alignItems = 'flex-end';
+
+            const autocompleteWrapper = document.createElement('div');
+            autocompleteWrapper.className = 'author-autocomplete';
+
+            const field = document.createElement('div');
+            field.className = 'field';
+            field.style.flex = '1';
+
+            const authorIndex = authorItems.length + 1;
+            const inputId = `author-name-${authorIndex}`;
+
+            const label = document.createElement('label');
+            label.setAttribute('for', inputId);
+            label.textContent = 'Nombre del autor';
+
+            const input = document.createElement('input');
+            input.id = inputId;
+            input.type = 'text';
+            input.name = `author-name-${authorIndex}`;
+            input.required = true;
+            input.placeholder = 'Ej. Juan Pérez';
+            input.autocomplete = 'off';
+            input.setAttribute('data-author-input', '');
+            
+            const dropdown = document.createElement('div');
+            dropdown.className = 'author-autocomplete-dropdown';
+            dropdown.setAttribute('data-autocomplete-dropdown', '');
+
+            field.appendChild(label);
+            field.appendChild(input);
+            field.appendChild(dropdown);
+
+            autocompleteWrapper.appendChild(field);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.className = 'btn-secondary';
+            deleteButton.textContent = '−';
+            deleteButton.setAttribute('aria-label', 'Eliminar autor');
+            deleteButton.onclick = function() {
+                eliminarAutor(authorItem);
+            };
+
+            fieldWrapper.appendChild(autocompleteWrapper);
+            fieldWrapper.appendChild(deleteButton);
+
+            authorItem.appendChild(fieldWrapper);
+
+            // Insertar antes del botón de agregar autor
+            authorsContainer.insertBefore(authorItem, addButton);
+
+            // Inicializar autocomplete en el nuevo input
+            inicializarAutocomplete(input);
+        }
+
+        function eliminarAutor(authorItem) {
+            if (!authorItem) {
+                return;
+            }
+            
+            const authorsContainer = document.querySelector('.authors-container');
+            const authorItems = authorsContainer.querySelectorAll('.author-item');
+            
+            // No permitir eliminar si solo queda un autor
+            if (authorItems.length <= 1) {
+                alert("Debe haber al menos un autor.");
+                return;
+            }
+            
+            authorItem.remove();
+        }
+
+        // Inicializar autocomplete en el input inicial cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialInput = document.getElementById('author-correspondencia');
+            if (initialInput) {
+                inicializarAutocomplete(initialInput);
+            }
+        });
+    </script>
 
     <!-- SCRIPT PARA CARGAR LOS PROYECTOS AL CARGAR LA PÁGINA -->
     <script>
