@@ -258,16 +258,19 @@
         async function cargarTabla() {
             const dataDeBDD = await fetch('../php/revisor_getDatosRubrica.php', {
                 method: 'POST',
+                credentials: 'same-origin',
                 body: JSON.stringify({
                     pdfPath: (new URLSearchParams(window.location.search)).get('doc')
                 }),
             });
             const jsonStr = await dataDeBDD.text();
 
-            //sin no tenia guardado nada, salir
+            //si no tenia guardado nada, salir
             if (!jsonStr) return;
 
+            console.log(jsonStr);   
             const datosEnJSON = JSON.parse(jsonStr);
+            if (!datosEnJSON.datosRubrica) return;
             const formObj = JSON.parse(datosEnJSON.datosRubrica);
 
             form = document.getElementById('rubric-form');
@@ -323,6 +326,8 @@
         const formFueraDeLaFunc = document.getElementById('rubric-form');
         // Función para validar el formulario
         const validarForm = () => {
+
+            const allRadios = formFueraDeLaFunc.querySelectorAll('input[type="radio"]');
 
             // Validar que se haya elegido un dictamen
             dictamenSeleccionado = Array.from(allRadios)

@@ -173,6 +173,7 @@
                                 assigned: proy.entregas[0].fechaEntrega,//TODO, esta será puesta manualmente por el manager
                                 due: proy.fechaLimite,
                                 route: ruta,
+                                id: proy.id
                             });
                             break;
                         
@@ -183,6 +184,7 @@
                                 completed: '2025-10-10',//TODO, mejor le quito esto luego
                                 logRoute: ruta,
                                 verdict: proy.entregas[proy.entregas.length-1].aceptado ? 'Aceptado' : 'Rechazado',
+                                id: proy.id
                             });
                             break;
                     }
@@ -356,7 +358,7 @@
             renderAll();
         }
 
-        document.addEventListener('click', event => {
+        document.addEventListener('click', async event => {
             const button = event.target.closest('[data-action]');
             if (!button) return;
             const action = button.dataset.action;
@@ -372,6 +374,7 @@
                 moveToPending(id);
                 const route = button.dataset.route;
                 if (route) {
+                    await fetch('../php/revisor_guardarIds.php', { method: 'POST', credentials: 'same-origin' , body: JSON.stringify({ id }) });
                     window.location.href = route;
                 }
                 return;
@@ -380,6 +383,7 @@
             if (action === 'open') {
                 const route = button.dataset.route;
                 if (route) {
+                    await fetch('../php/revisor_guardarIds.php', { method: 'POST', credentials: 'same-origin' , body: JSON.stringify({ id }) });
                     window.location.href = route;
                 }
             }
