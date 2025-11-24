@@ -30,6 +30,12 @@ if ($check->get_result()->num_rows > 0) {
 $stmt = $conn->prepare("INSERT INTO revisor_proyecto (idRevisor, idProyecto, fechaLimite, datos, terminado) VALUES (?, ?, ?, '{}', 0)");
 $stmt->bind_param("iis", $idRevisor, $idProyecto, $fechaLimite);
 
+//aqui le voy a poner lo de veredicto
+//creamos lo de revisor_veredicto
+$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status) VALUES (?, ?, NULL)");
+$stmtVeredicto->bind_param("ii", $idRevisor, $idProyecto);
+$stmtVeredicto->execute();
+
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Revisor asignado correctamente.']);
 } else {
