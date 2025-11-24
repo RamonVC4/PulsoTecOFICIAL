@@ -1,0 +1,64 @@
+#pdf-viewer {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;     /* 👈 scrolling */
+    background: #f8f8f8;
+    position: relative;
+}
+
+#pdf-canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+
+.pdf-scroll {
+    width: 100%;
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+    background: #f5f5f5;
+    padding: 20px 0;
+}
+
+
+.document-viewer {
+    position: sticky;
+    top: calc(50vh - 450px);
+    max-width: 1000px;
+    height: 90vh;
+    align-self: flex-start;
+    z-index: 1;
+}
+
+.doc-frame {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+
+.session-layout {
+    min-height: 1000px;
+}
+
+.pdf-page-canvas {
+    display: block;
+    margin: 20px auto;
+    box-shadow: 0 0 4px #aaa;
+}
+
+#pdf-pages {
+    height: 100%;
+    background-color: #000;
+}
+
+#visorPDF {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    border: none;
+    min-height: 0;
+}
+
+
+

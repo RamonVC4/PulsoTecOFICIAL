@@ -109,7 +109,8 @@ CREATE TABLE `revisor` (
 --
 
 INSERT INTO `revisor` (`id`, `correo`, `contra`) VALUES
-(1, 'revisor@example.com', '$2y$10$rDR7XxcDruOiYFv1bwWXYe/MxRXNpe6gogrEqK8OLiRuQ6DV4Jcma');
+(1, 'revisor@example.com', '$2y$10$rDR7XxcDruOiYFv1bwWXYe/MxRXNpe6gogrEqK8OLiRuQ6DV4Jcma'),
+(2, 'revisor2@example.com', '$3y$10$rDR7XxcDruOiYFv1bwWXYe/MxRXNpe6gogrEqK8OLiRuQ6DV4Jcma');
 
 -- --------------------------------------------------------
 

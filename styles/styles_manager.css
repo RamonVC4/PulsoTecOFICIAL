@@ -1089,3 +1089,69 @@
     }
 }
 
+/* Límite de altura para la lista de sugerencias */
+.slot-suggestions ul {
+    max-height: 200px; /* Aquí está el freno: Máximo 200px de alto */
+    overflow-y: auto;  /* Si pasa de 200px, activa el scroll */
+    padding-right: 5px;
+}
+
+/* Estilo para que la barra de scroll sea discreta */
+.slot-suggestions ul::-webkit-scrollbar {
+    width: 5px;
+}
+.slot-suggestions ul::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+/* Evita que los textos largos rompan la tarjeta de sugerencias */
+.slot-suggestion div {
+    min-width: 0; /* Truco vital para que flexbox deje encoger el texto */
+    word-break: break-word; /* Rompe la palabra si es necesario */
+    overflow-wrap: anywhere; /* Asegura el salto de línea en cualquier punto */
+}
+
+/* Opcional: Si quieres que el correo se corte con "..." en lugar de bajar */
+/* .slot-suggestion .muted.tiny {
+    display: block;
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+} 
+*/
+/* Esto va en styles_manager.css */
+
+/* 1. Permite que el contenedor del texto se encoja si es necesario */
+.slot-suggestion div {
+    min-width: 0; /* Vital para flexbox: permite que el texto ceda espacio */
+    flex: 1;      /* Ocupa todo el espacio disponible antes de empujar el botón */
+}
+
+/* 2. Obliga al texto largo (como emails) a romperse y bajar de renglón */
+.slot-suggestion strong, 
+.slot-suggestion span {
+    white-space: normal;       /* Permite saltos de línea */
+    overflow-wrap: anywhere;   /* Corta la palabra donde sea si no cabe */
+    word-break: break-word;    /* Asegura el corte en navegadores viejos */
+    display: block;            /* Asegura que ocupen su propio renglón si es necesario */
+}
+
+/* --- CORRECCIÓN PARA RÚBRICAS --- */
+
+/* 1. Permite que el contenedor del texto dentro del header se encoja */
+.rubric-card header > div {
+    min-width: 0; /* Obligatorio para que flexbox no se estire infinito */
+    flex: 1;      /* Ocupa el espacio disponible */
+    padding-right: 8px; /* Un poco de espacio antes de la etiqueta de estado */
+}
+
+/* 2. Obliga a los textos (Nombre y Correo) a saltar de línea */
+.rubric-card header strong,
+.rubric-card header span {
+    white-space: normal;      /* Permite saltos de línea */
+    overflow-wrap: anywhere;  /* Corta la palabra donde sea necesario */
+    word-break: break-word;   /* Compatibilidad extra */
+    display: block;           /* Asegura que cada cosa tenga su renglón */
+}
