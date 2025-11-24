@@ -199,6 +199,23 @@
         const shortDate = { day: '2-digit', month: 'short', year: 'numeric' };
         const shortDateTime = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
 
+        // Variable global para los revisores
+        let reviewers = [];
+
+        async function fetchReviewers() {
+            try {
+                const response = await fetch('../php/manager_getRevisores.php');
+                const data = await response.json();
+                if (data.success) {
+                    reviewers = data.revisores;
+                    console.log("Revisores cargados:", reviewers);
+                }
+            } catch (error) {
+                console.error("Error cargando revisores:", error);
+            }
+        }
+
+        /*
         const reviewers = [
             { id: 'rev-01', name: 'Dra. Andrea Molina', email: 'andrea.molina@pulso-tec.mx', expertise: ['Biomateriales', 'Ensayos clínicos'] },
             { id: 'rev-02', name: 'Dr. Javier Solís', email: 'javier.solis@pulso-tec.mx', expertise: ['Dispositivos médicos', 'Regulación'] },
@@ -206,8 +223,58 @@
             { id: 'rev-04', name: 'Dra. Karla Hernández', email: 'karla.hernandez@pulso-tec.mx', expertise: ['Farmacología', 'Bioética'] },
             { id: 'rev-05', name: 'Ing. Diego Prado', email: 'diego.prado@pulso-tec.mx', expertise: ['Sensores', 'Analítica de datos'] },
             { id: 'rev-06', name: 'Dr. Salvador Nieto', email: 'salvador.nieto@pulso-tec.mx', expertise: ['Epidemiología', 'Metodología'] }
-        ];
+        ]; */
+        // Variable global para guardar los proyectos cargados
+        let projects = [];
 
+        async function fetchProjects() {
+            try {
+                // Llamada al backend
+                const response = await fetch('../php/manager_getProyectos.php'); 
+                const data = await response.json();
+
+                if (data.success) {
+                    // Transformamos los datos 
+                    projects = data.proyectos.map(p => {
+                        let stageName = p.stage;
+                        return {
+                            id: p.id, 
+                            title: p.title, 
+                            author: p.author || 'Autor pendiente', 
+                            area: p.area || 'General', 
+                            submitted: p.submitted, 
+                            due: '2025-12-01', 
+                            stage: stageName, 
+                            rubric: { status: stageName, score: '—', updated: null },
+                            assignedCountReal: p.conteo_revisores,
+                            slots: [null, null, null], 
+                            entregas: p.entregas,
+                            locked: stageName === "Aceptado",
+                            timeline: [], 
+                            reviews: {}   
+                        };
+                    });
+
+                    console.log("Proyectos cargados:", projects);
+                    
+                    // 1. Primero dibujamos la lista
+                    renderAll(); 
+
+                    // ejecutamos 'setActiveProject' para que traiga sus detalles de la BD.
+                    if (projects.length > 0) {
+                        // El 'await' asegura que termine de cargar antes de dejarte interactuar
+                        await setActiveProject(projects[0].id);
+                    }
+
+
+                } else {
+                    console.error('El servidor respondió con error:', data.message);
+                }
+            } catch (error) {
+                console.error('Error conectando con el backend:', error);
+            }
+        }
+/*
         const projects = [
             {
                 id: 'mx-101',
@@ -464,6 +531,7 @@
                 ]
             }
         ];
+        */
 
         let activeProjectId = null;
         let projectQuery = '';
@@ -538,7 +606,8 @@
         }
 
         function getReviewer(id) {
-            return reviewers.find(reviewer => reviewer.id === id);
+            // Usamos == (doble igual) para que el numero 1 sea igual al texto "1"
+            return reviewers.find(reviewer => reviewer.id == id); 
         }
 
         function statusClass(stage) {
@@ -550,7 +619,7 @@
             if (normalized.includes('finalizado') || normalized.includes('aceptado') || normalized.includes('cerrado')) return 'is-success';
             return 'is-neutral';
         }
-
+/*
         function setActiveProject(id) {
             activeProjectId = id;
             const indexOnList = filteredProjects.findIndex(project => project.id === id);
@@ -561,11 +630,93 @@
             renderProjects();
             renderAssignment();
         }
+*/
+            // Variable global para guardar revisores temporales (para que se vean los nombres)
+            // Variable global auxiliar
+        if (typeof tempReviewers === 'undefined') var tempReviewers = {}; 
+
+        async function setActiveProject(id) {
+            activeProjectId = id;
+            
+            const localProject = filteredProjects.find(p => p.id === id);
+            
+            // Paginación
+            const indexOnList = filteredProjects.findIndex(project => project.id === id);
+            if (indexOnList !== -1) {
+                projectPage = Math.floor(indexOnList / PAGE_SIZE);
+            }
+            
+            // PEDIR DATOS A PHP
+            try {
+                const response = await fetch(`../php/manager_getDetalles.php?id=${id}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Limpiamos slots
+                    localProject.slots = [null, null, null]; 
+                    localProject.reviews = {}; 
+
+                    // Llenamos slots
+                    data.interacciones.forEach((interaccion, index) => {
+                        if (index < 3) {
+                            localProject.slots[index] = interaccion.revisor_id;
+
+                            localProject.reviews[interaccion.revisor_id] = {
+                                iterations: [{
+                                    submission: 1, 
+                                    status: interaccion.terminado ? 'Terminado' : 'En progreso', 
+                                    score: '—', 
+                                    updated: interaccion.fecha_limite, 
+                                    summary: 'Revisor asignado.'
+                                }]
+                            };
+                            
+                            // Registramos el nombre para que el HTML lo encuentre
+                            addTempReviewer(interaccion);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Error cargando detalles:", error);
+            }
+
+            openSlotIndex = null;
+            renderProjects();   
+            renderAssignment(); 
+        }
+
+        // ESTA FUNCIÓN DEBE ESTAR AFUERA, DISPONIBLE GLOBALMENTE
+        // Función auxiliar para registrar revisores que vienen de la BD
+        function addTempReviewer(data) {
+            if (typeof reviewers === 'undefined') reviewers = [];
+
+            const existing = reviewers.find(r => r.id == data.revisor_id);
+            
+            if (!existing) {
+                // Truco visual: Si no tenemos nombre real, inventamos uno basado en el correo
+                // Ejemplo: "andrea.molina@..." -> "Andrea Molina"
+                let displayName = data.revisor_email;
+                if (data.revisor_email.includes('@')) {
+                    const parts = data.revisor_email.split('@')[0].split('.');
+                    // Capitalizamos la primera letra de cada parte
+                    displayName = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+                }
+
+                reviewers.push({
+                    id: data.revisor_id, 
+                    name: displayName, // Ahora mostrará "Andrea Molina" en vez del correo
+                    email: data.revisor_email,
+                    expertise: ['General'] 
+                });
+            }
+        }
 
         function renderProjects() {
             filteredProjects = projects
                 .filter(project => {
-                    const assignedCount = getAssigned(project).length;
+                    //const assignedCount = getAssigned(project).length; <--Viejo
+                    // (Si le diste clic y editaste, usamos getAssigned, si no, usamos el de PHP)
+                    const assignedCount = project.slots.filter(s => s).length || project.assignedCountReal || 0;
                     const hayQuery = project.title.toLowerCase().includes(projectQuery) ||
                         project.author.toLowerCase().includes(projectQuery) ||
                         project.area.toLowerCase().includes(projectQuery);
@@ -626,11 +777,12 @@
             elements.projectsEmpty.hidden = totalItems > 0;
             updatePagination(totalPages, totalItems);
 
+            /*
             if (!activeProjectId && totalItems) {
                 projectPage = 0;
                 activeProjectId = filteredProjects[0].id;
                 renderAssignment();
-            }
+            }*/
 
             if (totalItems === 0) {
                 activeProjectId = null;
@@ -713,7 +865,13 @@
             const slots = getSlots(project);
             const locked = !!project.locked;
             const assignedIds = getAssigned(project);
-            const availableReviewers = reviewers.filter(reviewer => !assignedIds.includes(reviewer.id));
+            
+            // Convertimos todo a String para asegurar que "1" sea igual a 1
+            const availableReviewers = reviewers.filter(reviewer => {
+                const estaOcupado = assignedIds.some(occupiedId => String(occupiedId) === String(reviewer.id));
+                return !estaOcupado; 
+            });
+
             elements.slotsSection.hidden = false;
             elements.slotsGrid.innerHTML = '';
 
@@ -757,13 +915,40 @@
                         </div>
                     `;
                 } else {
+                    /*
                     const suggestionsMarkup = isOpen
                         ? `
                             <div class="slot-suggestions">
                                 <p class="muted tiny">${availableReviewers.length ? 'Ejemplos sugeridos de revisores disponibles:' : 'No hay revisores disponibles. Libera un espacio o registra nuevos revisores.'}</p>
+                                
                                 <ul>
                                     ${availableReviewers.map(reviewer => `
                                         <li class="slot-suggestion">
+                                            <div>
+                                                <strong>${reviewer.name}</strong>
+                                                <span class="muted tiny">${reviewer.email}</span>
+                                                <span class="muted tiny">${reviewer.expertise.join(' · ')}</span>
+                                            </div>
+                                            <button type="button" class="btn-secondary slot-assign-btn" data-id="${reviewer.id}" data-slot="${index}">Asignar</button>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        ` : '';*/
+                        // Dentro de renderSlots, en el bloque 'else' (cuando no hay revisor asignado):
+
+                    const suggestionsMarkup = isOpen
+                        ? `
+                            <div class="slot-suggestions">
+                                <p class="muted tiny">${availableReviewers.length ? 'Selecciona un revisor disponible:' : 'No hay revisores disponibles.'}</p>
+                                
+                                <div style="margin-bottom: 8px;">
+                                    <input type="text" class="reviewer-search-input" data-slot="${index}" placeholder="Buscar por nombre..." style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px;">
+                                </div>
+
+                                <ul class="reviewer-list-${index}">
+                                    ${availableReviewers.map(reviewer => `
+                                        <li class="slot-suggestion" data-name="${reviewer.name.toLowerCase()}" data-email="${reviewer.email.toLowerCase()}">
                                             <div>
                                                 <strong>${reviewer.name}</strong>
                                                 <span class="muted tiny">${reviewer.email}</span>
@@ -829,25 +1014,43 @@
             });
 
             elements.slotsGrid.querySelectorAll('.slot-assign-btn').forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => { 
                     const reviewerId = button.dataset.id;
                     const slotIdx = Number(button.dataset.slot);
-                    const slots = getSlots(project);
-                    if (slots[slotIdx]) return;
-                    if (getAssigned(project).includes(reviewerId)) {
-                        showAssignmentNote('Este revisor ya está asignado a otro espacio.', true);
-                        return;
+                    
+                    button.disabled = true;
+                    button.textContent = "...";
+
+                    const payload = {
+                        idProyecto: project.id,
+                        idRevisor: reviewerId,
+                        fechaLimite: '2025-12-31' 
+                    };
+
+                    try {
+                        const res = await fetch('../php/manager_asignarRevisor.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            alert("Asignado correctamente");
+                            openSlotIndex = null;
+                            setActiveProject(project.id); 
+                        } else {
+                            alert("Error: " + data.message);
+                            button.disabled = false;
+                            button.textContent = "Asignar";
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert("Error de conexión");
+                        button.disabled = false;
+                        button.textContent = "Asignar";
                     }
-                    slots[slotIdx] = reviewerId;
-                    ensureReviewEntry(project, reviewerId);
-                    project.timeline.unshift({
-                        type: 'manager',
-                        message: `Se asignó a ${getReviewer(reviewerId)?.name || 'un revisor'}`,
-                        at: new Date().toISOString()
-                    });
-                    openSlotIndex = null;
-                    renderAll();
-                    showAssignmentNote(`Asignaste a ${getReviewer(reviewerId)?.name || 'revisor'}.`, false);
                 });
             });
 
@@ -863,6 +1066,30 @@
                     const reviewerId = button.dataset.reviewer;
                     window.location.href = `./review-session.html?doc=${projectId}&reviewer=${reviewerId}`;
                 });
+            });
+
+            // Busqueda por nombre para revisores
+            elements.slotsGrid.querySelectorAll('.reviewer-search-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const slotIndex = e.target.dataset.slot;
+                    const list = document.querySelector(`.reviewer-list-${slotIndex}`);
+                    
+                    // Buscamos todos los elementos de la lista (li)
+                    const items = list.querySelectorAll('.slot-suggestion');
+
+                    items.forEach(item => {
+                        const name = item.dataset.name;   // El nombre que guardamos en el data-attribute
+                        const email = item.dataset.email; // El email
+                        
+                        if (name.includes(term) || email.includes(term)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+                input.addEventListener('click', (e) => e.stopPropagation());
             });
         }
 
@@ -973,6 +1200,7 @@
             });
         }
 
+        /*
         function renderSubmissions(project) {
             if (!project.submissions || !project.submissions.length) {
                 elements.submissionsSection.hidden = true;
@@ -996,6 +1224,72 @@
                 `;
                 elements.submissionsGrid.appendChild(card);
             });
+        }*/
+
+        function renderSubmissions(project) {
+            // Damos prioridad a 'entregas'
+            const dataList = (project.entregas && project.entregas.length > 0) 
+                ? project.entregas 
+                : (project.submissions || []);
+
+            if (!dataList.length) {
+                elements.submissionsSection.hidden = true;
+                return;
+            }
+
+            elements.submissionsSection.hidden = false;
+            elements.submissionsGrid.innerHTML = '';
+
+            // Recorremos la lista de entregas
+            dataList.forEach((item, index) => {
+                const card = document.createElement('article');
+                card.className = 'submission-card';
+                const label = item.numeroEntrega ? `Entrega ${item.numeroEntrega}` : `Entrega ${index + 1}`;
+                
+                // Formateamos la fecha (si existe)
+                const dateVal = item.fechaEntrega || item.submitted;
+                const dateStr = dateVal ? formatDate(dateVal, longDate) : '—';
+                
+                // Obtenemos el path del PDF
+                const pdfUrl = item.pdfPath;
+
+                let statusText = "Pendiente";
+                let badgeClass = "";
+
+
+                if (item.aceptado == 1) {
+                    statusText = "Aceptado";
+                    badgeClass = "is-success";
+                } else if (item.aceptado == 0 && item.entregado == 1) { 
+                    statusText = "Revisión"; 
+                    badgeClass = "is-warning"; 
+                } else if (item.entregado == 1) {
+                    statusText = "Recibido";
+                    badgeClass = "is-info";
+                } else if (item.status) {
+                    statusText = item.status;
+                    badgeClass = statusVariant(item.status);
+                }
+
+                card.innerHTML = `
+                    <header>
+                        <strong>${label}</strong>
+                        <span class="submission-status ${badgeClass}">${statusText}</span>
+                    </header>
+                    <div class="submission-meta">
+                        <span>Registrado: ${dateStr}</span>
+                        
+                        ${ pdfUrl 
+                            ? `<a href="${pdfUrl}" target="_blank" class="btn-link" style="display:flex; align-items:center; gap:4px; margin-top:6px;">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>
+                                Ver documento
+                            </a>`
+                            : '<span class="muted small">Sin archivo adjunto</span>'
+                        }
+                    </div>
+                `;
+                elements.submissionsGrid.appendChild(card);
+            });
         }
 
         function renderApproval(project) {
@@ -1015,21 +1309,52 @@
             elements.approveBtn.onclick = () => approveProject(project.id);
         }
 
-        function approveProject(projectId) {
+        async function approveProject(projectId) {
             const project = getProject(projectId);
             if (!project || project.locked) return;
-            project.locked = true;
-            project.stage = 'Cerrado';
-            project.status = 'Aprobado';
-            project.rubric.status = 'Aprobado';
-            project.rubric.updated = new Date().toISOString().slice(0, 10);
-            project.timeline.unshift({
-                type: 'manager',
-                message: 'Proyecto aprobado y cerrado',
-                at: new Date().toISOString()
-            });
-            openSlotIndex = null;
-            renderAll();
+
+            // Confirmación de seguridad
+            if (!confirm("¿Estás seguro de aprobar este proyecto? Esta acción cerrará el proceso.")) {
+                return;
+            }
+
+            const btn = document.getElementById('approve-btn');
+            if(btn) {
+                btn.textContent = "Proyecto aprobado";
+                btn.disabled = true;
+            }
+
+            try {
+                // Enviamos la orden al backend
+                const response = await fetch('../php/manager_aprobarProyecto.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idProyecto: projectId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("¡Proyecto aprobado exitosamente!");
+                    
+                    // Actualizamos la lista
+                    await fetchProjects(); 
+                    setActiveProject(projectId); 
+                } else {
+                    alert("Error: " + data.message);
+                    if(btn) {
+                        btn.textContent = "Aprobar proyecto";
+                        btn.disabled = false;
+                    }
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("No se pudo conectar con el servidor.");
+                if(btn) {
+                    btn.textContent = "Aprobar proyecto";
+                    btn.disabled = false;
+                }
+            }
         }
 
         function renderTimeline(project) {
@@ -1071,6 +1396,7 @@
             }
         }
 
+        /*
         function removeReviewer(projectId, slotIndex) {
             const project = getProject(projectId);
             if (!project || project.locked) return;
@@ -1088,6 +1414,61 @@
             });
             renderAll();
             showAssignmentNote(`Liberaste el espacio de ${reviewer?.name || 'revisor'}.`, false);
+        }*/
+        async function removeReviewer(projectId, slotIndex) {
+            // 1. Obtenemos el ID del revisor que está en ese espacio (slot)
+            const project = getProject(projectId);
+            const slots = getSlots(project);
+            const reviewerId = slots[slotIndex];
+
+            if (!reviewerId) return; // Si no hay nadie, no hacemos nada
+
+            // 2. Preguntamos confirmación (Opcional, pero recomendado)
+            if (!confirm("¿Estás seguro de que deseas eliminar a este revisor? Se perderán sus avances.")) {
+                return;
+            }
+
+            // 3. Enviamos la orden de borrar al Backend
+            try {
+                const payload = {
+                    idProyecto: projectId,
+                    idRevisor: reviewerId
+                };
+
+                const response = await fetch('../php/manager_eliminarRevisor.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // ÉXITO: Limpiamos visualmente y recargamos
+                    
+                    // Borramos del array local inmediatamente para que se sienta rápido
+                    project.slots[slotIndex] = null;
+                    delete project.reviews[reviewerId];
+                    
+                    // Agregamos al historial (timeline) visual
+                    project.timeline.unshift({
+                        type: 'manager',
+                        message: 'Se eliminó un revisor del proyecto',
+                        at: new Date().toISOString()
+                    });
+
+                    // Recargamos los datos reales de la BD para asegurar que todo esté sincrinizado
+                    setActiveProject(projectId);
+                    
+                    alert("Revisor eliminado correctamente.");
+                } else {
+                    alert("Error al eliminar: " + data.message);
+                }
+
+            } catch (error) {
+                console.error("Error de red:", error);
+                alert("No se pudo conectar con el servidor.");
+            }
         }
 
         function renderHistory() {
@@ -1192,7 +1573,15 @@
             renderProjects();
         });
 
-        renderAll();
+        //renderAll();
+        //fetchProjects(); 
+        //fetchReviewers();
+        async function initManager() {
+        console.log("Iniciando sistema...");
+        await fetchReviewers(); // 1. Primero revisores
+        await fetchProjects();  // 2. Luego proyectos
+    }
+    initManager();
     })();
     </script>
 

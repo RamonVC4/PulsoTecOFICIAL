@@ -6,6 +6,8 @@
     <title>Revisión de documento</title>
     <link rel="stylesheet" href="../styles/styles_general.css">
     <link rel="stylesheet" href="../styles/styles_revisor.css">
+    <link rel="stylesheet" href="../styles/styles_review_session.css">
+
 
 </head>
 <body>
@@ -29,6 +31,9 @@
         </nav>
     </header>
 
+<!-- <div class="pruebaVisor">
+</div> -->
+
 
 
     <!-- HEADER SECUNDARIO -->
@@ -45,16 +50,12 @@
         </header>
 
         <div class="session-layout" id="session-layout">
+            
             <section class="document-viewer" aria-label="Visualización del documento">
-                <div class="doc-frame">
-                    <div id="pdf-viewer">
-                        <canvas id="pdf-canvas"></canvas>
-                        <div class="doc-placeholder" id="doc-placeholder">
-                            Carga el PDF del manuscrito aquí
-                        </div>
-                    </div>
-                </div>
+                <iframe src="../ESTRUCTURA_DE_UN_TRADUCTOR.pdf" id="visorPDF"></iframe>
             </section>
+
+            
 
             <aside class="rubric-panel" id="rubric-panel" aria-label="Rúbrica de evaluación">
 
@@ -252,7 +253,7 @@
         </div>
     </main>
 
-
+    <!-- CARGAR TABLA -->
     <script>
         async function cargarTabla() {
             const dataDeBDD = await fetch('../php/revisor_getDatosRubrica.php', {
@@ -307,6 +308,14 @@
             }
         }
     </script>
+
+
+        
+    
+
+
+
+    <!-- VALIDACION DEL FORMULARIO -->
     <script>
     //esta funcion se ejecuta al cargar la pagina
     document.addEventListener('DOMContentLoaded', () => {
@@ -334,6 +343,8 @@
         validarForm();
     });
     </script>
+
+    <!-- TERMINAR REVISION -->
     <script>
         async function terminarRevision(terminado) {
             if (terminado && !tablaLlena){
@@ -372,6 +383,8 @@
         }
     </script>
 
+
+    <!-- RÚBRICA -->
     <script>
     (function () {
         const $ = (sel, root = document) => root.querySelector(sel);
