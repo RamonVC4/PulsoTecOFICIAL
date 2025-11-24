@@ -296,7 +296,7 @@
 <!-- no se si validar la orcid -->
  <script>
     function validarORCID(orcid) {//esto checa los digitos verificadores con la formula que se supone que es, pero no lo uso porque no se si hacerlo
-        const regexOrcid = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/;
+        const regexOrcid = /^\d{4}\d{4}\d{4}\d{3}[\dXx]$/;
         if (!regexOrcid.test(orcid)) return false;
 
         const digits = orcid.replace(/-/g, '');
@@ -433,6 +433,7 @@
             return;
         }else{
             alert("Registro exitoso.");
+            window.location.href = "./login.html";
         }
 
         //valido el email mandando un correo TODO no se si necesito hacer esto
