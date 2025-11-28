@@ -27,7 +27,7 @@
                 <ul class="nav-list">
                     <li><a href="../Index.html">INICIO</a></li>
                     <li><a href="#">MIS PROYECTOS</a></li>
-                    <li><a href="#">AYUDA</a></li>
+                    <!-- <li><a href="#">AYUDA</a></li> -->
                     <li class="login"><a href="../webpages/login.html">CERRAR SESIÓN</a></li>
                 </ul>
             </div>
@@ -63,25 +63,41 @@
                     <!-- Crear un espacio para agregar autores (1 a 5), y que sólo uno sea el de correspondencia  -->
                      <!-- quiero que se pongan por separado, que se busquen en la base de datos, y que haya un botón para agregar otro -->
                     
-                     <div class="authors-container">
+                    <div class="authors-container">
+                        <div class="field">
+                            <label for="add-authors">Autores extra del proyecto (tu ya estas incluido)</label><br>
+                        </div>
+                        <!-- <div class="author-item">
+                            <div class="author-autocomplete">
+                                <div class="field">
+                                    <label for="author-name-1">Nombre del autor</label>
+                                    <input id="author-name-1" name="author-name" type="text" required placeholder="Ej. Juan Pérez" autocomplete="off" data-author-input>
+                                    <div class="author-autocomplete-dropdown" data-autocomplete-dropdown></div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <button type="button" id="add-author-button" class="btn-secondary" onclick="agregarAutor()">+</button>
+                    </div>
+
+                    <div class="authors-container">
                         <div class="author-item">
                             <div class="author-autocomplete">
                                 <div class="field">
-                                    <label for="author-correspondencia">Nombre del autor</label>
-                                    <input id="author-correspondencia" name="author-name" type="text" required placeholder="Ej. Juan Pérez" autocomplete="off" data-author-input>
+                                    <label for="author-correspondencia">Autor de correspondencia</label>
+                                    <input id="author-correspondencia" name="author-name" type="text" required placeholder="Ej. Juan Pérez" autocomplete="off" data-author-input>
                                     <div class="author-autocomplete-dropdown" data-autocomplete-dropdown></div>
                                 </div>
                             </div>
                         </div>
-
-                        <button type="button" id="add-author-button" class="btn-secondary" onclick="agregarAutor()">+</button>
                     </div>
 
                     <div class="field">
                         <label for="knowledge-area">Área de conocimiento</label>
 
             
-                        <select id="knowledge-area" name="knowledge_area" required>
+                        <select id="area-conocimiento" name="knowledge_area" required>
+                            <option value="0" selected>Seleccione una opción</option>
                             <option value="1">Ingeniería Química y Bioquímica</option>
                             <option value="2">Ingeniería Industrial</option>
                             <option value="3">Sistemas Computacionales y TI</option>
@@ -96,16 +112,16 @@
                     </div>
 
                     <div class="field">
-                        <label for="project-file">Entrega inicial (PDF)</label>
+                        <label for="project-file">Entrega inicial (DOCX)</label>
                         <div class="dropzone" data-dropzone>
-                            <input id="project-file" name="initial_file" type="file" accept="application/pdf" hidden required>
+                            <input id="project-file" name="initial_file" type="file" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden required>
                             <div class="dz-inner">
                                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 5 17 10"></polyline>
                                     <line x1="12" y1="5" x2="12" y2="16"></line>
                                 </svg>
-                                <p><strong>Arrastra tu PDF</strong> o</p>
+                                <p><strong>Arrastra tu DOCX</strong> o</p>
                                 <button type="button" class="btn-secondary" data-dropzone-trigger>Seleccionar archivo</button>
                                 <div class="file-info" data-dropzone-info aria-live="polite"></div>
                             </div>
@@ -124,7 +140,7 @@
             <!-- LISTADO DE PROYECTOS DEL AUTOR -->
             <div class="project-board" aria-live="polite">
                 <div class="project-board-tools">
-                    <label class="sr-only" for="project-search">Buscar proyectos:</label>
+                    <!-- <label class="sr-only" for="project-search">Buscar proyectos:</label>
                     <div class="project-board-search">
                         <span class="project-board-search__icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -133,11 +149,10 @@
                             </svg>
                         </span>
                         <input id="project-search" type="search" placeholder="Buscar por título, autor o fecha...">
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="project-list" data-page-size="5">
-                    <!-- comenté los placeholders -->
 
                     <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
                         <header class="project-card__header">
@@ -190,37 +205,37 @@
 
 
 
+    <!-- SCRIPT PARA QUE NO TE DEJE ENTRAR SI NO ESTAS LOGGED IN -->
+    <!-- <script>
+        if (!sessionStorage.getItem('userId')) {
+            window.location.href = 'login.html';
+        }
+    </script> -->
 
     <!-- SCRIPT PARA AGREGAR UN NUEVO AUTOR -->
     <script>
         // Función para buscar autores en la BD (preparada para cuando se cree el endpoint)
         async function buscarAutores(query) {
-            if (!query || query.length < 2) {
+            if (!query || query.length < 1) {
                 return [];
             }
 
             try {
-                // TODO: Reemplazar con el endpoint real cuando esté listo
-                // const res = await fetch(`../php/autor_buscarAutores.php?q=${encodeURIComponent(query)}`, {
-                //     credentials: "same-origin"
-                // });
-                // const data = await res.json();
-                // return data.autores || [];
+                const res = await fetch(`../php/buscarAutores.php`, {
+                    credentials: "same-origin"
+                });
+                const data = await res.json();                
 
-                // Datos de ejemplo para pruebas (eliminar cuando se conecte con la BD)
-                const autoresEjemplo = [
-                    { id: 1, nombre: 'Juan Pérez', correo: 'juan@example.com' },
-                    { id: 2, nombre: 'María García', correo: 'maria@example.com' },
-                    { id: 3, nombre: 'Carlos López', correo: 'carlos@example.com' },
-                    { id: 4, nombre: 'Ana Martínez', correo: 'ana@example.com' },
-                    { id: 5, nombre: 'Pedro Sánchez', correo: 'pedro@example.com' }
-                ];
+                console.log(data);
 
                 // Filtrar por nombre o correo
                 const queryLower = query.toLowerCase();
-                return autoresEjemplo.filter(autor => 
+                return data.autores.filter(autor => 
                     autor.nombre.toLowerCase().includes(queryLower) ||
-                    autor.correo.toLowerCase().includes(queryLower)
+                    autor.correo.toLowerCase().includes(queryLower) ||
+                    autor.primerApellido.toLowerCase().includes(queryLower) ||
+                    autor.segundoApellido.toLowerCase().includes(queryLower)
+
                 );
             } catch (error) {
                 console.error('Error al buscar autores:', error);
@@ -264,12 +279,13 @@
                 resultados.forEach((autor, index) => {
                     const item = document.createElement('div');
                     item.className = 'author-autocomplete-item';
-                    item.textContent = `${autor.nombre} (${autor.correo})`;
+                    item.textContent = `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}`;
                     item.dataset.index = index;
                     
                     item.addEventListener('click', () => {
-                        input.value = autor.nombre;
-                        input.dataset.authorId = autor.id;
+                        input.value = `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}`;
+                        input.dataset.authorId = autor.id;//TODO usar esto mejor para conseguir las ids
+                        console.log(input.dataset);
                         ocultarDropdown();
                     });
 
@@ -371,7 +387,7 @@
             // Contar solo los author-item, excluyendo el botón de agregar
             const authorItems = authorsContainer.querySelectorAll('.author-item');
             
-            if(authorItems.length >= 5) {
+            if(authorItems.length >= 4) {
                 alert("No se pueden agregar más de 5 autores.");
                 return;
             }
@@ -445,12 +461,6 @@
             
             const authorsContainer = document.querySelector('.authors-container');
             const authorItems = authorsContainer.querySelectorAll('.author-item');
-            
-            // No permitir eliminar si solo queda un autor
-            if (authorItems.length <= 1) {
-                alert("Debe haber al menos un autor.");
-                return;
-            }
             
             authorItem.remove();
         }
@@ -625,23 +635,85 @@
         async function crearProyecto(){
             //consigo los datos
             const titulo = document.getElementById('project-title').value;
+            const autorCorrespondencia = document.querySelector('#author-correspondencia');
             const archivo = document.getElementById('project-file').files[0];
+            const areaDeConocimiento = document.querySelector('#area-conocimiento').value;
+            
+            //loopeo por los autores si es que hay autores extra
+            const authorsContainer = document.querySelectorAll('.authors-container')[0];
+            const inputs = authorsContainer.querySelectorAll('input[data-author-input]');
+            const idAutores = [];
 
-            // validación
+            inputs.forEach(input => {
+                idAutores.push(input.dataset.authorId);
+            });
+
+            //consigo todos los autores de la bdd
+            const respuestaAutores = await fetch("../php/buscarAutores.php", { credentials: "same-origin" });
+            const autoresBdd = await respuestaAutores.json();
+            if (!autoresBdd.success) {
+                console.error(autoresBdd.message);
+                return;
+            }
+
+            let autoresValidos = true;
+
+            if (!autoresValidos) {
+                alert("Alguno de los autores ingresados no existen en la base de datos.");
+                return;
+            }
+
+            /*VALIDACIONES DE*/
+            //titulo
             if (!titulo) {
                 alert("Por favor ingresa el nombre del proyecto.");
                 return;
             }
 
-            if (!archivo) {
-                alert("Por favor selecciona un archivo PDF para la entrega inicial.");
+            //autor de correspondencia
+            if (!autorCorrespondencia.value) {
+                alert("Por favor selecciona un autor de correspondencia.");
                 return;
             }
-            
+            let autorCorrespondenciaId = autorCorrespondencia.dataset.authorId;
+
+            if (!autorCorrespondenciaId) {
+                alert("Por favor selecciona un autor de correspondencia.");
+                return;
+            }
+
+            //consigo mi id de los params
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            console.log("VALORS")
+            console.log(idAutores);
+            console.log(id);
+            console.log(autorCorrespondenciaId);
+            console.log(idAutores.includes(autorCorrespondenciaId));
+            if (!(idAutores.includes(autorCorrespondenciaId) || id == autorCorrespondenciaId)) {
+                alert ("El autor de correspondencia debe ser un autor del proyecto.");
+            }
+
+            //archivo
+            if (!archivo) {
+                alert("Por favor selecciona un archivo DOCX para la entrega inicial.");
+                return;
+            }
+
+            //area de conocimiento
+            if (areaDeConocimiento === '0') {
+                alert("Por favor ingrese el area de conocimiento.");
+                return;
+            }
+
+
             //para mandar archivos no puede ser con json, tiene que ser con FormData
             const formData = new FormData();
             formData.append('titulo', titulo);
             formData.append('archivo', archivo);
+            formData.append('autores', JSON.stringify(idAutores));
+            formData.append('autorCorrespondenciaId', autorCorrespondenciaId);
 
             const res = await fetch("../php/autor_crearProyecto.php", {
                 method: "POST",

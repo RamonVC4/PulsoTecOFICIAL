@@ -30,6 +30,20 @@ if ($check->get_result()->num_rows > 0) {
 $stmt = $conn->prepare("INSERT INTO revisor_proyecto (idRevisor, idProyecto, fechaLimite, datos, terminado) VALUES (?, ?, ?, '{}', 0)");
 $stmt->bind_param("iis", $idRevisor, $idProyecto, $fechaLimite);
 
+//aqui le voy a poner lo de veredicto
+//consigo la id de la ultima entrega
+$stmtEntrega = $conn->prepare("SELECT id FROM entrega WHERE idProyecto = ? ORDER BY id DESC LIMIT 1");
+$stmtEntrega->bind_param("i", $idProyecto);
+$stmtEntrega->execute();
+$resultEntrega = $stmtEntrega->get_result();
+$rowEntrega = $resultEntrega->fetch_assoc();
+$idEntrega = $rowEntrega['id'];
+
+//creamos lo de revisor_veredicto
+$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status, idEntrega) VALUES (?, ?, NULL, ?)");
+$stmtVeredicto->bind_param("iii", $idRevisor, $idProyecto, $idEntrega);
+$stmtVeredicto->execute();
+
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Revisor asignado correctamente.']);
 } else {
