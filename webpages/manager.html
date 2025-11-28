@@ -1,3 +1,5 @@
+//COMENTÉ RENDER HISTORY Y UPDATE METRICS
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,6 +10,7 @@
     <link rel="stylesheet" href="../styles/styles_manager.css">
 </head>
 <body>
+    <!-- HEADER PRINCIPAL -->
     <header class="site-header">
         <div class="header-top">
             <div class="container">
@@ -27,22 +30,23 @@
         </nav>
     </header>
 
+
+
+
+
+
+
+
     <main class="container manager-main">
         <section class="manager-overview">
             <div class="overview-copy">
                 <h2>Panel de coordinación</h2>
                 <p class="muted">Controla el flujo entre autores y revisores: asigna proyectos, supervisa el avance de las rúbricas y mantén todo el histórico en un solo lugar.</p>
             </div>
-            <!-- FEATURE CREEP \/ -->
-            <!-- <div class="overview-metrics">
-                <article class="metric-card is-info">
-                    <span class="metric-label">Total proyectos</span>
-                    <span class="metric-value" data-metric="projects-total">0</span>
-                    <p class="metric-sub" data-metric="projects-updated">Actualización: —</p>
-                </article>
-        </section> -->
+        </section>
 
         <section class="manager-dashboard">
+            <!-- CARD PROYECTOS -->
             <article class="card projects-card" aria-labelledby="projects-title">
                 
                 <header class="projects-header">
@@ -76,6 +80,9 @@
                     </form>
                 </header>
                 <ul class="projects-list" id="projects-list" aria-live="polite"></ul>
+
+
+                
                 <div class="projects-empty" id="projects-empty" hidden>No encontramos proyectos con esos criterios.</div>
                 <div class="projects-pagination" id="projects-pagination" hidden>
                     <button type="button" class="btn-pagination" id="projects-prev" aria-label="Proyectos anteriores">Anterior</button>
@@ -83,6 +90,16 @@
                     <button type="button" class="btn-pagination" id="projects-next" aria-label="Proyectos siguientes">Siguiente</button>
                 </div>
             </article>
+
+
+
+
+
+
+
+
+
+
 
             <article class="card assignment-card" aria-labelledby="assignment-title">
                 <div class="assignment-shell">
@@ -249,6 +266,7 @@
                 console.error('Error conectando con el backend:', error);
             }
         }
+
         let activeProjectId = null;
         let projectQuery = '';
         let projectFilter = 'all';
@@ -613,7 +631,7 @@
                         </div>
                     `;
                 } else {
-            
+
                     const suggestionsMarkup = isOpen
                         ? `
                             <div class="slot-suggestions">
@@ -876,6 +894,7 @@
                 });
             });
         }
+
         function renderSubmissions(project) {
             // Damos prioridad a 'entregas'
             const dataList = (project.entregas && project.entregas.length > 0) 
@@ -1046,6 +1065,7 @@
             }
         }
 
+
         async function removeReviewer(projectId, slotIndex) {
             // 1. Obtenemos el ID del revisor que está en ese espacio (slot)
             const project = getProject(projectId);
@@ -1102,30 +1122,30 @@
             }
         }
 
-        function renderHistory() {
-            elements.historyTable.innerHTML = '';
-            projects
-                .slice()
-                .sort((a, b) => new Date(b.submitted) - new Date(a.submitted))
-                .forEach(project => {
-                    const row = document.createElement('tr');
-                    const reviewerNames = getAssigned(project).map(id => getReviewer(id)?.name || '—').join(', ') || 'Sin asignar';
-                    row.innerHTML = `
-                        <td><code>${project.id}</code></td>
-                        <td>
-                            <div class="history-project">
-                                <strong>${project.title}</strong>
-                                <span class="muted small">${project.author}</span>
-                            </div>
-                        </td>
-                        <td><span class="status-pill ${statusClass(project.stage)}">${project.stage}</span></td>
-                        <td>${project.rubric.status}${project.rubric.score && project.rubric.score !== '—' ? ` · ${project.rubric.score}` : ''}</td>
-                        <td>${reviewerNames}</td>
-                        <td>${project.rubric.updated ? formatDate(project.rubric.updated, shortDate) : formatDate(project.submitted, shortDate)}</td>
-                    `;
-                    elements.historyTable.appendChild(row);
-                });
-        }
+        // function renderHistory() {
+        //     elements.historyTable.innerHTML = '';
+        //     projects
+        //         .slice()
+        //         .sort((a, b) => new Date(b.submitted) - new Date(a.submitted))
+        //         .forEach(project => {
+        //             const row = document.createElement('tr');
+        //             const reviewerNames = getAssigned(project).map(id => getReviewer(id)?.name || '—').join(', ') || 'Sin asignar';
+        //             row.innerHTML = `
+        //                 <td><code>${project.id}</code></td>
+        //                 <td>
+        //                     <div class="history-project">
+        //                         <strong>${project.title}</strong>
+        //                         <span class="muted small">${project.author}</span>
+        //                     </div>
+        //                 </td>
+        //                 <td><span class="status-pill ${statusClass(project.stage)}">${project.stage}</span></td>
+        //                 <td>${project.rubric.status}${project.rubric.score && project.rubric.score !== '—' ? ` · ${project.rubric.score}` : ''}</td>
+        //                 <td>${reviewerNames}</td>
+        //                 <td>${project.rubric.updated ? formatDate(project.rubric.updated, shortDate) : formatDate(project.submitted, shortDate)}</td>
+        //             `;
+        //             elements.historyTable.appendChild(row);
+        //         });
+        // }
 
         function updateMetrics() {
             const total = projects.length;
@@ -1148,8 +1168,6 @@
         function renderAll() {
             renderProjects();
             renderAssignment();
-            //renderHistory();
-            //updateMetrics();
         }
 
         elements.projectFilter.addEventListener('change', event => {
@@ -1203,6 +1221,7 @@
             projectPage = 0;
             renderProjects();
         });
+
 
         async function initManager() {
         console.log("Iniciando sistema...");
