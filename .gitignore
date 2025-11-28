@@ -4,3 +4,5 @@ pdfTest.pdf
 /vendor
 composer.json
 composer.lock
+
+service-account.json

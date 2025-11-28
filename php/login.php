@@ -29,7 +29,8 @@ $stmt->execute();
 
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
-if (!$row || !password_verify($password, $row['contra'])) {
+//if (!$row || !password_verify($password, $row['contra'])) {
+if (!$row || $password != $row['contra']) {
     echo json_encode(["success" => false]);
     exit;
 }
@@ -40,9 +41,9 @@ session_start();
 $_SESSION['user_id'] = $row['id'];
 
 $routes = [
-    "autor" => "../webpages/author.html",
-    "manager" => "../webpages/manager.html",
-    "revisor" => "../webpages/revisor.html"
+    "autor" => "../webpages/author.html"."?id=" . $row['id'],
+    "manager" => "../webpages/manager.html"."?id=" . $row['id'],
+    "revisor" => "../webpages/revisor.html"."?id=" . $row['id']
 ];
 
 echo json_encode([

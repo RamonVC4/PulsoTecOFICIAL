@@ -5,9 +5,8 @@ require_once 'db.php';
 $data = json_decode(file_get_contents("php://input"), true);
 $cuerpo = $data;
 $tabla = $data['role'];
-$contrarParaMeter = password_hash($cuerpo['password'], PASSWORD_DEFAULT);
+$contrarParaMeter = $cuerpo['password'];//password_hash($cuerpo['password'], PASSWORD_DEFAULT); TODO descomentar
 //hago el insert porque se supone que ya verifiqué todo 
-var_dump($cuerpo);
 if($tabla == 'revisor'){
     $stmt = $conn->prepare("INSERT INTO revisor (nombre, correo, contra, primerApellido, segundoApellido, CURP, areaDeConocimiento) VALUES (?, ?, ?, ?, ?, ?, ?);");
     $stmt->bind_param("sssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['curp'], $cuerpo['areaDeConocimiento']);

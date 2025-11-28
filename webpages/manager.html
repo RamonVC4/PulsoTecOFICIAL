@@ -20,7 +20,7 @@
                 <ul class="nav-list">
                     <li><a href="../Index.html">INICIO</a></li>
                     <li><a href="#">TABLERO</a></li>
-                    <li><a href="#">AYUDA</a></li>
+                    <!-- <li><a href="#">AYUDA</a></li> -->
                     <li class="login"><a href="./login.html">CERRAR SESIÓN</a></li>
                 </ul>
             </div>
@@ -1064,7 +1064,7 @@
                 button.addEventListener('click', () => {
                     const projectId = button.dataset.project;
                     const reviewerId = button.dataset.reviewer;
-                    window.location.href = `./review-session.html?doc=${projectId}&reviewer=${reviewerId}`;
+                    window.location.href = `./manager-verRubrica.html?doc=${projectId}&reviewer=${reviewerId}`;
                 });
             });
 
@@ -1195,7 +1195,7 @@
                 button.addEventListener('click', () => {
                     const projectId = button.dataset.project;
                     const reviewerId = button.dataset.reviewer;
-                    window.location.href = `./review-session.html?doc=${projectId}&reviewer=${reviewerId}`;
+                    window.location.href = `./manager-verRubrica.html?doc=${projectId}&reviewer=${reviewerId}`;
                 });
             });
         }
