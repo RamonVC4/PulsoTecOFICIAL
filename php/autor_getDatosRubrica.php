@@ -20,6 +20,7 @@ if (!$result) {
 }
 
 //regreso solo los datos como json
+var_dump($idEntrega);
 echo json_encode(['success' => true, 'datosRubrica' => $row['datos'], 'terminado' => 1]);
 
 ?>

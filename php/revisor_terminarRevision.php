@@ -10,9 +10,17 @@ $respuestasComoJSONString = json_encode($respuestas);
 //consigo la id del proyecto
 $idProyecto = $_SESSION['idProyecto'];
 
+//consigo la id de la ultima entrega
+$stmtEntrega = $conn->prepare("SELECT id FROM entrega WHERE idProyecto = ? ORDER BY id DESC LIMIT 1");
+$stmtEntrega->bind_param("i", $idProyecto);
+$stmtEntrega->execute();
+$resultEntrega = $stmtEntrega->get_result();
+$rowEntrega = $resultEntrega->fetch_assoc();
+$idEntrega = $rowEntrega['id'];
+
 //actualizo las respuestas en la base de datos
-$stmtRevisorProyecto = $conn->prepare("UPDATE revisor_proyecto SET terminado = 1, datos = ? WHERE idRevisor = ? AND idProyecto = ?");//TODO CAMBIAR TERMINADO A 1
-$stmtRevisorProyecto->bind_param("sii", $respuestasComoJSONString, $_SESSION['user_id'], $idProyecto);
+$stmtRevisorProyecto = $conn->prepare("UPDATE revisor_proyecto SET terminado = 1, datos = ? WHERE idRevisor = ? AND idProyecto = ? AND idEntrega = ?");//TODO CAMBIAR TERMINADO A 1
+$stmtRevisorProyecto->bind_param("siii", $respuestasComoJSONString, $_SESSION['user_id'], $idProyecto, $idEntrega);
 $stmtRevisorProyecto->execute();
 
 $seLlegoAUnVeredicto = false;
