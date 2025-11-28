@@ -25,14 +25,15 @@ $stmtRevisorProyecto->execute();
 
 $seLlegoAUnVeredicto = false;
 
+//checo si es la primera entrega
+$stmtEntrega = $conn->prepare("SELECT COUNT(*) as entregaCount FROM entrega WHERE idProyecto = ?");
+$stmtEntrega->bind_param("i", $idProyecto);
+$stmtEntrega->execute();
+$resultEntrega = $stmtEntrega->get_result();
+$rowEntrega = $resultEntrega->fetch_assoc();
+
 //ahora tengo que crear una entrega para la revision SOLO EN CASO DE QUE NO FUERA ACEPTADA
 if ($respuestas['dictamen'] === "no_recomendar"){
-    //checo si es la primera entrega
-    $stmtEntrega = $conn->prepare("SELECT COUNT(*) as entregaCount FROM entrega WHERE idProyecto = ?");
-    $stmtEntrega->bind_param("i", $idProyecto);
-    $stmtEntrega->execute();
-    $resultEntrega = $stmtEntrega->get_result();
-    $rowEntrega = $resultEntrega->fetch_assoc();
 
     //actualizo revisor_veredicto
     $stmtRevisorVeredicto = $conn->prepare("UPDATE revisor_veredicto SET status = 0 WHERE idRevisor = ? AND idProyecto = ?");
@@ -55,17 +56,17 @@ if ($respuestas['dictamen'] === "no_recomendar"){
 }else{
     if($rowEntrega['entregaCount'] == 1){
         //creo la segunda entrega
-        $stmtProyecto = $conn->prepare("INSERT INTO entrega (idProyecto, numeroEntrega, pdfPath, entregado, aceptado, fechaLimite) VALUES (?, 2, NULL, 0, NULL, DATE_ADD(CURDATE(), INTERVAL 7 DAY))");//TODO tengo que poner la fecha limite bien
-        $stmtProyecto->bind_param("i", $idProyecto);
-        $stmtProyecto->execute();
+        // $stmtProyecto = $conn->prepare("INSERT INTO entrega (idProyecto, numeroEntrega, pdfPath, entregado, aceptado, fechaLimite) VALUES (?, 2, NULL, 0, NULL, DATE_ADD(CURDATE(), INTERVAL 7 DAY))");//TODO tengo que poner la fecha limite bien
+        // $stmtProyecto->bind_param("i", $idProyecto);
+        // $stmtProyecto->execute();
         
         //checo que si se haya creado bien
-        if($stmtProyecto->affected_rows == 0){
-            echo json_encode(['success' => false, 'message' => 'Error al crear la segunda entrega.']);
-            exit;
-        }
+        // if($stmtProyecto->affected_rows == 0){
+        //     echo json_encode(['success' => false, 'message' => 'Error al crear la segunda entrega.']);
+        //     exit;
+        // }
 
-        $rowDeProyecto = $resultEntrega->fetch_assoc();
+        // $rowDeProyecto = $resultEntrega->fetch_assoc();
     }else{
         //guardo en revisor_veredicto no aceptado porque ya fue la segunda entrega
         $stmtRevisorVeredicto2daEntrega = $conn->prepare("UPDATE revisor_veredicto SET status = 0 WHERE idRevisor = ? AND idProyecto = ?");
