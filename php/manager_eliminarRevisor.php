@@ -17,6 +17,16 @@ $idRevisor = $data['idRevisor'];
 $stmt = $conn->prepare("DELETE FROM revisor_proyecto WHERE idProyecto = ? AND idRevisor = ?");
 $stmt->bind_param("ii", $idProyecto, $idRevisor);
 
+//aqui voy a poner tambien lo de eliminar veredicto
+$stmtVeredicto = $conn->prepare("DELETE FROM revisor_veredicto WHERE idProyecto = ? AND idRevisor = ?");
+$stmtVeredicto->bind_param("ii", $idProyecto, $idRevisor);
+
+if ($stmtVeredicto->execute()) {
+    echo json_encode(['success' => true]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Error al eliminar: ' . $conn->error]);
+}
+
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);
 } else {

@@ -20,7 +20,7 @@
                 <ul class="nav-list">
                     <li><a href="../Index.html">INICIO</a></li>
                     <li><a href="#">DOCUMENTOS</a></li>
-                    <li><a href="#">AYUDA</a></li>
+                    <!-- <li><a href="#">AYUDA</a></li> -->
                     <li class="login"><a href="./login.html">CERRAR SESIÓN</a></li>
                 </ul>
             </div>
@@ -89,7 +89,7 @@
                         <h3 id="board-title">Bandeja de documentos</h3>
                         <p class="muted">Consulta los documentos recién asignados, tus revisiones en curso y el historial.</p>
                     </div>
-                    <button class="btn-secondary" type="button">Exportar resumen</button>
+                    <!-- <button class="btn-secondary" type="button">Exportar resumen</button> -->
                 </header>
 
 
@@ -173,6 +173,7 @@
                                 assigned: proy.entregas[0].fechaEntrega,//TODO, esta será puesta manualmente por el manager
                                 due: proy.fechaLimite,
                                 route: ruta,
+                                id: proy.id
                             });
                             break;
                         
@@ -183,6 +184,7 @@
                                 completed: '2025-10-10',//TODO, mejor le quito esto luego
                                 logRoute: ruta,
                                 verdict: proy.entregas[proy.entregas.length-1].aceptado ? 'Aceptado' : 'Rechazado',
+                                id: proy.id
                             });
                             break;
                     }
@@ -356,7 +358,7 @@
             renderAll();
         }
 
-        document.addEventListener('click', event => {
+        document.addEventListener('click', async event => {
             const button = event.target.closest('[data-action]');
             if (!button) return;
             const action = button.dataset.action;
@@ -372,6 +374,7 @@
                 moveToPending(id);
                 const route = button.dataset.route;
                 if (route) {
+                    await fetch('../php/revisor_guardarIds.php', { method: 'POST', credentials: 'same-origin' , body: JSON.stringify({ id }) });
                     window.location.href = route;
                 }
                 return;
@@ -380,6 +383,7 @@
             if (action === 'open') {
                 const route = button.dataset.route;
                 if (route) {
+                    await fetch('../php/revisor_guardarIds.php', { method: 'POST', credentials: 'same-origin' , body: JSON.stringify({ id }) });
                     window.location.href = route;
                 }
             }
