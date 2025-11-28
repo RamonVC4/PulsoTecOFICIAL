@@ -40,23 +40,7 @@
                     <span class="metric-value" data-metric="projects-total">0</span>
                     <p class="metric-sub" data-metric="projects-updated">Actualización: —</p>
                 </article>
-                <article class="metric-card is-warning">
-                    <span class="metric-label">Plazas disponibles</span>
-                    <span class="metric-value" data-metric="projects-open">0</span>
-                    <p class="metric-sub">Proyectos con menos de 3 revisores asignados</p>
-                </article>
-                <article class="metric-card is-critical">
-                    <span class="metric-label">En revisión activa</span>
-                    <span class="metric-value" data-metric="projects-review">0</span>
-                    <p class="metric-sub">Programar recordatorios antes de la fecha límite</p>
-                </article>
-                <article class="metric-card is-success">
-                    <span class="metric-label">Rúbricas entregadas</span>
-                    <span class="metric-value" data-metric="projects-completed">0</span>
-                    <p class="metric-sub">Última rúbrica: —</p>
-                </article>
-            </div> -->
-        </section>
+        </section> -->
 
         <section class="manager-dashboard">
             <article class="card projects-card" aria-labelledby="projects-title">
@@ -215,15 +199,6 @@
             }
         }
 
-        /*
-        const reviewers = [
-            { id: 'rev-01', name: 'Dra. Andrea Molina', email: 'andrea.molina@pulso-tec.mx', expertise: ['Biomateriales', 'Ensayos clínicos'] },
-            { id: 'rev-02', name: 'Dr. Javier Solís', email: 'javier.solis@pulso-tec.mx', expertise: ['Dispositivos médicos', 'Regulación'] },
-            { id: 'rev-03', name: 'Mtra. Luisa Méndez', email: 'luisa.mendez@pulso-tec.mx', expertise: ['Telemedicina', 'Gestión de proyectos'] },
-            { id: 'rev-04', name: 'Dra. Karla Hernández', email: 'karla.hernandez@pulso-tec.mx', expertise: ['Farmacología', 'Bioética'] },
-            { id: 'rev-05', name: 'Ing. Diego Prado', email: 'diego.prado@pulso-tec.mx', expertise: ['Sensores', 'Analítica de datos'] },
-            { id: 'rev-06', name: 'Dr. Salvador Nieto', email: 'salvador.nieto@pulso-tec.mx', expertise: ['Epidemiología', 'Metodología'] }
-        ]; */
         // Variable global para guardar los proyectos cargados
         let projects = [];
 
@@ -274,265 +249,6 @@
                 console.error('Error conectando con el backend:', error);
             }
         }
-/*
-        const projects = [
-            {
-                id: 'mx-101',
-                title: 'Ensayo de biomateriales',
-                author: 'Anónimo A',
-                area: 'Biomateriales',
-                submitted: '2025-11-08',
-                due: '2025-11-16',
-                stage: 'En revisión',
-                status: 'Prioridad alta',
-                rubric: { status: 'En progreso', score: '—', updated: '2025-11-09' },
-                slots: ['rev-01', 'rev-02', null],
-                locked: false,
-                submissions: [
-                    { label: 'Primer envío', status: 'En revisión', submitted: '2025-11-08', notes: 'Documento original en evaluación.' },
-                    { label: 'Segundo envío', status: 'Pendiente', submitted: null, notes: 'Esperando correcciones.' }
-                ],
-                reviews: {
-                    'rev-01': {
-                        iterations: [
-                            { submission: 1, status: 'Observaciones', score: '7.8', updated: '2025-11-09', summary: 'Adjuntar anexos complementarios.' }
-                        ]
-                    },
-                    'rev-02': {
-                        iterations: [
-                            { submission: 1, status: 'En progreso', score: '—', updated: '2025-11-09', summary: 'Revisión agendada para 11 nov.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'manager', message: 'Revisión solicitada a Dra. Andrea Molina', at: '2025-11-09T09:15' },
-                    { type: 'system', message: 'Documento cargado por el autor', at: '2025-11-08T10:42' }
-                ]
-            },
-            {
-                id: 'mx-102',
-                title: 'Protocolo anestesia inteligente',
-                author: 'Anónimo B',
-                area: 'Dispositivos médicos',
-                submitted: '2025-11-06',
-                due: '2025-11-18',
-                stage: 'Sin revisar',
-                status: 'Pendiente de asignación',
-                rubric: { status: 'Sin iniciar', score: '—', updated: null },
-                slots: ['rev-03', null, null],
-                locked: false,
-                submissions: [
-                    { label: 'Primer envío', status: 'Pendiente de revisión', submitted: '2025-11-06', notes: 'Revisión aún no iniciada.' }
-                ],
-                reviews: {
-                    'rev-03': {
-                        iterations: [
-                            { submission: 1, status: 'Asignado', score: '—', updated: '2025-11-07', summary: 'En espera de revisión.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'system', message: 'Documento cargado por el autor', at: '2025-11-06T08:05' }
-                ]
-            },
-            {
-                id: 'mx-090',
-                title: 'Guía de monitoreo cardiaco',
-                author: 'Anónimo C',
-                area: 'Telemedicina',
-                submitted: '2025-10-12',
-                due: '2025-10-25',
-                stage: 'Cerrado',
-                status: 'Cerrado',
-                rubric: { status: 'Aceptado', score: '9.2', updated: '2025-10-22' },
-                slots: ['rev-01', 'rev-02', 'rev-03'],
-                locked: true,
-                submissions: [
-                    { label: 'Primer envío', status: 'En revisión', submitted: '2025-10-12', notes: 'Revisión inicial con observaciones.' },
-                    { label: 'Segundo envío', status: 'Aprobado', submitted: '2025-10-20', notes: 'Correcciones incorporadas y aceptadas.' }
-                ],
-                reviews: {
-                    'rev-01': {
-                        iterations: [
-                            { submission: 1, status: 'Observaciones', score: '8.1', updated: '2025-10-16', summary: 'Clarificar metodología en sección 2.' },
-                            { submission: 2, status: 'Aceptado', score: '9.3', updated: '2025-10-22', summary: 'Documento listo para publicación.' }
-                        ]
-                    },
-                    'rev-02': {
-                        iterations: [
-                            { submission: 2, status: 'Aceptado', score: '9.1', updated: '2025-10-22', summary: 'Revisión complementaria sin observaciones.' }
-                        ]
-                    },
-                    'rev-03': {
-                        iterations: [
-                            { submission: 2, status: 'Aceptado', score: '9.0', updated: '2025-10-22', summary: 'Revisión final confirmada.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'reviewer', message: 'Rúbrica enviada (aceptado)', at: '2025-10-22T16:10' },
-                    { type: 'manager', message: 'Correcciones confirmadas con el autor', at: '2025-10-20T11:34' },
-                    { type: 'system', message: 'Proyecto asignado a revisores', at: '2025-10-15T09:18' }
-                ]
-            },
-            {
-                id: 'mx-099',
-                title: 'Evaluación de algoritmos educativos',
-                author: 'Anónimo D',
-                area: 'Educación digital',
-                submitted: '2025-10-28',
-                due: '2025-11-12',
-                stage: 'En revisión',
-                status: 'En curso',
-                rubric: { status: 'Borrador guardado', score: '7.8', updated: '2025-11-05' },
-                slots: ['rev-04', 'rev-05', 'rev-06'],
-                locked: false,
-                submissions: [
-                    { label: 'Primer envío', status: 'Con observaciones', submitted: '2025-10-28', notes: 'Borrador con recomendaciones pendientes.' },
-                    { label: 'Segundo envío', status: 'Pendiente de autor', submitted: null, notes: 'Esperando respuesta del autor.' }
-                ],
-                reviews: {
-                    'rev-04': {
-                        iterations: [
-                            { submission: 1, status: 'Observaciones', score: '7.5', updated: '2025-11-03', summary: 'Detallar instrumentos de evaluación.' }
-                        ]
-                    },
-                    'rev-05': {
-                        iterations: [
-                            { submission: 1, status: 'Borrador guardado', score: '—', updated: '2025-11-05', summary: 'Revisión parcial registrada.' }
-                        ]
-                    },
-                    'rev-06': {
-                        iterations: [
-                            { submission: 1, status: 'En progreso', score: '—', updated: '2025-11-04', summary: 'Analizando resultados preliminares.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'reviewer', message: 'Rúbrica guardada como borrador', at: '2025-11-05T18:45' },
-                    { type: 'manager', message: 'Se agregó a Ing. Diego Prado como revisor', at: '2025-10-30T09:12' }
-                ]
-            },
-            {
-                id: 'mx-110',
-                title: 'Protocolos de rehabilitación remota',
-                author: 'Anónimo E',
-                area: 'Telemedicina',
-                submitted: '2025-11-02',
-                due: '2025-11-20',
-                stage: 'En revisión',
-                status: 'Seguimiento semanal',
-                rubric: { status: 'En progreso', score: '—', updated: '2025-11-12' },
-                slots: ['rev-01', null, null],
-                locked: false,
-                submissions: [
-                    { label: 'Primer envío', status: 'En revisión', submitted: '2025-11-02', notes: 'Documentación inicial recibida.' }
-                ],
-                reviews: {
-                    'rev-01': {
-                        iterations: [
-                            { submission: 1, status: 'En progreso', score: '—', updated: '2025-11-12', summary: 'Se revisan anexos clínicos.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'manager', message: 'Se asignó a Dra. Andrea Molina como revisor principal', at: '2025-11-12T10:25' },
-                    { type: 'system', message: 'Proyecto cargado por el autor', at: '2025-11-02T14:40' }
-                ]
-            },
-            {
-                id: 'mx-111',
-                title: 'Plataforma de diagnósticos con IA',
-                author: 'Anónimo F',
-                area: 'Inteligencia artificial médica',
-                submitted: '2025-11-10',
-                due: '2025-11-24',
-                stage: 'Sin revisar',
-                status: 'Pendiente de asignación',
-                rubric: { status: 'Sin iniciar', score: '—', updated: null },
-                slots: [null, null, null],
-                locked: false,
-                submissions: [
-                    { label: 'Primer envío', status: 'Pendiente de revisión', submitted: '2025-11-10', notes: 'Esperando asignación de revisores.' }
-                ],
-                reviews: {},
-                timeline: [
-                    { type: 'system', message: 'Proyecto recibido en la plataforma', at: '2025-11-10T08:12' }
-                ]
-            },
-            {
-                id: 'mx-125',
-                title: 'Dispositivo portátil de monitoreo renal',
-                author: 'Anónimo G',
-                area: 'Dispositivos médicos',
-                submitted: '2025-10-30',
-                due: '2025-11-22',
-                stage: 'En revisión',
-                status: 'Observaciones con autor',
-                rubric: { status: 'Observaciones', score: '7.5', updated: '2025-11-11' },
-                slots: ['rev-02', 'rev-04', null],
-                locked: false,
-                submissions: [
-                    { label: 'Primer envío', status: 'Observaciones enviadas', submitted: '2025-10-30', notes: 'Requiere ajustes en metodología.' },
-                    { label: 'Segundo envío', status: 'Pendiente del autor', submitted: null, notes: 'Autor revisando comentarios.' }
-                ],
-                reviews: {
-                    'rev-02': {
-                        iterations: [
-                            { submission: 1, status: 'Observaciones', score: '7.2', updated: '2025-11-09', summary: 'Clarificar flujo de calibración del sensor.' }
-                        ]
-                    },
-                    'rev-04': {
-                        iterations: [
-                            { submission: 1, status: 'En progreso', score: '—', updated: '2025-11-11', summary: 'Analizando riesgos farmacológicos asociados.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'reviewer', message: 'Observaciones enviadas por Dr. Javier Solís', at: '2025-11-09T17:05' },
-                    { type: 'manager', message: 'Se solicitó actualización al autor', at: '2025-11-11T09:15' }
-                ]
-            },
-            {
-                id: 'mx-133',
-                title: 'Guía de interacción humano-robot',
-                author: 'Anónimo H',
-                area: 'Robótica médica',
-                submitted: '2025-09-22',
-                due: '2025-10-18',
-                stage: 'Cerrado',
-                status: 'Documentado',
-                rubric: { status: 'Aceptado', score: '9.5', updated: '2025-10-16' },
-                slots: ['rev-03', 'rev-05', 'rev-06'],
-                locked: true,
-                submissions: [
-                    { label: 'Primer envío', status: 'Aceptado', submitted: '2025-09-22', notes: 'Proyecto aprobado sin observaciones mayores.' }
-                ],
-                reviews: {
-                    'rev-03': {
-                        iterations: [
-                            { submission: 1, status: 'Aceptado', score: '9.4', updated: '2025-10-16', summary: 'Excelente documentación de la interacción.' }
-                        ]
-                    },
-                    'rev-05': {
-                        iterations: [
-                            { submission: 1, status: 'Aceptado', score: '9.6', updated: '2025-10-16', summary: 'Resultados consistentes y bien sustentados.' }
-                        ]
-                    },
-                    'rev-06': {
-                        iterations: [
-                            { submission: 1, status: 'Aceptado', score: '9.5', updated: '2025-10-16', summary: 'Revisión final confirmada.' }
-                        ]
-                    }
-                },
-                timeline: [
-                    { type: 'manager', message: 'Proyecto cerrado por cumplimiento de rúbricas', at: '2025-10-17T12:20' },
-                    { type: 'reviewer', message: 'Rúbrica final registrada por Ing. Diego Prado', at: '2025-10-16T18:32' }
-                ]
-            }
-        ];
-        */
-
         let activeProjectId = null;
         let projectQuery = '';
         let projectFilter = 'all';
@@ -619,18 +335,7 @@
             if (normalized.includes('finalizado') || normalized.includes('aceptado') || normalized.includes('cerrado')) return 'is-success';
             return 'is-neutral';
         }
-/*
-        function setActiveProject(id) {
-            activeProjectId = id;
-            const indexOnList = filteredProjects.findIndex(project => project.id === id);
-            if (indexOnList !== -1) {
-                projectPage = Math.floor(indexOnList / PAGE_SIZE);
-            }
-            openSlotIndex = null;
-            renderProjects();
-            renderAssignment();
-        }
-*/
+
             // Variable global para guardar revisores temporales (para que se vean los nombres)
             // Variable global auxiliar
         if (typeof tempReviewers === 'undefined') var tempReviewers = {}; 
@@ -777,13 +482,6 @@
             elements.projectsEmpty.hidden = totalItems > 0;
             updatePagination(totalPages, totalItems);
 
-            /*
-            if (!activeProjectId && totalItems) {
-                projectPage = 0;
-                activeProjectId = filteredProjects[0].id;
-                renderAssignment();
-            }*/
-
             if (totalItems === 0) {
                 activeProjectId = null;
                 renderAssignment(true);
@@ -915,28 +613,7 @@
                         </div>
                     `;
                 } else {
-                    /*
-                    const suggestionsMarkup = isOpen
-                        ? `
-                            <div class="slot-suggestions">
-                                <p class="muted tiny">${availableReviewers.length ? 'Ejemplos sugeridos de revisores disponibles:' : 'No hay revisores disponibles. Libera un espacio o registra nuevos revisores.'}</p>
-                                
-                                <ul>
-                                    ${availableReviewers.map(reviewer => `
-                                        <li class="slot-suggestion">
-                                            <div>
-                                                <strong>${reviewer.name}</strong>
-                                                <span class="muted tiny">${reviewer.email}</span>
-                                                <span class="muted tiny">${reviewer.expertise.join(' · ')}</span>
-                                            </div>
-                                            <button type="button" class="btn-secondary slot-assign-btn" data-id="${reviewer.id}" data-slot="${index}">Asignar</button>
-                                        </li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        ` : '';*/
-                        // Dentro de renderSlots, en el bloque 'else' (cuando no hay revisor asignado):
-
+            
                     const suggestionsMarkup = isOpen
                         ? `
                             <div class="slot-suggestions">
@@ -1199,33 +876,6 @@
                 });
             });
         }
-
-        /*
-        function renderSubmissions(project) {
-            if (!project.submissions || !project.submissions.length) {
-                elements.submissionsSection.hidden = true;
-                return;
-            }
-            elements.submissionsSection.hidden = false;
-            elements.submissionsGrid.innerHTML = '';
-            project.submissions.forEach((submission, index) => {
-                const card = document.createElement('article');
-                const badgeClass = statusVariant(submission.status);
-                card.className = 'submission-card';
-                card.innerHTML = `
-                    <header>
-                        <strong>${submission.label || `Envío ${index + 1}`}</strong>
-                        <span class="submission-status ${badgeClass}">${submission.status || 'Sin estado'}</span>
-                    </header>
-                    <div class="submission-meta">
-                        <span>Registrado: ${submission.submitted ? formatDate(submission.submitted, longDate) : '—'}</span>
-                        <span>${submission.notes || 'Sin notas adicionales.'}</span>
-                    </div>
-                `;
-                elements.submissionsGrid.appendChild(card);
-            });
-        }*/
-
         function renderSubmissions(project) {
             // Damos prioridad a 'entregas'
             const dataList = (project.entregas && project.entregas.length > 0) 
@@ -1396,25 +1046,6 @@
             }
         }
 
-        /*
-        function removeReviewer(projectId, slotIndex) {
-            const project = getProject(projectId);
-            if (!project || project.locked) return;
-            const slots = getSlots(project);
-            if (slotIndex < 0 || slotIndex >= MAX_REVIEWERS) return;
-            const reviewerId = slots[slotIndex];
-            if (!reviewerId) return;
-            const reviewer = getReviewer(reviewerId);
-            slots[slotIndex] = null;
-            openSlotIndex = slotIndex;
-            project.timeline.unshift({
-                type: 'manager',
-                message: `Se liberó a ${reviewer?.name || 'un revisor'} del proyecto`,
-                at: new Date().toISOString()
-            });
-            renderAll();
-            showAssignmentNote(`Liberaste el espacio de ${reviewer?.name || 'revisor'}.`, false);
-        }*/
         async function removeReviewer(projectId, slotIndex) {
             // 1. Obtenemos el ID del revisor que está en ese espacio (slot)
             const project = getProject(projectId);
@@ -1573,9 +1204,6 @@
             renderProjects();
         });
 
-        //renderAll();
-        //fetchProjects(); 
-        //fetchReviewers();
         async function initManager() {
         console.log("Iniciando sistema...");
         await fetchReviewers(); // 1. Primero revisores
@@ -1584,12 +1212,6 @@
     initManager();
     })();
     </script>
-
-
-
-
-
-
 
     <!-- script para ocultar los proyectos -->
     <script>
@@ -1600,7 +1222,6 @@
             projectsList.style.display = projectsList.style.display === 'none' ? 'block' : 'none';
             hideButton.textContent = projectsCard.style.display === 'none' ? 'Mostrar' : 'Ocultar';
         }
-
 
     </script>
 </body>
