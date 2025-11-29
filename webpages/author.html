@@ -13,25 +13,8 @@
 
 
 <body>
-
-    <!-- TITULO Y NAV INICIAL -->
     <header class="site-header">
-        <div class="header-top">
-            <div class="container">
-                <div class="logo-text">PT</div>
-                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
-            </div>
-        </div>
-        <nav class="nav-bar">
-            <div class="container">
-                <ul class="nav-list">
-                    <li><a href="../Index.html">INICIO</a></li>
-                    <li><a href="#">MIS PROYECTOS</a></li>
-                    <!-- <li><a href="#">AYUDA</a></li> -->
-                    <li class="login"><a href="../webpages/login.html">CERRAR SESIÓN</a></li>
-                </ul>
-            </div>
-        </nav>
+        <!-- HEADER CON JS -->
     </header>
 
 
@@ -45,8 +28,9 @@
         </section>
 
 
-        <section class="author-grid">
 
+
+        <section class="author-grid">
             <!-- INICIAR NUEVO PROYECTO -->
             <article class="card new-project-card" aria-labelledby="new-project-title">
                 <header class="card-head">
@@ -59,23 +43,11 @@
                         <label for="project-title">Nombre del proyecto</label>
                         <input id="project-title" name="project_title" type="text" required placeholder="Ej. Evaluación de impacto tecnológico">
                     </div>
-
-                    <!-- Crear un espacio para agregar autores (1 a 5), y que sólo uno sea el de correspondencia  -->
-                     <!-- quiero que se pongan por separado, que se busquen en la base de datos, y que haya un botón para agregar otro -->
                     
                     <div class="authors-container">
                         <div class="field">
                             <label for="add-authors">Autores extra del proyecto (tu ya estas incluido)</label><br>
                         </div>
-                        <!-- <div class="author-item">
-                            <div class="author-autocomplete">
-                                <div class="field">
-                                    <label for="author-name-1">Nombre del autor</label>
-                                    <input id="author-name-1" name="author-name" type="text" required placeholder="Ej. Juan Pérez" autocomplete="off" data-author-input>
-                                    <div class="author-autocomplete-dropdown" data-autocomplete-dropdown></div>
-                                </div>
-                            </div>
-                        </div> -->
 
                         <button type="button" id="add-author-button" class="btn-secondary" onclick="agregarAutor()">+</button>
                     </div>
@@ -97,17 +69,21 @@
 
             
                         <select id="area-conocimiento" name="knowledge_area" required>
-                            <option value="0" selected>Seleccione una opción</option>
-                            <option value="1">Ingeniería Química y Bioquímica</option>
-                            <option value="2">Ingeniería Industrial</option>
-                            <option value="3">Sistemas Computacionales y TI</option>
-                            <option value="4">Ingeniería en Gestión Empresarial</option>
-                            <option value="5">Ingeniería Eléctrica y Electrónica</option>
-                            <option value="6">Ingeniería Mecánica y Mecatrónica</option>
-                            <option value="7">Ingeniería en Energías Renovables</option>
-                            <option value="8">Ingeniería en Semiconductores</option>
-                            <option value="9">Administración</option>
-                            <option value="10">Investigación Educativa</option>
+
+                            <!-- CARGAR LAS OPCIONES DEL SELECT DESDE EL JS DE CONFIG -->
+                            <script type="module">
+                                import {areasDeConocimiento} from '../config/config.js';
+                                import {select, create} from '../js/utils/dom.js';
+
+                                const areaConocimientoSelect = select('#area-conocimiento');
+                                
+                                Object.entries(areasDeConocimiento).forEach(([id, value]) => {
+                                    const option = create('option');
+                                    option.setAttribute('value', id);
+                                    option.textContent = value;
+                                    areaConocimientoSelect.appendChild(option);
+                                });
+                            </script>
                         </select>
                     </div>
 
@@ -135,62 +111,23 @@
                 </form>
             </article>
 
-            
 
             <!-- LISTADO DE PROYECTOS DEL AUTOR -->
             <div class="project-board" aria-live="polite">
                 <div class="project-board-tools">
-                    <!-- <label class="sr-only" for="project-search">Buscar proyectos:</label>
-                    <div class="project-board-search">
-                        <span class="project-board-search__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="7"></circle>
-                                <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
-                            </svg>
-                        </span>
-                        <input id="project-search" type="search" placeholder="Buscar por título, autor o fecha...">
-                    </div> -->
                 </div>
 
                 <div class="project-list" data-page-size="5">
 
-                    <article class="card project-card is-review" data-title="Estudio de biomateriales" data-author="Equipo biomateriales" data-date="2025-11-01" aria-labelledby="project-01-title">
-                        <header class="project-card__header">
-                            <div>
-                                <h3 class="project-title">NOMBRE DEL PROYECTO</h3>
-                                <p class="project-description">Proyecto cargado el 20/10/2025</p>
-                            </div>
-                            <span class="project-status">ACEPTADO</span>
-                        </header>
-                        <div class="version-grid">
-                            <section class="version version-initial is-ready">
-                                <header>
-                                    <h4>Versión inicial</h4>
-                                    <span class="chip chip-denied">
-                                        No aceptado
-                                    </span>
-                                </header>
-                                <p class="muted small">Subido el 20/10/2025</p>
-                                <a class="link" href="${proj.entregas[0].pdfPath}" target="_blank">Descargar PDF</a>
-                            </section>
-        
-                            <section class="version version-revised ${proj.entregas[1].entregado ? 'is-ready' : 'is-await'}">
-                                <header>
-                                    <h4>Aún no has subido la versión revisada</h4>
-                                    <span class="chip chip-pending">
-                                        Pendiente
-                                    </span>
-                                </header>
-                                <button type="button" class="btn-outline">Subir corrección</button>
-                            </section>
-                        </div>
-                    </article>
-
 
                 </div>
 
-                <div id="project-empty" class="project-empty" hidden>
-                    <p>No encontramos proyectos que coincidan con tu búsqueda.</p>
+                <div id="project-empty-search" class="project-empty" hidden>
+                    <p>No encontramos artículos que coincidan con tu búsqueda.</p>
+                </div>
+                
+                <div id="project-empty" class="project-empty">
+                    <p>Ups! Parece que aún no has subido ningún artículo</p>
                 </div>
 
                 <div class="project-pagination" id="project-pagination">
@@ -202,8 +139,9 @@
         </section>
     </main>
 
+
+
     <!-- SCRIPT PARA AGREGAR UN NUEVO AUTOR -->
-    <script src="../pages/script_author.js"></script>
+    <script type="module" src="../pages/script_author.js"></script>
 </body>
 </html>
-
