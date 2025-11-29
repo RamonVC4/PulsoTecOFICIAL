@@ -1,4 +1,13 @@
+// Este js maneja el login de la página.
 
+    // ======================================================================
+    //                         FUNCIONES DE FRONTEND
+    // ======================================================================
+
+    // =============================================
+    //          TOGGLE PASSWORD VISIBLE
+    // =============================================
+    
     (function () {
         const toggle = document.querySelector('.toggle-password');
         const pwd = document.getElementById('password');
@@ -12,7 +21,20 @@
         }
     })();
 
-    async function goToPage() {
+
+
+
+
+
+    // ======================================================================
+    //                          FUNCIONES DE BACKEND
+    // ======================================================================
+
+    // =============================================
+    //     LOGIN HACIA LA PÁGINA SEGÚN EL ROL
+    // =============================================
+
+    export async function goToPage() {
         //consigo los datos
         const role = document.querySelector('input[name="role"]:checked')?.value;
         const correo = document.getElementById('correo').value;
@@ -36,3 +58,10 @@
         console.log(data);
         window.location.href = data.redirect;
     }
+
+
+
+    // =============================================
+    //       AGREGAR TODAS LAS FUNCIONES EXPORT
+    // =============================================
+    window.goToPage = goToPage;

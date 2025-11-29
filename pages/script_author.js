@@ -732,7 +732,3 @@
     window.buscarAutores = buscarAutores;
 
     console.log("funciones disponibles:", window.agregarAutor);
-
-
-    
-
