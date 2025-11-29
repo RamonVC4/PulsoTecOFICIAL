@@ -18,7 +18,7 @@ while ($row = $result->fetch_assoc()) {
     $veredictoResult = $stmtRevisorVeredicto->get_result();
     $veredictoRow = $veredictoResult->fetch_assoc();
 
-    if (isset($veredictoRow['status']) && ($veredictoRow['status'] === 1 || $veredictoRow['status'] === 0)) {
+    if (isset($veredictoRow['status']) && (($veredictoRow['status'] === 1 || $veredictoRow['status'] === 0)) || ($veredictoRow['terminado'] === 1)) {
         continue;
     }
 
