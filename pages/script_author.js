@@ -1,35 +1,133 @@
+    // Este js carga la vista de autor (panel principal) de PulsoTec.
 
-    // Función para buscar autores en la BD (preparada para cuando se cree el endpoint)
-    async function buscarAutores(query) {
-        if (!query || query.length < 1) {
-            return [];
+    console.log("script_author.js cargado");
+
+
+    import {select} from '../js/utils/dom.js';
+    import {createHeaderTop, createHeaderNav} from '../components/header.js';
+
+
+    // =============================================
+    //               CARGAR EL HEADER
+    // =============================================
+
+    const urls = {
+        'INICIO': '../Index.html',
+        'MIS PROYECTOS': './',
+    }
+    const cerrar_sesion_link = './login.html';
+
+    const header = select('.site-header');
+    header.appendChild(createHeaderTop());
+    header.appendChild(createHeaderNav(urls, null, cerrar_sesion_link));
+
+
+
+
+    // ===========================================================================
+    //                              FUNCIONES DE FRONTEND
+    // ==========================================================================
+
+    // =============================================
+    //               AGREGAR AUTORES
+    // =============================================
+
+    export function agregarAutor() {
+        const authorsContainer = document.querySelector('.authors-container');
+        const addButton = authorsContainer.querySelector('#add-author-button');
+
+        // Contar solo los author-item, excluyendo el botón de agregar
+        const authorItems = authorsContainer.querySelectorAll('.author-item');
+        
+        if(authorItems.length >= 4) {
+            alert("No se pueden agregar más de 5 autores.");
+            return;
         }
 
-        try {
-            const res = await fetch(`../php/buscarAutores.php`, {
-                credentials: "same-origin"
-            });
-            const data = await res.json();                
+        const authorItem = document.createElement('div');
+        authorItem.className = 'author-item';
 
-            console.log(data);
+        const fieldWrapper = document.createElement('div');
+        fieldWrapper.style.display = 'flex';
+        fieldWrapper.style.gap = '10px';
+        fieldWrapper.style.alignItems = 'flex-end';
 
-            // Filtrar por nombre o correo
-            const queryLower = query.toLowerCase();
-            return data.autores.filter(autor => 
-                autor.nombre.toLowerCase().includes(queryLower) ||
-                autor.correo.toLowerCase().includes(queryLower) ||
-                autor.primerApellido.toLowerCase().includes(queryLower) ||
-                autor.segundoApellido.toLowerCase().includes(queryLower)
+        const autocompleteWrapper = document.createElement('div');
+        autocompleteWrapper.className = 'author-autocomplete';
 
-            );
-        } catch (error) {
-            console.error('Error al buscar autores:', error);
-            return [];
-        }
+        const field = document.createElement('div');
+        field.className = 'field';
+        field.style.flex = '1';
+
+        const authorIndex = authorItems.length + 1;
+        const inputId = `author-name-${authorIndex}`;
+
+        const label = document.createElement('label');
+        label.setAttribute('for', inputId);
+        label.textContent = 'Nombre del autor';
+
+        const input = document.createElement('input');
+        input.id = inputId;
+        input.type = 'text';
+        input.name = `author-name-${authorIndex}`;
+        input.required = true;
+        input.placeholder = 'Ej. Juan Pérez';
+        input.autocomplete = 'off';
+        input.setAttribute('data-author-input', '');
+        
+        const dropdown = document.createElement('div');
+        dropdown.className = 'author-autocomplete-dropdown';
+        dropdown.setAttribute('data-autocomplete-dropdown', '');
+
+        field.appendChild(label);
+        field.appendChild(input);
+        field.appendChild(dropdown);
+
+        autocompleteWrapper.appendChild(field);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'btn-secondary';
+        deleteButton.textContent = '−';
+        deleteButton.setAttribute('aria-label', 'Eliminar autor');
+        deleteButton.onclick = function() {
+            eliminarAutor(authorItem);
+        };
+
+        fieldWrapper.appendChild(autocompleteWrapper);
+        fieldWrapper.appendChild(deleteButton);
+
+        authorItem.appendChild(fieldWrapper);
+
+        // Insertar antes del botón de agregar autor
+        authorsContainer.insertBefore(authorItem, addButton);
+
+        // Inicializar autocomplete en el nuevo input
+        inicializarAutocomplete(input);
     }
 
-    // Función para inicializar el autocomplete en un input
-    function inicializarAutocomplete(input) {
+
+    // =============================================
+    //               ELIMINAR AUTOR
+    // =============================================
+
+    export function eliminarAutor(authorItem) {
+        if (!authorItem) {
+            return;
+        }
+        
+        const authorsContainer = document.querySelector('.authors-container');
+        const authorItems = authorsContainer.querySelectorAll('.author-item');
+        
+        authorItem.remove();
+    }
+
+
+    // =============================================
+    //               INICIALIZAR AUTOCOMPLETE
+    // =============================================
+
+    export function inicializarAutocomplete(input) {
         const dropdown = input.parentElement.querySelector('[data-autocomplete-dropdown]');
         if (!dropdown) return;
 
@@ -165,91 +263,6 @@
         });
     }
 
-    function agregarAutor() {
-        const authorsContainer = document.querySelector('.authors-container');
-        const addButton = authorsContainer.querySelector('#add-author-button');
-
-        // Contar solo los author-item, excluyendo el botón de agregar
-        const authorItems = authorsContainer.querySelectorAll('.author-item');
-        
-        if(authorItems.length >= 4) {
-            alert("No se pueden agregar más de 5 autores.");
-            return;
-        }
-
-        const authorItem = document.createElement('div');
-        authorItem.className = 'author-item';
-
-        const fieldWrapper = document.createElement('div');
-        fieldWrapper.style.display = 'flex';
-        fieldWrapper.style.gap = '10px';
-        fieldWrapper.style.alignItems = 'flex-end';
-
-        const autocompleteWrapper = document.createElement('div');
-        autocompleteWrapper.className = 'author-autocomplete';
-
-        const field = document.createElement('div');
-        field.className = 'field';
-        field.style.flex = '1';
-
-        const authorIndex = authorItems.length + 1;
-        const inputId = `author-name-${authorIndex}`;
-
-        const label = document.createElement('label');
-        label.setAttribute('for', inputId);
-        label.textContent = 'Nombre del autor';
-
-        const input = document.createElement('input');
-        input.id = inputId;
-        input.type = 'text';
-        input.name = `author-name-${authorIndex}`;
-        input.required = true;
-        input.placeholder = 'Ej. Juan Pérez';
-        input.autocomplete = 'off';
-        input.setAttribute('data-author-input', '');
-        
-        const dropdown = document.createElement('div');
-        dropdown.className = 'author-autocomplete-dropdown';
-        dropdown.setAttribute('data-autocomplete-dropdown', '');
-
-        field.appendChild(label);
-        field.appendChild(input);
-        field.appendChild(dropdown);
-
-        autocompleteWrapper.appendChild(field);
-
-        const deleteButton = document.createElement('button');
-        deleteButton.type = 'button';
-        deleteButton.className = 'btn-secondary';
-        deleteButton.textContent = '−';
-        deleteButton.setAttribute('aria-label', 'Eliminar autor');
-        deleteButton.onclick = function() {
-            eliminarAutor(authorItem);
-        };
-
-        fieldWrapper.appendChild(autocompleteWrapper);
-        fieldWrapper.appendChild(deleteButton);
-
-        authorItem.appendChild(fieldWrapper);
-
-        // Insertar antes del botón de agregar autor
-        authorsContainer.insertBefore(authorItem, addButton);
-
-        // Inicializar autocomplete en el nuevo input
-        inicializarAutocomplete(input);
-    }
-
-    function eliminarAutor(authorItem) {
-        if (!authorItem) {
-            return;
-        }
-        
-        const authorsContainer = document.querySelector('.authors-container');
-        const authorItems = authorsContainer.querySelectorAll('.author-item');
-        
-        authorItem.remove();
-    }
-
     // Inicializar autocomplete en el input inicial cuando se carga la página
     document.addEventListener('DOMContentLoaded', () => {
         const initialInput = document.getElementById('author-correspondencia');
@@ -257,37 +270,14 @@
             inicializarAutocomplete(initialInput);
         }
     });
+    
 
 
+    // =============================================
+    //           CONSTRUIR CARD DE ENTREGA
+    // =============================================
 
-//esta funcion se ejecuta al cargar la pagina
-    document.addEventListener('DOMContentLoaded', () => {
-        loadProjects(); // llama a la función que obtiene los proyectos y los renderiza
-    });
-
-
-    //helper par poder construir elementos como lego
-    function el(tag, options = {}) {
-    const node = document.createElement(tag);
-
-    if (options.class) node.className = options.class;
-    if (options.text) node.textContent = options.text;
-    if (options.html) node.innerHTML = options.html; 
-    if (options.attrs) {
-        for (const [k, v] of Object.entries(options.attrs)) {
-            node.setAttribute(k, v);
-        }
-    }
-    if (options.children) {
-        options.children.forEach(child => node.appendChild(child));
-    }
-
-    return node;
-}
-
-
-    //helper para construir las card de las entregas
-    function makeEntrega(entrega, titulo, isInitial) {
+    export function makeEntrega(entrega, titulo, isInitial) {
         const section = el("section", {
             class: `version ${isInitial ? "version-initial" : "version-revised"} ${entrega.entregado ? "is-ready" : "is-await"}`
         });
@@ -336,83 +326,295 @@
         return section;
     }
 
+    //helper par poder construir elementos como lego
+    function el(tag, options = {}) {
+        const node = document.createElement(tag);
 
-
-//esta funcion renderiza los proyectos en el HTML
-function renderProjects(projects) {
-    const board = document.querySelector('.project-list');
-    board.innerHTML = ''; // quita los proyectos placeholder
-
-    console.log(projects);
-    projects.forEach(proj => {
-        const card = el("article", {
-            class: "card project-card",
-            attrs: {
-                "data-title": proj.nombre,
+        if (options.class) node.className = options.class;
+        if (options.text) node.textContent = options.text;
+        if (options.html) node.innerHTML = options.html; 
+        if (options.attrs) {
+            for (const [k, v] of Object.entries(options.attrs)) {
+                node.setAttribute(k, v);
             }
-        });
+        }
+        if (options.children) {
+            options.children.forEach(child => node.appendChild(child));
+        }
 
-        const e = proj.entregas[0];
+        return node;
+    }
 
-        const header = el("header", { class: "project-card__header" });
 
-        const headerInfo = el("div", {
-            children: [
-                el("h3", { class: "project-title", text: proj.nombre }),
-                el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
-            ]
-        });
+    // =============================================
+    //          RENDERIZAR PROYECTOS EN HTML
+    // =============================================
 
-        const status = el("span", {
-            class: `project-status ${e.aceptado ? 'chip-success' : ""}`,
-            text: e.aceptado ? "Aceptado" : "En revisión"
-        });
+    export function renderProjects(projects) {
+        const board = document.querySelector('.project-list');
+        board.innerHTML = ''; // quita los proyectos placeholder
 
-        header.append(headerInfo, status);
+        console.log(projects);
+        projects.forEach(proj => {
+            const card = el("article", {
+                class: "card project-card",
+                attrs: {
+                    "data-title": proj.nombre,
+                }
+            });
 
-        const grid = el("div", { class: "version-grid" });
-        grid.appendChild(makeEntrega(e, proj.nombre, true));
+            const e = proj.entregas[0];
 
-        // Usa la segunda entrega como fecha si existe
-        if (proj.entregas.length > 1) {
-            //le pongo la date
-            card.dataset.date = proj.entregas[1].fechaEntrega;
+            const header = el("header", { class: "project-card__header" });
+
+            const headerInfo = el("div", {
+                children: [
+                    el("h3", { class: "project-title", text: proj.nombre }),
+                    el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
+                ]
+            });
 
             const status = el("span", {
-                class: `project-status ${proj.entregas[0].aceptado ? 'chip-success' : ""}`,
-                text: proj.entregas[0].aceptado ? "Aceptado" : "En revisión"
+                class: `project-status ${e.aceptado ? 'chip-success' : ""}`,
+                text: e.aceptado ? "Aceptado" : "En revisión"
             });
 
             header.append(headerInfo, status);
 
-            // creo la carta de la otra entrega
-            grid.appendChild(makeEntrega(proj.entregas[1], proj.nombre, false));
+            const grid = el("div", { class: "version-grid" });
+            grid.appendChild(makeEntrega(e, proj.nombre, true));
 
-        }
+            // Usa la segunda entrega como fecha si existe
+            if (proj.entregas.length > 1) {
+                //le pongo la date
+                card.dataset.date = proj.entregas[1].fechaEntrega;
 
-        card.append(header, grid);
-        document.querySelector('.project-list').appendChild(card); // o donde vayan tus cards
-});
+                const status = el("span", {
+                    class: `project-status ${proj.entregas[0].aceptado ? 'chip-success' : ""}`,
+                    text: proj.entregas[0].aceptado ? "Aceptado" : "En revisión"
+                });
 
-}
+                header.append(headerInfo, status);
 
-//esta funcion obtiene los proyectos del autor
-async function loadProjects() {
-    try {
-        const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
-        const data = await res.json();
-        if (!data.success) {
-            console.error(data.message);
-            return;
-        }
-        console.log(data);
-        renderProjects(data.proyectos);
-    } catch (error) {
-        console.error("Error al cargar proyectos:", error);
+                // creo la carta de la otra entrega
+                grid.appendChild(makeEntrega(proj.entregas[1], proj.nombre, false));
+
+            }
+
+            card.append(header, grid);
+            document.querySelector('.project-list').appendChild(card); // o donde vayan tus cards
+    });
+
     }
-}
 
-    async function crearProyecto(){
+
+    // =============================================
+    //                 DROPZONE
+    // =============================================
+
+    (function () {
+        const dropzones = document.querySelectorAll('[data-dropzone]');
+
+        dropzones.forEach(function (zone) {
+            const input = zone.querySelector('input[type="file"]');
+            const trigger = zone.querySelector('[data-dropzone-trigger]');
+            const info = zone.querySelector('[data-dropzone-info]');
+
+            if (!input) { return; }
+
+            function setInfo(file) {
+                if (!info) { return; }
+                if (!file) { info.textContent = ''; return; }
+                var sizeInKb = file.size / 1024;
+                var formatted = sizeInKb < 1024 ? sizeInKb.toFixed(1) + ' KB' : (sizeInKb / 1024).toFixed(2) + ' MB';
+                info.textContent = file.name + ' · ' + formatted;
+            }
+
+            ['dragenter', 'dragover'].forEach(function (eventName) {
+                zone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    zone.classList.add('is-dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(function (eventName) {
+                zone.addEventListener(eventName, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    zone.classList.remove('is-dragover');
+                });
+            });
+
+            zone.addEventListener('drop', function (event) {
+                if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+                    var file = event.dataTransfer.files[0];
+                    input.files = event.dataTransfer.files;
+                    setInfo(file);
+                }
+            });
+
+            if (trigger) {
+                trigger.addEventListener('click', function () {
+                    input.click();
+                });
+            }
+
+            input.addEventListener('change', function () {
+                setInfo(input.files && input.files[0]);
+            });
+        });
+        const board = document.querySelector('.project-list');
+        if (!board) { return; }
+
+        const pageSize = Number(board.dataset.pageSize) || 5;
+        const allCards = Array.from(board.querySelectorAll('.project-card'));
+        //const searchInput = document.getElementById('project-search');
+        const emptyState = document.getElementById('project-empty');
+        const pagination = document.getElementById('project-pagination');
+        const prevBtn = document.getElementById('project-prev');
+        const nextBtn = document.getElementById('project-next');
+        const pageIndicator = document.getElementById('project-page-indicator');
+
+        let filteredCards = allCards.slice();
+        let currentPage = 1;
+
+        function updateVisibility() {
+            const total = filteredCards.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            currentPage = Math.min(currentPage, totalPages);
+
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const visibleSet = new Set(filteredCards.slice(start, end));
+
+
+            allCards.forEach(card => {
+                card.hidden = !visibleSet.has(card);
+            });
+
+            emptyState.hidden = (total > 0); //|| !searchInput.value.trim());
+            pagination.hidden = total <= pageSize;
+            pageIndicator.textContent = total ? currentPage + ' / ' + totalPages : '0 / 0';
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+        }
+
+        function applySearch(value) {
+            const term = value.trim().toLowerCase();
+            if (!term) {
+                filteredCards = allCards.slice();
+            } else {
+                filteredCards = allCards.filter(card => {
+                    const title = (card.dataset.title || card.querySelector('.project-title')?.textContent || '').toLowerCase();
+                    const author = (card.dataset.author || '').toLowerCase();
+                    const date = (card.dataset.date || '').toLowerCase();
+                    return title.includes(term) || author.includes(term) || date.includes(term);
+                });
+            }
+            currentPage = 1;
+            updateVisibility();
+        }
+
+        // if (searchInput) {
+        //     searchInput.addEventListener('input', event => {
+        //         applySearch(event.target.value);
+        //     });
+        // }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage <= 1) { return; }
+            currentPage -= 1;
+            updateVisibility();
+            board.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(filteredCards.length / pageSize));
+            if (currentPage >= totalPages) { return; }
+            currentPage += 1;
+            updateVisibility();
+            board.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        updateVisibility();
+    })();
+
+
+
+
+    
+
+
+
+
+    // ===========================================================================
+    //                              FUNCIONES DE BACKEND
+    // ==========================================================================
+
+
+    // =============================================
+    //               CARGAR PROYECTOS
+    // =============================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProjects(); 
+    });
+
+    //esta funcion obtiene los proyectos del autor
+    export async function loadProjects() {
+        try {
+            const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
+            const data = await res.json();
+            if (!data.success) {
+                console.error(data.message);
+                return;
+            }
+            console.log(data);
+            renderProjects(data.proyectos);
+        } catch (error) {
+            console.error("Error al cargar proyectos:", error);
+        }
+    }
+
+
+    // =============================================
+    //               BUSCAR AUTORES EN LA BD
+    // =============================================
+
+    export async function buscarAutores(query) {
+        if (!query || query.length < 1) {
+            return [];
+        }
+
+        try {
+            const res = await fetch(`../php/buscarAutores.php`, {
+                credentials: "same-origin"
+            });
+            const data = await res.json();                
+
+            console.log(data);
+
+            // Filtrar por nombre o correo
+            const queryLower = query.toLowerCase();
+            return data.autores.filter(autor => 
+                autor.nombre.toLowerCase().includes(queryLower) ||
+                autor.correo.toLowerCase().includes(queryLower) ||
+                autor.primerApellido.toLowerCase().includes(queryLower) ||
+                autor.segundoApellido.toLowerCase().includes(queryLower)
+
+            );
+        } catch (error) {
+            console.error('Error al buscar autores:', error);
+            return [];
+        }
+    }
+
+
+    // =============================================
+    //               CREAR PROYECTO
+    // =============================================
+    export async function crearProyecto(){
         //consigo los datos
         const titulo = document.getElementById('project-title').value;
         const autorCorrespondencia = document.querySelector('#author-correspondencia');
@@ -511,133 +713,26 @@ async function loadProjects() {
             alert("Proyecto creado con éxito.");
         }
     }
+    
 
 
 
-(function () {
-    const dropzones = document.querySelectorAll('[data-dropzone]');
-
-    dropzones.forEach(function (zone) {
-        const input = zone.querySelector('input[type="file"]');
-        const trigger = zone.querySelector('[data-dropzone-trigger]');
-        const info = zone.querySelector('[data-dropzone-info]');
-
-        if (!input) { return; }
-
-        function setInfo(file) {
-            if (!info) { return; }
-            if (!file) { info.textContent = ''; return; }
-            var sizeInKb = file.size / 1024;
-            var formatted = sizeInKb < 1024 ? sizeInKb.toFixed(1) + ' KB' : (sizeInKb / 1024).toFixed(2) + ' MB';
-            info.textContent = file.name + ' · ' + formatted;
-        }
-
-        ['dragenter', 'dragover'].forEach(function (eventName) {
-            zone.addEventListener(eventName, function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-                zone.classList.add('is-dragover');
-            });
-        });
-
-        ['dragleave', 'drop'].forEach(function (eventName) {
-            zone.addEventListener(eventName, function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-                zone.classList.remove('is-dragover');
-            });
-        });
-
-        zone.addEventListener('drop', function (event) {
-            if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
-                var file = event.dataTransfer.files[0];
-                input.files = event.dataTransfer.files;
-                setInfo(file);
-            }
-        });
-
-        if (trigger) {
-            trigger.addEventListener('click', function () {
-                input.click();
-            });
-        }
-
-        input.addEventListener('change', function () {
-            setInfo(input.files && input.files[0]);
-        });
-    });
-    const board = document.querySelector('.project-list');
-    if (!board) { return; }
-
-    const pageSize = Number(board.dataset.pageSize) || 5;
-    const allCards = Array.from(board.querySelectorAll('.project-card'));
-    const searchInput = document.getElementById('project-search');
-    const emptyState = document.getElementById('project-empty');
-    const pagination = document.getElementById('project-pagination');
-    const prevBtn = document.getElementById('project-prev');
-    const nextBtn = document.getElementById('project-next');
-    const pageIndicator = document.getElementById('project-page-indicator');
-
-    let filteredCards = allCards.slice();
-    let currentPage = 1;
-
-    function updateVisibility() {
-        const total = filteredCards.length;
-        const totalPages = Math.max(1, Math.ceil(total / pageSize));
-        currentPage = Math.min(currentPage, totalPages);
-
-        const start = (currentPage - 1) * pageSize;
-        const end = start + pageSize;
-        const visibleSet = new Set(filteredCards.slice(start, end));
 
 
-        allCards.forEach(card => {
-            card.hidden = !visibleSet.has(card);
-        });
+    // =============================================
+    //         AGREGAR TODAS LAS FUNCIONES EXPORT
+    // =============================================
+    window.agregarAutor = agregarAutor;
+    window.eliminarAutor = eliminarAutor;
+    window.inicializarAutocomplete = inicializarAutocomplete;
+    window.makeEntrega = makeEntrega;
+    window.renderProjects = renderProjects;
+    window.crearProyecto = crearProyecto;
+    window.loadProjects = loadProjects;
+    window.buscarAutores = buscarAutores;
 
-        emptyState.hidden = (total > 0 || !searchInput.value.trim());
-        pagination.hidden = total <= pageSize;
-        pageIndicator.textContent = total ? currentPage + ' / ' + totalPages : '0 / 0';
-        prevBtn.disabled = currentPage <= 1;
-        nextBtn.disabled = currentPage >= totalPages;
-    }
+    console.log("funciones disponibles:", window.agregarAutor);
 
-    function applySearch(value) {
-        const term = value.trim().toLowerCase();
-        if (!term) {
-            filteredCards = allCards.slice();
-        } else {
-            filteredCards = allCards.filter(card => {
-                const title = (card.dataset.title || card.querySelector('.project-title')?.textContent || '').toLowerCase();
-                const author = (card.dataset.author || '').toLowerCase();
-                const date = (card.dataset.date || '').toLowerCase();
-                return title.includes(term) || author.includes(term) || date.includes(term);
-            });
-        }
-        currentPage = 1;
-        updateVisibility();
-    }
 
-    if (searchInput) {
-        searchInput.addEventListener('input', event => {
-            applySearch(event.target.value);
-        });
-    }
+    
 
-    prevBtn.addEventListener('click', () => {
-        if (currentPage <= 1) { return; }
-        currentPage -= 1;
-        updateVisibility();
-        board.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-
-    nextBtn.addEventListener('click', () => {
-        const totalPages = Math.max(1, Math.ceil(filteredCards.length / pageSize));
-        if (currentPage >= totalPages) { return; }
-        currentPage += 1;
-        updateVisibility();
-        board.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-
-    updateVisibility();
-})();
