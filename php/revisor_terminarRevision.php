@@ -48,28 +48,20 @@ if ($respuestas['dictamen'] === "no_recomendar"){
     $stmtProyecto->execute();
 
     //actualizo revisor_veredicto
-    $stmtRevisorVeredicto = $conn->prepare("UPDATE revisor_veredicto SET status = 1 WHERE idRevisor = ? AND idProyecto = ?");
+    $stmtRevisorVeredicto = $conn->prepare("UPDATE revisor_veredicto SET status = 1, terminado = 1 WHERE idRevisor = ? AND idProyecto = ?");
     $stmtRevisorVeredicto->bind_param("ii", $_SESSION['user_id'], $idProyecto);
     $stmtRevisorVeredicto->execute();
 
     $seLlegoAUnVeredicto = true;
 }else{
     if($rowEntrega['entregaCount'] == 1){
-        //creo la segunda entrega
-        // $stmtProyecto = $conn->prepare("INSERT INTO entrega (idProyecto, numeroEntrega, pdfPath, entregado, aceptado, fechaLimite) VALUES (?, 2, NULL, 0, NULL, DATE_ADD(CURDATE(), INTERVAL 7 DAY))");//TODO tengo que poner la fecha limite bien
-        // $stmtProyecto->bind_param("i", $idProyecto);
-        // $stmtProyecto->execute();
-        
-        //checo que si se haya creado bien
-        // if($stmtProyecto->affected_rows == 0){
-        //     echo json_encode(['success' => false, 'message' => 'Error al crear la segunda entrega.']);
-        //     exit;
-        // }
+        $stmtRevisorVeredicto2daEntrega = $conn->prepare("UPDATE revisor_veredicto SET terminado = 1 WHERE idRevisor = ? AND idProyecto = ?");
+        $stmtRevisorVeredicto2daEntrega->bind_param("ii", $_SESSION['user_id'], $idProyecto);
+        $stmtRevisorVeredicto2daEntrega->execute();
 
-        // $rowDeProyecto = $resultEntrega->fetch_assoc();
     }else{
         //guardo en revisor_veredicto no aceptado porque ya fue la segunda entrega
-        $stmtRevisorVeredicto2daEntrega = $conn->prepare("UPDATE revisor_veredicto SET status = 0 WHERE idRevisor = ? AND idProyecto = ?");
+        $stmtRevisorVeredicto2daEntrega = $conn->prepare("UPDATE revisor_veredicto SET status = 0, terminado = 1 WHERE idRevisor = ? AND idProyecto = ?");
         $stmtRevisorVeredicto2daEntrega->bind_param("ii", $_SESSION['user_id'], $idProyecto);
         $stmtRevisorVeredicto2daEntrega->execute();
 
@@ -87,9 +79,9 @@ if($seLlegoAUnVeredicto){
     $aFavor = 0;
     $enContra = 0;
     while ($rowRevisorVeredicto = $resultRevisorVeredicto->fetch_assoc()) {
-        if ($rowRevisorVeredicto['status'] == 1) {
+        if ($rowRevisorVeredicto['status'] === 1) {
             $aFavor++;   
-        }else if ($rowRevisorVeredicto['status'] == 0) {
+        }else if ($rowRevisorVeredicto['status'] === 0) {
             $enContra++;
         }
     }
