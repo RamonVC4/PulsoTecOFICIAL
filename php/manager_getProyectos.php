@@ -4,10 +4,13 @@ session_start();
 header('Content-Type: application/json');
 
 // CAMBIO AQUÍ: Agregamos JOINs para traer el correo del autor
-$sql = "SELECT p.id, p.nombre, a.correo 
-        FROM proyecto p 
-        JOIN autor_proyecto ap ON p.id = ap.idProyecto 
-        JOIN autor a ON ap.idAutor = a.id";
+$sql = "SELECT p.id, p.nombre, 
+               GROUP_CONCAT(a.correo SEPARATOR ', ') AS correos
+        FROM proyecto p
+        JOIN autor_proyecto ap ON p.id = ap.idProyecto
+        JOIN autor a ON ap.idAutor = a.id
+        GROUP BY p.id, p.nombre";
+
 
 $stmtProyectos = $conn->prepare($sql);
 $stmtProyectos->execute();
@@ -53,7 +56,7 @@ while ($row = $result->fetch_assoc()) {
     $proyectos[] = [
         'id' => $row['id'],
         'title' => $row['nombre'],
-        'author' => $row['correo'], 
+        'author' => $row['correos'], 
         'area' => 'Sistemas',
         'stage' => $ultimoEstado,
         'entregas' => $entregas,

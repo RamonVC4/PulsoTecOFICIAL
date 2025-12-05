@@ -19,6 +19,10 @@ while ($row = $result->fetch_assoc()) {
 
     while ($entregaRow = $entregaResult->fetch_assoc()) {
         //var_dump($entregaRow);
+        if (!empty($entregaRow['fechaLimite']) && $entregaRow['fechaLimite'] < date('Y-m-d')) {
+            continue;
+        }
+
         $entregas[] = [
             'id' => $entregaRow['id'],
             'pdfPath' => $entregaRow['pdfPath'],

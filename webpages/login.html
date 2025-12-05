@@ -6,6 +6,9 @@
     <title>Acceder - PULSOTEC</title>
     <link rel="stylesheet" href="../styles/styles_login.css">
 </head>
+
+
+
 <body class="login-page">
     <main class="login-container">
         
@@ -13,13 +16,12 @@
             <a href="../index.html">VOLVER A INICIO</a>
         </header>
 
-
         <section class="card" role="region" aria-labelledby="login-title">
             <h1 id="login-title" class="card-title">ACCEDER COMO</h1>
 
             <!-- <form class="login-form" action="login.php" method="post" autocomplete="on" novalidate> -->
             <form class="login-form" autocomplete="on" novalidate>
-                <!-- Role switcher (submits with the form) -->
+                <!-- Role switcher -->
                 <div class="role-switch" role="tablist" aria-label="Seleccionar rol">
                     <input type="radio" id="role-autor" name="role" value="autor">
                     <input type="radio" id="role-manager" name="role" value="manager">
@@ -33,6 +35,8 @@
                     </div>
                 </div>
 
+
+                <!-- FORMULARIO DE LOGIN -->
                 <div id="tabpanel" class="form-fields" role="tabpanel" tabindex="-1">
                     <div class="field">
                         <label for="correo">Correo</label>
@@ -57,6 +61,7 @@
                     </div>
                 </div>
 
+                <!-- ACCIONES -->
                 <div class="actions">
                     <button type="button" class="btn-primary" onclick="goToPage()">ACCEDER</button>
                     <a class="link-ghost" href="./register.html" aria-label="Crear cuenta nueva">NO TENGO UN USUARIO</a>
@@ -69,49 +74,8 @@
         <span>P u l s o T e c&nbsp;&nbsp;V e r i f i c a</span>
     </footer>
 
-
-
-    
-    <script>
-    (function () {
-        const toggle = document.querySelector('.toggle-password');
-        const pwd = document.getElementById('password');
-        if (toggle && pwd) {
-            toggle.addEventListener('click', function () {
-                const reveal = pwd.type === 'password';
-                pwd.type = reveal ? 'text' : 'password';
-                toggle.classList.toggle('revealed', reveal);
-                pwd.focus({ preventScroll: true });
-            });
-        }
-    })();
-
-    async function goToPage() {
-        //consigo los datos
-        const role = document.querySelector('input[name="role"]:checked')?.value;
-        const correo = document.getElementById('correo').value;
-        const password = document.getElementById('password').value;
-
-        //hago un fetch a php
-        const res = await fetch("../php/login.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ correo, password, role }),
-            credentials: "same-origin" // para enviar cookies de la sesion
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-            alert("Datos incorrectos, por favor verifique los campos.");
-            return;
-        }
-
-        window.location.href = data.redirect;
-    }
-
-
-    </script>
+    <!-- SCRIPT PARA EL LOGIN -->
+    <script type="module" src="../pages/script_login.js"></script>
 </body>
 </html>
 

@@ -13,10 +13,11 @@ if ($row = $result->fetch_assoc()) {
     exit;
 }
 
-
 //leo los datos
 $pdf = $_FILES['archivo'];
 $projectTitle = $_POST['titulo'];
+$autoresIds = json_decode($_POST['autores'], true);
+$autorCorrespId = $_POST['autorCorrespondenciaId'];
 
 //guardo el PDF aqui
 $uploadsDir = '../uploads/'; 
@@ -47,6 +48,15 @@ $projectId = $stmtCrearProyecto->insert_id;
 $stmtAutorProyecto = $conn->prepare("INSERT INTO autor_proyecto (idAutor, idProyecto) VALUES (?, ?)");
 $stmtAutorProyecto->bind_param("ii", $_SESSION['user_id'], $projectId);
 $stmtAutorProyecto->execute();
+
+//pongo los demas autores en la relacion
+if (!empty($autoresIds)) {
+    foreach ($autoresIds as $currId) {
+        $stmtAutorProyecto = $conn->prepare("INSERT INTO autor_proyecto (idAutor, idProyecto) VALUES (?, ?)");
+        $stmtAutorProyecto->bind_param("ii",$currId, $projectId);
+        $stmtAutorProyecto->execute();
+    }   
+}
 
 //si hubo error regreso
 if ($stmtAutorProyecto->affected_rows === 0) {
