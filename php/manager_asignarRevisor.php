@@ -40,8 +40,8 @@ if (!$stmt->execute()) {
 
 // 3. Crear registro en revisor_veredicto
 // CORRECCIÓN: Quitamos idEntrega porque no existe en la tabla revisor_veredicto del SQL
-$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status) VALUES (?, ?, NULL)");
-$stmtVeredicto->bind_param("ii", $idRevisor, $idProyecto);
+$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status, idEntrega, terminado) VALUES (?, ?, NULL, (SELECT MAX(numeroEntrega) FROM entrega WHERE idProyecto = ?), NULL)");
+$stmtVeredicto->bind_param("iii", $idRevisor, $idProyecto, $idProyecto);
 
 if ($stmtVeredicto->execute()) {
     echo json_encode(['success' => true, 'message' => 'Revisor asignado correctamente.']);

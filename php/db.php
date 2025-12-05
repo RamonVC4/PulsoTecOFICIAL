@@ -1,8 +1,9 @@
 <?php
+
 // Datos conexión
 $host = "pulsotec-pulsotec.g.aivencloud.com";
 $user = "avnadmin";
-$pass = $_ENV['AIVEN_PASS'];
+$pass = "AVNS_D0TghQZ5koF26QhoHxo";
 $port = "24265";
 $db = "pulsotec";
 
