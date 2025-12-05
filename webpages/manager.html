@@ -451,7 +451,10 @@
             elements.projectsList.innerHTML = '';
 
             pageItems.forEach(project => {
-                const assignedCount = getAssigned(project).length;
+                const assignedCount = (project.assignedCountReal !== undefined) 
+                    ? project.assignedCountReal 
+                    : getAssigned(project).length;
+
                 const item = document.createElement('li');
                 item.className = `project-card ${statusClass(project.stage)}` + (project.id === activeProjectId ? ' is-active' : '');
                 item.dataset.id = project.id;
