@@ -26,6 +26,21 @@ header.appendChild(createHeaderNav(urls, null, cerrar_sesion_link));
 const innerSessionHead = select('.session-head');
 innerSessionHead.innerHTML = createInnerSessionHead('./author.html');
 
+// Agregar selector de revisores después del header interno
+const sessionContext = innerSessionHead.querySelector('.session-context');
+if (sessionContext) {
+    const revisorSelector = document.createElement('div');
+    revisorSelector.className = 'revisor-selector';
+    revisorSelector.id = 'revisor-selector-container';
+    revisorSelector.innerHTML = `
+        <label for="revisor-select">Ver rúbrica de:</label>
+        <select id="revisor-select" class="revisor-select">
+            <option value="">Cargando revisores...</option>
+        </select>
+    `;
+    sessionContext.appendChild(revisorSelector);
+}
+
 
 
 // =============================================
@@ -44,27 +59,91 @@ rubric.innerHTML = createRubric();
 //     CARGAR LA TABLA DESDE LA BASE DE DATOS
 // =============================================
 
+let revisoresData = [];
+let revisorActual = null;
+
 //esta funcion se ejecuta al cargar la pagina
 document.addEventListener('DOMContentLoaded', () => {
-    cargarTabla(); 
+    cargarRevisores(); 
 });
 
-async function cargarTabla() {
+async function cargarRevisores() {
+    const idEntrega = (new URLSearchParams(window.location.search)).get('id');
     const dataDeBDD = await fetch('../php/autor_getDatosRubrica.php', {
         method: 'POST',
         body: JSON.stringify({
-            idEntrega: (new URLSearchParams(window.location.search)).get('id')
+            idEntrega: idEntrega
         }),
     });
     const jsonStr = await dataDeBDD.text();
 
-    //sin no tenia guardado nada, salir
+    //si no hay datos, salir
     if (!jsonStr) return;
 
     const datosEnJSON = JSON.parse(jsonStr);
-    const formObj = JSON.parse(datosEnJSON.datosRubrica);
+    
+    if (!datosEnJSON.success || !datosEnJSON.revisores || datosEnJSON.revisores.length === 0) {
+        const selector = document.getElementById('revisor-select');
+        if (selector) {
+            selector.innerHTML = '<option value="">No hay revisores disponibles</option>';
+        }
+        return;
+    }
 
-    form = document.getElementById('rubric-form'); 
+    revisoresData = datosEnJSON.revisores;
+    
+    // Llenar el selector de revisores
+    const selector = document.getElementById('revisor-select');
+    if (selector) {
+        selector.innerHTML = revisoresData.map((revisor, index) => 
+            `<option value="${index}">${revisor.nombre} ${revisor.terminado ? '✓' : '(En progreso)'}</option>`
+        ).join('');
+        
+        // Cargar la primera rúbrica por defecto
+        if (revisoresData.length > 0) {
+            selector.value = '0';
+            cargarRubricaRevisor(0);
+        }
+        
+        // Agregar listener para cambiar de revisor
+        selector.addEventListener('change', (e) => {
+            const index = parseInt(e.target.value);
+            if (!isNaN(index) && index >= 0 && index < revisoresData.length) {
+                cargarRubricaRevisor(index);
+            }
+        });
+    }
+}
+
+function cargarRubricaRevisor(index) {
+    if (index < 0 || index >= revisoresData.length) return;
+    
+    revisorActual = revisoresData[index];
+    
+    // Manejar datos de rúbrica vacíos o inválidos
+    let formObj = {};
+    if (revisorActual.datosRubrica && revisorActual.datosRubrica.trim() !== '' && revisorActual.datosRubrica !== '{}') {
+        try {
+            formObj = JSON.parse(revisorActual.datosRubrica);
+        } catch (e) {
+            console.error('Error al parsear datos de rúbrica:', e);
+            formObj = {};
+        }
+    }
+    
+    const form = document.getElementById('rubric-form');
+    if (!form) return;
+    
+    // Limpiar el formulario primero
+    Array.from(form.elements).forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            el.checked = false;
+        } else if (el.type !== 'button' && el.type !== 'submit' && el.id !== 'rubric-doc-id') {
+            el.value = '';
+        }
+    });
+    
+    // Llenar con los datos del revisor
     for (const [key, value] of Object.entries(formObj)) {
         const field = form.elements[key];
         if (!field) continue;
@@ -167,6 +246,6 @@ $('#download-btn').addEventListener('click', () => {
     alert('Descarga simulada. Conecta este botón con el PDF del manuscrito.');
 });
 
-// Iniciar con rúbrica oculta para dispositivos grandes
-showRubric(false);
+// Iniciar con rúbrica visible por defecto (solo en author-verRubrica)
+showRubric(true);
 })();

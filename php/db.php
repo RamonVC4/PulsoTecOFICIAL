@@ -2,8 +2,8 @@
 // Datos conexión
 $host = "localhost";
 $user = "root";
-$pass = "";
-$port = "3306";
+$pass = "root";
+$port = "8889";
 $db = "pulsotec";
 
 $conn = new mysqli($host, $user, $pass,$db, $port);

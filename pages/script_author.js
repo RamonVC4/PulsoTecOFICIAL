@@ -277,7 +277,7 @@
     //           CONSTRUIR CARD DE ENTREGA
     // =============================================
 
-    export function makeEntrega(entrega, titulo, isInitial) {
+    export function makeEntrega(entrega, titulo, isInitial, primeraEntrega = null) {
         const section = el("section", {
             class: `version ${isInitial ? "version-initial" : "version-revised"} ${entrega.entregado ? "is-ready" : "is-await"}`
         });
@@ -286,9 +286,14 @@
         const status = entrega.aceptado?? "chip-null" === "chip-null"? "chip-null": entrega.aceptado? "chip-success": "chip-denied";
         const textoStatus = entrega.aceptado?? "PENDIENTE" === "PENDIENTE"? "PENDIENTE": entrega.aceptado? "ACEPTADO": "DENEGADO";
 
+        // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
+        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== null && primeraEntrega.aceptado !== 0;
+        
         const header = el("header", {
             children: [
-                el("h4", { text: titulo }),
+                esSegundaEntregaConFormulario 
+                    ? el("h4", { text: "Pendiente" })
+                    : el("h4", { text: titulo }),
                 el("span", {
                     class: `chip ${entrega.entregado ? "chip-success" : "chip-pending"} ${status}`,
                     text: entrega.entregado ? (textoStatus) : "Pendiente"
@@ -304,6 +309,103 @@
         });
 
         section.append(header, fecha);
+
+        // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
+        if (esSegundaEntregaConFormulario) {
+            // Agregar clase especial para la tarjeta con formulario
+            section.classList.add('has-upload-form');
+            
+            // Mostrar formulario para subir la segunda entrega
+            const uploadForm = el("form", {
+                class: "upload-second-delivery",
+                attrs: {
+                    "data-entrega-id": entrega.id,
+                    "data-proyecto-id": entrega.idProyecto || ""
+                }
+            });
+
+            const dropzone = el("div", {
+                class: "dropzone dropzone-second-delivery",
+                attrs: { "data-dropzone": "" }
+            });
+
+            const fileInput = el("input", {
+                attrs: {
+                    type: "file",
+                    id: `file-${entrega.id}`,
+                    name: "archivo",
+                    accept: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    hidden: true,
+                    required: true
+                }
+            });
+
+            const dzInner = el("div", {
+                class: "dz-inner"
+            });
+            
+            const svg = el("svg", {
+                attrs: {
+                    viewBox: "0 0 24 24",
+                    width: "28",
+                    height: "28",
+                    fill: "none",
+                    stroke: "currentColor",
+                    "stroke-width": "2",
+                    "stroke-linecap": "round",
+                    "stroke-linejoin": "round",
+                    "aria-hidden": "true"
+                }
+            });
+            svg.innerHTML = `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="16"></line>`;
+            
+            const pText = el("p");
+            pText.innerHTML = "<strong>Arrastra tu DOCX</strong> o";
+            
+            const selectBtn = el("button", {
+                type: "button",
+                class: "btn-secondary",
+                text: "Seleccionar archivo",
+                attrs: { "data-dropzone-trigger": "" }
+            });
+            
+            const fileInfo = el("div", {
+                class: "file-info",
+                attrs: { "data-dropzone-info": "", "aria-live": "polite" }
+            });
+            
+            dzInner.appendChild(svg);
+            dzInner.appendChild(pText);
+            dzInner.appendChild(selectBtn);
+            dzInner.appendChild(fileInfo);
+
+            dropzone.appendChild(fileInput);
+            dropzone.appendChild(dzInner);
+
+            const submitBtn = el("button", {
+                type: "button",
+                class: "btn-primary",
+                text: "Subir segunda entrega",
+                attrs: {
+                    "data-upload-btn": "",
+                    "data-entrega-id": entrega.id
+                }
+            });
+            
+            // Agregar event listener para el botón
+            submitBtn.addEventListener('click', () => {
+                subirSegundaEntrega(entrega.id);
+            });
+
+            uploadForm.appendChild(dropzone);
+            uploadForm.appendChild(submitBtn);
+            section.appendChild(uploadForm);
+
+            // Inicializar dropzone para esta sección
+            setTimeout(() => {
+                inicializarDropzone(dropzone, fileInput);
+            }, 100);
+        }
 
         if (entrega.pdfPath) {
             section.appendChild(
@@ -360,6 +462,12 @@
 
         console.log(projects);
         projects.forEach(proj => {
+            // Validar que el proyecto tenga entregas
+            if (!proj.entregas || proj.entregas.length === 0) {
+                console.warn(`El proyecto "${proj.nombre}" no tiene entregas disponibles`);
+                return; // Saltar este proyecto
+            }
+
             const card = el("article", {
                 class: "card project-card",
                 attrs: {
@@ -380,9 +488,14 @@
                 ]
             });
 
+            // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
+            // El proyecto está cerrado solo si la última entrega está definitivamente aceptada o rechazada
+            const ultimaEntrega = proj.entregas[proj.entregas.length - 1];
+            const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
+            
             const status = el("span", {
-                class: `project-status ${e.aceptado ? 'chip-success' : ""}`,
-                text: e.aceptado ? "Aceptado" : "En revisión"
+                class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
+                text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
             });
 
             header.append(headerInfo, status);
@@ -395,15 +508,8 @@
                 //le pongo la date
                 card.dataset.date = proj.entregas[1].fechaEntrega;
 
-                const status = el("span", {
-                    class: `project-status ${proj.entregas[0].aceptado ? 'chip-success' : ""}`,
-                    text: proj.entregas[0].aceptado ? "Aceptado" : "En revisión"
-                });
-
-                header.append(headerInfo, status);
-
-                // creo la carta de la otra entrega
-                grid.appendChild(makeEntrega(proj.entregas[1], proj.nombre, false));
+                // creo la carta de la otra entrega, pasando la primera entrega para verificar estado
+                grid.appendChild(makeEntrega(proj.entregas[1], proj.nombre, false, proj.entregas[0]));
 
             }
 
@@ -413,6 +519,131 @@
 
     }
 
+
+    // =============================================
+    //         INICIALIZAR DROPZONE DINÁMICO
+    // =============================================
+
+    function inicializarDropzone(zone, input) {
+        const trigger = zone.querySelector('[data-dropzone-trigger]');
+        const info = zone.querySelector('[data-dropzone-info]');
+
+        if (!input) { return; }
+
+        function setInfo(file) {
+            if (!info) { return; }
+            if (!file) { info.textContent = ''; return; }
+            var sizeInKb = file.size / 1024;
+            var formatted = sizeInKb < 1024 ? sizeInKb.toFixed(1) + ' KB' : (sizeInKb / 1024).toFixed(2) + ' MB';
+            info.textContent = file.name + ' · ' + formatted;
+        }
+
+        ['dragenter', 'dragover'].forEach(function (eventName) {
+            zone.addEventListener(eventName, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                zone.classList.add('is-dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(function (eventName) {
+            zone.addEventListener(eventName, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                zone.classList.remove('is-dragover');
+            });
+        });
+
+        zone.addEventListener('drop', function (event) {
+            if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+                var file = event.dataTransfer.files[0];
+                input.files = event.dataTransfer.files;
+                setInfo(file);
+            }
+        });
+
+        if (trigger) {
+            trigger.addEventListener('click', function () {
+                input.click();
+            });
+        }
+
+        input.addEventListener('change', function () {
+            setInfo(input.files && input.files[0]);
+        });
+    }
+
+    // =============================================
+    //         SUBIR SEGUNDA ENTREGA
+    // =============================================
+
+    export async function subirSegundaEntrega(idEntrega) {
+        // Si es el proyecto de ejemplo, solo mostrar mensaje
+        if (idEntrega === 'ejemplo-entrega-2' || idEntrega.toString().includes('ejemplo')) {
+            alert('Este es un proyecto de ejemplo. En un proyecto real, aquí podrías subir tu segunda entrega después de recibir los comentarios de los revisores.');
+            return;
+        }
+
+        const form = document.querySelector(`form[data-entrega-id="${idEntrega}"]`);
+        if (!form) {
+            alert('Error: No se encontró el formulario de subida.');
+            return;
+        }
+
+        const fileInput = form.querySelector('input[type="file"]');
+        if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+            alert('Por favor selecciona un archivo DOCX para subir.');
+            return;
+        }
+
+        const archivo = fileInput.files[0];
+        
+        // Validar que sea un archivo DOCX
+        if (!archivo.name.endsWith('.docx') && !archivo.type.includes('wordprocessingml')) {
+            alert('Por favor selecciona un archivo DOCX válido.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('idEntrega', idEntrega);
+        formData.append('archivo', archivo);
+
+        const submitBtn = form.querySelector('[data-upload-btn]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Subiendo...';
+        }
+
+        try {
+            const res = await fetch("../php/autor_subirSegundaEntrega.php", {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin"
+            });
+
+            const data = await res.json();
+
+            if (!data.success) {
+                alert(data.message || 'Error al subir la segunda entrega.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Subir segunda entrega';
+                }
+                return;
+            }
+
+            alert('Segunda entrega subida exitosamente.');
+            // Recargar los proyectos para mostrar el estado actualizado
+            loadProjects();
+        } catch (error) {
+            console.error('Error al subir la segunda entrega:', error);
+            alert('Error al subir la segunda entrega. Por favor intenta de nuevo.');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Subir segunda entrega';
+            }
+        }
+    }
 
     // =============================================
     //                 DROPZONE
@@ -578,9 +809,155 @@
                 return;
             }
             renderProjects(data.proyectos);
+            // Agregar proyectos de ejemplo
+            renderProyectoEjemplo();
+            renderProyectoEjemploSinRevisar();
         //} catch (error) {
         //    console.error("Error al cargar proyectos:", error);
         //}
+    }
+
+    // =============================================
+    //         RENDERIZAR PROYECTO DE EJEMPLO
+    // =============================================
+
+    function renderProyectoEjemplo() {
+        const board = document.querySelector('.project-list');
+        if (!board) return;
+
+        const proyectoEjemplo = {
+            id: 'ejemplo-1',
+            nombre: 'Proyecto de Ejemplo - Primera Revisión Completada',
+            entregas: [
+                {
+                    id: 'ejemplo-entrega-1',
+                    idProyecto: 'ejemplo-1',
+                    pdfPath: '../uploads/ejemplo-doc.pdf',
+                    entregado: 1,
+                    aceptado: 1, // Primera entrega revisada y aceptada (con cambios solicitados)
+                    fechaEntrega: '2025-01-15'
+                },
+                {
+                    id: 'ejemplo-entrega-2',
+                    idProyecto: 'ejemplo-1',
+                    pdfPath: null,
+                    entregado: 0, // Segunda entrega pendiente de subir
+                    aceptado: null,
+                    fechaEntrega: '2025-02-01'
+                }
+            ]
+        };
+
+        // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
+        const card = el("article", {
+            class: "card project-card",
+            attrs: {
+                "data-title": proyectoEjemplo.nombre,
+            }
+        });
+
+        const e = proyectoEjemplo.entregas[0];
+
+        const header = el("header", { class: "project-card__header" });
+
+        const headerInfo = el("div", {
+            children: [
+                el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
+                el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
+            ]
+        });
+
+        // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
+        const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
+        const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
+        
+        const status = el("span", {
+            class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
+            text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
+        });
+
+        header.append(headerInfo, status);
+
+        const grid = el("div", { class: "version-grid" });
+        grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
+
+        // Agregar la segunda entrega
+        if (proyectoEjemplo.entregas.length > 1) {
+            card.dataset.date = proyectoEjemplo.entregas[1].fechaEntrega;
+
+            // Crear la carta de la segunda entrega, pasando la primera entrega para verificar estado
+            grid.appendChild(makeEntrega(proyectoEjemplo.entregas[1], proyectoEjemplo.nombre, false, proyectoEjemplo.entregas[0]));
+        }
+
+        card.append(header, grid);
+        // Agregar al inicio de la lista
+        board.insertBefore(card, board.firstChild);
+    }
+
+    // =============================================
+    //    RENDERIZAR PROYECTO DE EJEMPLO SIN REVISAR
+    // =============================================
+
+    function renderProyectoEjemploSinRevisar() {
+        const board = document.querySelector('.project-list');
+        if (!board) return;
+
+        const proyectoEjemplo = {
+            id: 'ejemplo-2',
+            nombre: 'Proyecto de Ejemplo - Primera Entrega Pendiente de Revisión',
+            entregas: [
+                {
+                    id: 'ejemplo-entrega-3',
+                    idProyecto: 'ejemplo-2',
+                    pdfPath: '../uploads/ejemplo-doc-2.pdf',
+                    entregado: 1,
+                    aceptado: null, // Primera entrega aún sin revisar
+                    fechaEntrega: '2025-01-20'
+                }
+            ]
+        };
+
+        // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
+        const card = el("article", {
+            class: "card project-card",
+            attrs: {
+                "data-title": proyectoEjemplo.nombre,
+            }
+        });
+
+        const e = proyectoEjemplo.entregas[0];
+
+        const header = el("header", { class: "project-card__header" });
+
+        const headerInfo = el("div", {
+            children: [
+                el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
+                el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
+            ]
+        });
+
+        // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
+        const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
+        const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
+        
+        const status = el("span", {
+            class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
+            text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
+        });
+
+        header.append(headerInfo, status);
+
+        const grid = el("div", { class: "version-grid" });
+        grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
+
+        card.append(header, grid);
+        // Agregar al inicio de la lista (después del primer ejemplo)
+        const firstChild = board.firstChild;
+        if (firstChild) {
+            board.insertBefore(card, firstChild.nextSibling);
+        } else {
+            board.appendChild(card);
+        }
     }
 
 
@@ -680,7 +1057,8 @@
         console.log(autorCorrespondenciaId);
         console.log(idAutores.includes(autorCorrespondenciaId));
         if (!(idAutores.includes(autorCorrespondenciaId) || id == autorCorrespondenciaId)) {
-            alert ("El autor de correspondencia debe ser un autor del proyecto.");
+            alert("El autor de correspondencia debe ser un autor del proyecto.");
+            return;
         }
 
         //archivo
@@ -703,20 +1081,34 @@
         formData.append('autores', JSON.stringify(idAutores));
         formData.append('autorCorrespondenciaId', autorCorrespondenciaId);
 
-        const res = await fetch("../php/autor_crearProyecto.php", {
-            method: "POST",
-            body: formData,
-            credentials: "same-origin" // para enviar cookies de la sesion
-        });
+        try {
+            const res = await fetch("../php/autor_crearProyecto.php", {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin" // para enviar cookies de la sesion
+            });
 
-        const data = await res.json();
+            const text = await res.text();
+            let data;
+            
+            try {
+                data = JSON.parse(text);
+            } catch (parseError) {
+                console.error('Error al parsear JSON. Respuesta del servidor:', text);
+                alert('Error del servidor. Por favor verifica la consola para más detalles.');
+                return;
+            }
 
-        if (!data.success) {
-            alert(data.message);
-            return;
-        }else{
-            loadProjects(); // recarga los proyectos para mostrar el nuevo
-            alert("Proyecto creado con éxito.");
+            if (!data.success) {
+                alert(data.message || 'Error al crear el proyecto');
+                return;
+            } else {
+                loadProjects(); // recarga los proyectos para mostrar el nuevo
+                alert("Proyecto creado con éxito.");
+            }
+        } catch (error) {
+            console.error('Error al crear proyecto:', error);
+            alert('Error al crear el proyecto. Por favor intenta de nuevo.');
         }
     }
     
@@ -736,5 +1128,6 @@
     window.crearProyecto = crearProyecto;
     window.loadProjects = loadProjects;
     window.buscarAutores = buscarAutores;
+    window.subirSegundaEntrega = subirSegundaEntrega;
 
     console.log("funciones disponibles:", window.agregarAutor);

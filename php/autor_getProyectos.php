@@ -25,6 +25,7 @@ while ($row = $result->fetch_assoc()) {
 
         $entregas[] = [
             'id' => $entregaRow['id'],
+            'idProyecto' => $row['id'],
             'pdfPath' => $entregaRow['pdfPath'],
             'entregado' => $entregaRow['entregado'],
             'aceptado' => $entregaRow['aceptado'],
