@@ -368,6 +368,7 @@
             });
 
             const e = proj.entregas[0];
+            console.log("ENTRERGASD ASAAAAAA");
             console.log(proj);
             console.log(e);
 
@@ -702,6 +703,7 @@
         formData.append('archivo', archivo);
         formData.append('autores', JSON.stringify(idAutores));
         formData.append('autorCorrespondenciaId', autorCorrespondenciaId);
+        formData.append('areaDeConocimiento', areaDeConocimiento);
 
         const res = await fetch("../php/autor_crearProyecto.php", {
             method: "POST",

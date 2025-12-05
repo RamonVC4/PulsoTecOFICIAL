@@ -18,6 +18,7 @@ $pdf = $_FILES['archivo'];
 $projectTitle = $_POST['titulo'];
 $autoresIds = json_decode($_POST['autores'], true);
 $autorCorrespId = $_POST['autorCorrespondenciaId'];
+$areaDeConocimiento = $_POST['areaDeConocimiento'];
 
 //guardo el PDF aqui
 $uploadsDir = '../uploads/'; 
@@ -31,8 +32,8 @@ if (!move_uploaded_file($pdf['tmp_name'], $targetPath)){
 
 //inserto el proyecto en la base de datos
 //inserto un proyecto con id y nombre
-$stmtCrearProyecto = $conn->prepare("INSERT INTO proyecto (nombre) VALUES (?)");
-$stmtCrearProyecto->bind_param("s", $projectTitle);
+$stmtCrearProyecto = $conn->prepare("INSERT INTO proyecto (nombre, areaDeConocimiento) VALUES (?,?)");
+$stmtCrearProyecto->bind_param("si", $projectTitle,$areaDeConocimiento);
 $stmtCrearProyecto->execute();
 
 //si hubo error en el execute, regreso
