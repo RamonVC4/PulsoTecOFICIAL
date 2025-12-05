@@ -36,7 +36,7 @@ $rowEntrega = $resultEntrega->fetch_assoc();
 if ($respuestas['dictamen'] === "no_recomendar"){
 
     //actualizo revisor_veredicto
-    $stmtRevisorVeredicto = $conn->prepare("UPDATE revisor_veredicto SET status = 0 WHERE idRevisor = ? AND idProyecto = ?");
+    $stmtRevisorVeredicto = $conn->prepare("UPDATE revisor_veredicto SET status = 0, terminado = 1 WHERE idRevisor = ? AND idProyecto = ?");
     $stmtRevisorVeredicto->bind_param("ii", $_SESSION['user_id'], $idProyecto);
     $stmtRevisorVeredicto->execute();
     
@@ -71,8 +71,8 @@ if ($respuestas['dictamen'] === "no_recomendar"){
 
 //si se llegó a un veredicto tengo que checar si ya hay 2 de tres revisadas para elegir si pasa o no
 if($seLlegoAUnVeredicto){
-    $stmtRevisorVeredicto = $conn->prepare("SELECT status FROM revisor_veredicto WHERE idProyecto = ? AND status IS NOT NULL");
-    $stmtRevisorVeredicto->bind_param("i", $idProyecto);
+    $stmtRevisorVeredicto = $conn->prepare("SELECT status FROM revisor_veredicto WHERE idProyecto = ? AND status IS NOT NULL AND idEntrega = ?;");
+    $stmtRevisorVeredicto->bind_param("ii", $idProyecto, $idEntrega);
     $stmtRevisorVeredicto->execute();
     $resultRevisorVeredicto = $stmtRevisorVeredicto->get_result();
 
@@ -86,14 +86,31 @@ if($seLlegoAUnVeredicto){
         }
     }
 
+    //si hay suficientes a favor pasa
     if($aFavor >=2){
         $stmtProyecto = $conn->prepare("UPDATE entrega SET aceptado = 1 WHERE idProyecto = ?;");
         $stmtProyecto->bind_param("i", $idProyecto);
         $stmtProyecto->execute();
-    }else if ($enContra >= 2){
+
+    }//si no, si hay suficientes en contra, se deniega
+    else if ($enContra >= 2){
         $stmtProyecto = $conn->prepare("UPDATE entrega SET aceptado = 0 WHERE idProyecto = ?;");
         $stmtProyecto->bind_param("i", $idProyecto);
         $stmtProyecto->execute();
+    }
+}else{
+    //checo que no este ya calificada la entrega
+    $resultFueAceptado = q("SELECT aceptado FROM entrega WHERE idProyecto = ? order by id desc limit 1;", "i", [$idProyecto]);
+
+    //si aun no esta calificada, le sigo
+    if (!($resultFueAceptado->fetch_assoc()['aceptado'] !== null)) {
+        //consigo cuantos revisores ya terminaron de revisar
+        $result = q("SELECT COUNT(*) as revisoresTerminaron FROM revisor_proyecto WHERE idProyecto = ? and idEntrega = ? AND terminado = 1;", "ii", [$idProyecto, $idEntrega]);
+
+        //si ya todos revisaron, creo la segunda entrega
+        if ($result->fetch_assoc()['revisoresTerminaron'] === 3) {
+            q("INSERT INTO ENTREGA (idProyecto,numeroEntrega,entregado,fechaLimite) VALUES (?,2,0,NOW())", "i", [$idProyecto]);//TODO CAMBIAR FECHA LIMITE
+        }
     }
 }
 

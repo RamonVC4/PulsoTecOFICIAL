@@ -12,15 +12,11 @@ $proyectos = [];
 
 while ($row = $result->fetch_assoc()) {
     //si ya lo revisé, no lo muestro 
-    $stmtRevisorVeredicto = $conn->prepare("SELECT status FROM revisor_veredicto WHERE idRevisor = ? AND idProyecto = ?");
+    $stmtRevisorVeredicto = $conn->prepare("SELECT status, terminado FROM revisor_veredicto WHERE idRevisor = ? AND idProyecto = ? ORDER BY idEntrega DESC");//este order by deberia hacer que me muestre la ultima entrega
     $stmtRevisorVeredicto->bind_param("ii", $_SESSION['user_id'], $row['id']);
     $stmtRevisorVeredicto->execute();
     $veredictoResult = $stmtRevisorVeredicto->get_result();
     $veredictoRow = $veredictoResult->fetch_assoc();
-
-    if (isset($veredictoRow['status']) && (($veredictoRow['status'] === 1 || $veredictoRow['status'] === 0)) || ($veredictoRow['terminado'] === 1)) {
-        continue;
-    }
 
     //consigo los datos especificos de las entregas de cada proyecto
     $stmtProyectosEntrega = $conn->prepare("SELECT e.id, e.numeroEntrega, e.pdfPath, e.entregado, e.aceptado, e.fechaLimite FROM entrega e WHERE e.idProyecto = ? ORDER BY numeroEntrega DESC");
@@ -30,7 +26,7 @@ while ($row = $result->fetch_assoc()) {
     $primerRow = $entregaResult->fetch_assoc();
     $entregas = [];
 
-    //checo si currProy no fue aceptado ya
+    //checo si currProy no tiene ya un veredicto
     if ($primerRow['aceptado'] === 0 || $primerRow['aceptado'] === 1) {
         continue;
     }
@@ -46,14 +42,15 @@ while ($row = $result->fetch_assoc()) {
         'pdfPath' => $primerRow['pdfPath'],//$outputPDF,TODO
         'entregado' => $primerRow['entregado'],
         'aceptado' => $primerRow['aceptado'],
-        'fechaEntrega' => $primerRow['fechaLimite']
+        'fechaEntrega' => $primerRow['fechaLimite'],
+        'terminado' => $veredictoRow['terminado']
     ];
 
     $proyectos[] = [
         'id' => $row['id'],
         'nombre' => $row['nombre'],
         'entregas' => $entregas,
-        'fechaLimite' => $row['fechaLimite']
+        'fechaLimite' => $row['fechaLimite'],
     ];
 }
 

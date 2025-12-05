@@ -35,6 +35,7 @@ export const creators = Object.freeze([
  */
 
 export const areasDeConocimiento = Object.freeze({
+    0: "Seleccione una área de conocimiento",
     1: "Ingeniería Química y Bioquímica",
     2: "Ingeniería Industrial",
     3: "Sistemas Computacionales y TI",
