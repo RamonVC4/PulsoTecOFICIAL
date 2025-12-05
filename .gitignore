@@ -7,3 +7,5 @@ composer.lock
 
 service-account.json
 pulsoTecinfinityfree.zip
+ca.pem
+.env

@@ -7,7 +7,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 $idEntrega = intval($data['idEntrega']);
 
 //consigo los datos de la rubrica
-$stmtRevisorRubrica = $conn->prepare("SELECT rp.datos from revisor_proyecto rp WHERE rp.idEntrega = ?");
+$stmtRevisorRubrica = $conn->prepare("SELECT rp.datos from revisor_veredicto rp WHERE rp.idEntrega = ?");
 $stmtRevisorRubrica->bind_param("i", $idEntrega);
 $stmtRevisorRubrica->execute();
 $result = $stmtRevisorRubrica->get_result();
