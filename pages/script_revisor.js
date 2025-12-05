@@ -40,7 +40,9 @@
                 //los meto a pending, new o completed segun corresponda
                 //TODO LO SIGUIENTE ES UNSAFE, TENGO QUE CAMBIARLO PARA QUE USE SESSION DE PHP MEJOR
                 const ruta = `review-session.html?doc=${proy.entregas[proy.entregas.length-1].pdfPath}&title=${proy.nombre}`;
-                switch (proy.entregas[proy.entregas.length-1].aceptado) {
+                console.log("dentro de lo que le pone el switch ese");
+                console.log(proy);
+                switch (proy.entregas[proy.entregas.length-1].terminado) {
                     case null:
                         state.pending.push({
                             title: proy.nombre,
@@ -53,6 +55,7 @@
                     
                     case 0:
                     case 1:
+                        console.log("en el case 0 y 1");
                         state.completed.push({
                             title: proy.nombre,
                             completed: '2025-10-10',//TODO, mejor le quito esto luego

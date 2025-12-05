@@ -282,12 +282,16 @@
             class: `version ${isInitial ? "version-initial" : "version-revised"} ${entrega.entregado ? "is-ready" : "is-await"}`
         });
 
+        //consigo el estado de la entrega
+        const status = entrega.aceptado?? "chip-null" === "chip-null"? "chip-null": entrega.aceptado? "chip-success": "chip-denied";
+        const textoStatus = entrega.aceptado?? "PENDIENTE" === "PENDIENTE"? "PENDIENTE": entrega.aceptado? "ACEPTADO": "DENEGADO";
+
         const header = el("header", {
             children: [
                 el("h4", { text: titulo }),
                 el("span", {
-                    class: `chip ${entrega.entregado ? "chip-success" : "chip-pending"}`,
-                    text: entrega.entregado ? (entrega.aceptado ? "Aceptada" : "Recibida") : "Pendiente"
+                    class: `chip ${entrega.entregado ? "chip-success" : "chip-pending"} ${status}`,
+                    text: entrega.entregado ? (textoStatus) : "Pendiente"
                 })
             ]
         });
@@ -364,6 +368,8 @@
             });
 
             const e = proj.entregas[0];
+            console.log(proj);
+            console.log(e);
 
             const header = el("header", { class: "project-card__header" });
 
@@ -563,18 +569,18 @@
 
     //esta funcion obtiene los proyectos del autor
     export async function loadProjects() {
-        try {
+       // try {
             const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
             const data = await res.json();
+            console.log(data);
             if (!data.success) {
                 console.error(data.message);
                 return;
             }
-            console.log(data);
             renderProjects(data.proyectos);
-        } catch (error) {
-            console.error("Error al cargar proyectos:", error);
-        }
+        //} catch (error) {
+        //    console.error("Error al cargar proyectos:", error);
+        //}
     }
 
 
@@ -587,7 +593,7 @@
             return [];
         }
 
-        try {
+        //try {
             const res = await fetch(`../php/buscarAutores.php`, {
                 credentials: "same-origin"
             });
@@ -604,10 +610,10 @@
                 autor.segundoApellido.toLowerCase().includes(queryLower)
 
             );
-        } catch (error) {
-            console.error('Error al buscar autores:', error);
-            return [];
-        }
+        //} catch (error) {
+        //    console.error('Error al buscar autores:', error);
+        //    return [];
+        //}
     }
 
 
