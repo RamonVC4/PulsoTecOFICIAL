@@ -1,7 +1,11 @@
 <?php
 // manager_asignarRevisor.php
-require_once 'db.php'; // O 'db.php', verifica tu nombre
+require_once 'db.php'; 
 header('Content-Type: application/json');
+
+// Activar reporte de errores pero NO mostrarlos en pantalla para no romper el JSON
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -13,7 +17,6 @@ if (!isset($data['idProyecto']) || !isset($data['idRevisor'])) {
 
 $idProyecto = $data['idProyecto'];
 $idRevisor = $data['idRevisor'];
-// Si no mandan fecha, ponemos la de hoy + 7 días o NULL (según prefieras)
 $fechaLimite = isset($data['fechaLimite']) ? $data['fechaLimite'] : date('Y-m-d', strtotime('+7 days'));
 
 // 1. Verificar si ya existe esa asignación
@@ -25,28 +28,26 @@ if ($check->get_result()->num_rows > 0) {
     exit;
 }
 
-// 2. Insertar asignación
-// OJO: 'datos' es NOT NULL en tu BD, así que insertamos un JSON vacío '{}'
+// 2. Insertar asignación en revisor_proyecto
+// NOTA: Aquí insertamos JSON vacío '{}' en 'datos' y 0 en 'terminado'
 $stmt = $conn->prepare("INSERT INTO revisor_proyecto (idRevisor, idProyecto, fechaLimite, datos, terminado) VALUES (?, ?, ?, '{}', 0)");
 $stmt->bind_param("iis", $idRevisor, $idProyecto, $fechaLimite);
 
-//aqui le voy a poner lo de veredicto
-//consigo la id de la ultima entrega
-$stmtEntrega = $conn->prepare("SELECT id FROM entrega WHERE idProyecto = ? ORDER BY id DESC LIMIT 1");
-$stmtEntrega->bind_param("i", $idProyecto);
-$stmtEntrega->execute();
-$resultEntrega = $stmtEntrega->get_result();
-$rowEntrega = $resultEntrega->fetch_assoc();
-$idEntrega = $rowEntrega['id'];
+if (!$stmt->execute()) {
+    echo json_encode(['success' => false, 'message' => 'Error al asignar proyecto: ' . $conn->error]);
+    exit;
+}
 
-//creamos lo de revisor_veredicto
-$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status, idEntrega) VALUES (?, ?, NULL, ?)");
-$stmtVeredicto->bind_param("iii", $idRevisor, $idProyecto, $idEntrega);
-$stmtVeredicto->execute();
+// 3. Crear registro en revisor_veredicto
+// CORRECCIÓN: Quitamos idEntrega porque no existe en la tabla revisor_veredicto del SQL
+$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status) VALUES (?, ?, NULL)");
+$stmtVeredicto->bind_param("ii", $idRevisor, $idProyecto);
 
-if ($stmt->execute()) {
+if ($stmtVeredicto->execute()) {
     echo json_encode(['success' => true, 'message' => 'Revisor asignado correctamente.']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $conn->error]);
+    // Si falla el veredicto, idealmente deberíamos borrar la asignación anterior, 
+    // pero por ahora solo avisamos del error.
+    echo json_encode(['success' => false, 'message' => 'Error al crear veredicto: ' . $conn->error]);
 }
 ?>
