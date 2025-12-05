@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db.php';
+header('Content-Type: application/json');
 
 //valido que no tenga el proyecto un nombre que el usuario ya usó
 $stmtAutorProyecto = $conn->prepare("SELECT ap.idProyecto FROM autor_proyecto ap JOIN proyecto p ON ap.idProyecto = p.id WHERE ap.idAutor = ? AND p.nombre = ?");
