@@ -96,6 +96,26 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Por favor, complete todos los campos obligatorios antes de enviar el dictamen.');
             return;
         }
+
+        //leo el veredicto para saber si no es definitivo
+        const seleccionado = document.querySelector('input[name="dictamen"]:checked');
+        if (seleccionado) {
+            if (!(seleccionado.value === 'no_recomendar' || seleccionado.value === 'aceptar_sin_cambios')) {
+                //mando a llamar a php para ver si no es la segunda revisión
+                const response = await fetch('../php/revisor_verSiEsSegundaEntrega.php', {
+                        method: 'POST',
+                        body: JSON.stringify({}),
+                });
+                
+                const result = await response.json();
+                if(result.esSegundaEntrega){
+                    alert('El veredicto debe ser definitivo en la segunda entrega.');
+                    return;
+                }
+            }
+        }
+
+
         //guardamos la form como json
         const form = document.getElementById('rubric-form');
         const data = new FormData(form);
@@ -113,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         pdfPath = params.get('doc');
         // mandar con fetch
+        console.log("voy a andar a llamar terminarrevision");
         const response = await fetch(terminado ? '../php/revisor_terminarRevision.php' : '../php/revisor_guardarBorrador.php', {
             method: 'POST',
             body: JSON.stringify({formObj,pdfPath}),
