@@ -91,11 +91,126 @@ document.addEventListener('DOMContentLoaded', () => {
     visualizador.src = pdfPath;
 });
 
+    // Función para mostrar modal de CURP
+    function mostrarModalCURP() {
+        return new Promise((resolve, reject) => {
+            // Crear modal
+            const modal = document.createElement('div');
+            modal.className = 'curp-modal-overlay';
+            modal.innerHTML = `
+                <div class="curp-modal">
+                    <div class="curp-modal-header">
+                        <h3>Firmar con CURP</h3>
+                        <button type="button" class="curp-modal-close" aria-label="Cerrar">×</button>
+                    </div>
+                    <div class="curp-modal-body">
+                        <p class="curp-modal-text">Para entregar la revisión, ingresa tu CURP para firmar:</p>
+                        <div class="curp-modal-field">
+                            <label for="curp-input">CURP</label>
+                            <input type="text" id="curp-input" name="curp" placeholder="Ingresa tu CURP" maxlength="18" required>
+                            <div id="curp-error" class="curp-error" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <div class="curp-modal-footer">
+                        <button type="button" class="btn-secondary curp-modal-cancel">Cancelar</button>
+                        <button type="button" class="btn-primary curp-modal-submit">Firmar y enviar</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            const curpInput = modal.querySelector('#curp-input');
+            const errorDiv = modal.querySelector('#curp-error');
+            const submitBtn = modal.querySelector('.curp-modal-submit');
+            const cancelBtn = modal.querySelector('.curp-modal-cancel');
+            const closeBtn = modal.querySelector('.curp-modal-close');
+            
+            const cerrarModal = () => {
+                document.body.removeChild(modal);
+                reject(new Error('Cancelado por el usuario'));
+            };
+            
+            const validarYEnviar = async () => {
+                const curp = curpInput.value.trim().toUpperCase();
+                
+                if (!curp) {
+                    errorDiv.textContent = 'Por favor ingresa tu CURP';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (curp.length !== 18) {
+                    errorDiv.textContent = 'El CURP debe tener 18 caracteres';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // Validar CURP con el servidor
+                try {
+                    const response = await fetch('../php/revisor_validarCURP.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ curp: curp })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        document.body.removeChild(modal);
+                        resolve(curp);
+                    } else {
+                        errorDiv.textContent = result.message || 'CURP no válido. Verifica que sea correcto.';
+                        errorDiv.style.display = 'block';
+                    }
+                } catch (error) {
+                    errorDiv.textContent = 'Error al validar el CURP. Por favor intenta de nuevo.';
+                    errorDiv.style.display = 'block';
+                }
+            };
+            
+            submitBtn.addEventListener('click', validarYEnviar);
+            cancelBtn.addEventListener('click', cerrarModal);
+            closeBtn.addEventListener('click', cerrarModal);
+            
+            // Cerrar al hacer click fuera del modal
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    cerrarModal();
+                }
+            });
+            
+            // Enter para enviar
+            curpInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    validarYEnviar();
+                }
+            });
+            
+            // Focus en el input
+            setTimeout(() => curpInput.focus(), 100);
+        });
+    }
+
     async function terminarRevision(terminado) {
         if (terminado && !tablaLlena){
             alert('Por favor, complete todos los campos obligatorios antes de enviar el dictamen.');
             return;
         }
+        
+        // Si es para terminar (no borrador), pedir CURP
+        if (terminado) {
+            try {
+                await mostrarModalCURP();
+            } catch (error) {
+                // Usuario canceló
+                return;
+            }
+        }
+        
         //guardamos la form como json
         const form = document.getElementById('rubric-form');
         const data = new FormData(form);
