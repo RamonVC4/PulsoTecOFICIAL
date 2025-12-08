@@ -476,7 +476,7 @@
 
         const pageSize = Number(board.dataset.pageSize) || 5;
         const allCards = Array.from(board.querySelectorAll('.project-card'));
-        //const searchInput = document.getElementById('project-search');
+        const emptySearch = document.getElementById('project-empty-search');
         const emptyState = document.getElementById('project-empty');
         const pagination = document.getElementById('project-pagination');
         const prevBtn = document.getElementById('project-prev');
@@ -500,7 +500,8 @@
                 card.hidden = !visibleSet.has(card);
             });
 
-            emptyState.hidden = (total > 0); //|| !searchInput.value.trim());
+            emptyState.hidden = !(total > 0); //|| !searchInput.value.trim());
+            emptySearch.hidden = !(total > 0);
             pagination.hidden = total <= pageSize;
             pageIndicator.textContent = total ? currentPage + ' / ' + totalPages : '0 / 0';
             prevBtn.disabled = currentPage <= 1;
