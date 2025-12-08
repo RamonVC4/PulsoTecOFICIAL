@@ -6,11 +6,11 @@
 // $port = "8889";
 // $db = "pulsotec";
 
-$host = "sql203.infinityfree.com";
-$user = "if0_40606412";
-$pass = "echephph";
-$port = "3306";
-$db = "if0_40606412_pulsotec";
+$host = "pulsotec-pulsotec.g.aivencloud.com";
+$user = "avnadmin";
+$pass = "AVNS_D0TghQZ5koF26QhoHxo";
+$port = "24265";
+$db = "pulsotec";
 
 $conn = new mysqli($host, $user, $pass,$db, $port);
 if ($conn->connect_error) {
