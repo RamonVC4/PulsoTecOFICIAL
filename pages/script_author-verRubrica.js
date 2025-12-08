@@ -200,28 +200,28 @@ const rubricPanel = $('#rubric-panel');
 const toggleBtn = $('#toggle-rubric');
 const closeBtn = $('#close-rubric');
 
+// Declarar la variable rubricVisible
+let rubricVisible = true;
 
-
-let rubricVisible = false;
 const showRubric = (show) => {
     rubricVisible = typeof show === 'boolean' ? show : !rubricVisible;
     if (rubricVisible) {
-        rubricPanel.hidden = false;
-        layout.classList.add('is-rubric-open');
-        toggleBtn.textContent = 'Cerrar rúbrica';
+        if (rubricPanel) rubricPanel.hidden = false;
+        if (layout) layout.classList.add('is-rubric-open');
+        if (toggleBtn) toggleBtn.textContent = 'Cerrar rúbrica';
     } else {
-        layout.classList.remove('is-rubric-open');
-        toggleBtn.textContent = 'Abrir rúbrica';
+        if (layout) layout.classList.remove('is-rubric-open');
+        if (toggleBtn) toggleBtn.textContent = 'Abrir rúbrica';
         window.setTimeout(() => {
-            if (!layout.classList.contains('is-rubric-open')) {
-                rubricPanel.hidden = true;
+            if (layout && !layout.classList.contains('is-rubric-open')) {
+                if (rubricPanel) rubricPanel.hidden = true;
             }
         }, 260);
     }
 };
 
-toggleBtn.addEventListener('click', () => showRubric());
-closeBtn.addEventListener('click', () => showRubric(false));
+// toggleBtn.addEventListener('click', () => showRubric());
+// closeBtn.addEventListener('click', () => showRubric(false));
 
 $('#save-draft').addEventListener('click', () => {
     const form = $('#rubric-form');
@@ -242,10 +242,23 @@ $('#save-draft').addEventListener('click', () => {
     alert('Borrador guardado localmente. Recuerda enviarlo antes de la fecha límite.');
 });
 
-$('#download-btn').addEventListener('click', () => {
-    alert('Descarga simulada. Conecta este botón con el PDF del manuscrito.');
-});
+
 
 // Iniciar con rúbrica visible por defecto (solo en author-verRubrica)
-showRubric(true);
+// Asegurarse de que se ejecute después de que el DOM esté listo y los elementos existan
+function initRubricVisibility() {
+    if (layout && rubricPanel) {
+        showRubric(true);
+    } else {
+        // Si los elementos aún no existen, intentar de nuevo en el siguiente tick
+        setTimeout(initRubricVisibility, 10);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRubricVisibility);
+} else {
+    // El DOM ya está listo, pero puede que los elementos aún no estén renderizados
+    setTimeout(initRubricVisibility, 0);
+}
 })();

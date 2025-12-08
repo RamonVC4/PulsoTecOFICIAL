@@ -589,6 +589,21 @@
     );
 }
 
+
+/* Estilos para centrar la rúbrica cuando solo está presente (author-verRubrica) */
+.session-layout.rubric-author {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.session-layout.rubric-author.is-rubric-open .rubric-panel {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 .rubric-panel {
     flex: 0 0 0;
     width: 0;
@@ -823,6 +838,11 @@
     .session-layout.is-rubric-open .rubric-panel {
         width: 100%;
         flex: 1 1 auto;
+    }
+
+    .session-layout.rubric-author.is-rubric-open .rubric-panel {
+        max-width: 100%;
+        width: 100%;
     }
 
     .rubric-panel {
