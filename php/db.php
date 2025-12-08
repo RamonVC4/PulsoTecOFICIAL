@@ -1,5 +1,14 @@
 <?php
 // Datos conexión
+<<<<<<< HEAD
+=======
+// $host = "localhost";
+// $user = "root";
+// $pass = "root";
+// $port = "8889";
+// $db = "pulsotec";
+
+>>>>>>> pmpt
 $host = "pulsotec-pulsotec.g.aivencloud.com";
 $user = "avnadmin";
 $pass = "AVNS_D0TghQZ5koF26QhoHxo";

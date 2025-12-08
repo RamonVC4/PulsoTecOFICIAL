@@ -47,7 +47,6 @@
                         state.pending.push({
                             title: proy.nombre,
                             assigned: proy.entregas[0].fechaEntrega,//TODO, esta será puesta manualmente por el manager
-                            due: proy.fechaLimite,
                             route: ruta,
                             id: proy.id
                         });
@@ -140,7 +139,6 @@
             li.className = 'doc-row' + (type === 'new' ? ' is-new' : '');
             li.dataset.id = item.id;
             const summary = item.summary ? `<p class="doc-summary">${item.summary}</p>` : '';
-            const dueInfo = item.due ? `<span>Entrega: ${formatDateLong(item.due)}</span>` : '';
             const actions = type === 'new'
                 ? `
                     <button class="btn-primary" data-action="start" data-id="${item.id}" data-route="${item.route}">Comenzar revisión</button>
@@ -154,7 +152,6 @@
                     <h4 class="doc-title">${item.title}</h4>
                     <p class="doc-meta">
                         <span>Asignado: ${formatDateLong(item.assigned)}</span>
-                        ${dueInfo ? ' · ' + dueInfo : ''}
                     </p>
                     ${summary}
                 </div>
@@ -173,7 +170,7 @@
         let actionMarkup = '';
 
         if (type === 'new' || type === 'pending') {
-            sub = `Asignado: ${formatDateShort(item.assigned)} · Entrega: ${formatDateShort(item.due)}`;
+            sub = `Asignado: ${formatDateShort(item.assigned)}`;
             const label = type === 'new' ? 'Registrar y abrir' : 'Continuar';
             const action = type === 'new' ? 'start' : 'open';
             const buttonClass = type === 'new' ? 'btn-tertiary' : 'btn-tertiary';
@@ -204,8 +201,7 @@
             if (!state.pending.length) {
                 metrics.pendingInfo.textContent = 'Sin entregas próximas';
             } else {
-                const nextDue = state.pending.slice().sort((a, b) => parseDate(a.due) - parseDate(b.due))[0];
-                metrics.pendingInfo.textContent = `Próxima entrega: ${formatDateShort(nextDue.due)}`;
+                metrics.pendingInfo.textContent = `${state.pending.length} documento(s) en revisión`;
             }
         }
 

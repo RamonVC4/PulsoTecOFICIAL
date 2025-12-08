@@ -347,6 +347,61 @@
     min-height: 150px;
 }
 
+/* Tarjeta con formulario de segunda entrega - más compacta pero aún más grande */
+.version.has-upload-form {
+    padding: 16px;
+    min-height: 200px;
+    max-width: 100%;
+}
+
+.version.has-upload-form .upload-second-delivery {
+    display: grid;
+    gap: 10px;
+    margin-top: 8px;
+    align-content: start;
+}
+
+.version.has-upload-form .dropzone-second-delivery {
+    min-height: 60px;
+    padding: 6px 8px;
+    border-width: 1.5px;
+    max-width: 100%;
+    width: 100%;
+    align-self: start;
+}
+
+.version.has-upload-form .dropzone-second-delivery .dz-inner {
+    gap: 4px;
+}
+
+.version.has-upload-form .dropzone-second-delivery .dz-inner svg {
+    width: 18px;
+    height: 18px;
+}
+
+.version.has-upload-form .dropzone-second-delivery .dz-inner p {
+    font-size: 11px;
+    margin: 2px 0;
+}
+
+.version.has-upload-form .dropzone-second-delivery .btn-secondary {
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+.version.has-upload-form .btn-primary {
+    min-height: 40px;
+    padding: 0 20px;
+    font-size: 12px;
+}
+
+
+.dropzone-second-delivery {
+    gap: 5px !important;
+    flex-shrink: 0;
+}
+
+
 .version header {
     display: flex;
     align-items: center;
