@@ -1,6 +1,6 @@
 <?php
 require_once 'db.php';
-require_once 'crearPDF.php';
+// require_once 'crearPDF.php';
 session_start();
 
 //obtengo los proyectos asignados al revisor
