@@ -1083,7 +1083,7 @@
         formData.append('autores', JSON.stringify(idAutores));
         formData.append('autorCorrespondenciaId', autorCorrespondenciaId);
         formData.append('areaDeConocimiento', areaDeConocimiento);
-
+        console.log("formData: ", formData)
         try {
             const res = await fetch("../php/autor_crearProyecto.php", {
                 method: "POST",

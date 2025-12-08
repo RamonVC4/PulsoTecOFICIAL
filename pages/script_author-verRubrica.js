@@ -68,50 +68,102 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function cargarRevisores() {
-    const idEntrega = (new URLSearchParams(window.location.search)).get('id');
-    const dataDeBDD = await fetch('../php/autor_getDatosRubrica.php', {
-        method: 'POST',
-        body: JSON.stringify({
-            idEntrega: idEntrega
-        }),
-    });
-    const jsonStr = await dataDeBDD.text();
+    const idProyecto = (new URLSearchParams(window.location.search)).get('id');
 
-    //si no hay datos, salir
-    if (!jsonStr) return;
-
-    const datosEnJSON = JSON.parse(jsonStr);
-    
-    if (!datosEnJSON.success || !datosEnJSON.revisores || datosEnJSON.revisores.length === 0) {
+    if (!idProyecto) {
+        console.error('No se proporcionó ID de proyecto');
         const selector = document.getElementById('revisor-select');
         if (selector) {
-            selector.innerHTML = '<option value="">No hay revisores disponibles</option>';
+            selector.innerHTML = '<option value="">Error: No se proporcionó ID de proyecto</option>';
         }
         return;
     }
 
-    revisoresData = datosEnJSON.revisores;
-    
-    // Llenar el selector de revisores
-    const selector = document.getElementById('revisor-select');
-    if (selector) {
-        selector.innerHTML = revisoresData.map((revisor, index) => 
-            `<option value="${index}">${revisor.nombre} ${revisor.terminado ? '✓' : '(En progreso)'}</option>`
-        ).join('');
-        
-        // Cargar la primera rúbrica por defecto
-        if (revisoresData.length > 0) {
-            selector.value = '0';
-            cargarRubricaRevisor(0);
-        }
-        
-        // Agregar listener para cambiar de revisor
-        selector.addEventListener('change', (e) => {
-            const index = parseInt(e.target.value);
-            if (!isNaN(index) && index >= 0 && index < revisoresData.length) {
-                cargarRubricaRevisor(index);
-            }
+    try {
+        // OBTENER TODOS LOS IDENTIFICADORES DE ENTREGAS ASOCIADAS AL PROYECTO
+        const responseIdRubricas = await fetch('../php/autor_obtenerIdRubricasProyecto.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idProyecto: idProyecto
+            }),
         });
+        
+        const jsonStrIdRubricas = await responseIdRubricas.text();
+        const datosIdRubricas = JSON.parse(jsonStrIdRubricas);
+        
+        if (!datosIdRubricas.success || !datosIdRubricas.rubricas || datosIdRubricas.rubricas.length === 0) {
+            const selector = document.getElementById('revisor-select');
+            if (selector) {
+                selector.innerHTML = '<option value="">No hay rúbricas disponibles</option>';
+            }
+            return;
+        }
+
+        // PARA CADA ENTREGA, OBTENER LOS DATOS DE LOS REVISORES
+        const todosLosRevisores = [];
+        
+        for (const idEntrega of datosIdRubricas.rubricas) {
+            const responseDatos = await fetch('../php/autor_getDatosRubrica.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idEntrega: idEntrega
+                }),
+            });
+            
+            const jsonStrDatos = await responseDatos.text();
+            const datosEnJSON = JSON.parse(jsonStrDatos);
+            
+            if (datosEnJSON.success && datosEnJSON.revisores && datosEnJSON.revisores.length > 0) {
+                // Agregar todos los revisores de esta entrega
+                todosLosRevisores.push(...datosEnJSON.revisores);
+            }
+        }
+
+        // Si no hay datos, salir
+        if (todosLosRevisores.length === 0) {
+            const selector = document.getElementById('revisor-select');
+            if (selector) {
+                selector.innerHTML = '<option value="">No hay revisores disponibles</option>';
+            }
+            return;
+        }
+
+        revisoresData = todosLosRevisores;
+        
+        // Llenar el selector de revisores
+        const selector = document.getElementById('revisor-select');
+
+        if (selector) {
+            selector.innerHTML = revisoresData.map((revisor, index) => 
+                `<option value="${index}">${revisor.nombre} ${revisor.terminado ? '✓' : '(En progreso)'}</option>`
+            ).join('');
+            
+            // Cargar la primera rúbrica por defecto
+            if (revisoresData.length > 0) {
+                selector.value = '0';
+                cargarRubricaRevisor(0);
+            }
+            
+            // Agregar listener para cambiar de revisor
+            selector.addEventListener('change', (e) => {
+                const index = parseInt(e.target.value);
+                if (!isNaN(index) && index >= 0 && index < revisoresData.length) {
+                    cargarRubricaRevisor(index);
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar revisores:', error);
+        const selector = document.getElementById('revisor-select');
+        if (selector) {
+            selector.innerHTML = '<option value="">Error al cargar revisores</option>';
+        }
     }
 }
 
