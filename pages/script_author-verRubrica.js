@@ -70,9 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function cargarRevisores() {
-    const idProyecto = (new URLSearchParams(window.location.search)).get('id');
+    const idEntrega = (new URLSearchParams(window.location.search)).get('id');
 
-    if (!idProyecto) {
+    if (!idEntrega) {
         console.error('No se proporcionó ID de proyecto');
         const selector = document.getElementById('revisor-select');
         if (selector) {
@@ -85,16 +85,18 @@ async function cargarRevisores() {
         // OBTENER TODOS LOS IDENTIFICADORES DE ENTREGAS ASOCIADAS AL PROYECTO
         const responseIdRubricas = await fetch('../php/autor_obtenerIdRubricasProyecto.php', {
             method: 'POST',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                idProyecto: idProyecto
+                idEntrega: idEntrega
             }),
         });
         
         const jsonStrIdRubricas = await responseIdRubricas.text();
         const datosIdRubricas = JSON.parse(jsonStrIdRubricas);
+        console.log('Datos de ID de rúbricas:', datosIdRubricas);
         
         if (!datosIdRubricas.success || !datosIdRubricas.rubricas || datosIdRubricas.rubricas.length === 0) {
             const selector = document.getElementById('revisor-select');
@@ -107,24 +109,29 @@ async function cargarRevisores() {
         // PARA CADA ENTREGA, OBTENER LOS DATOS DE LOS REVISORES
         const todosLosRevisores = [];
         
-        for (const idEntrega of datosIdRubricas.rubricas) {
+        for (const idRV of datosIdRubricas.rubricas) {
             const responseDatos = await fetch('../php/autor_getDatosRubrica.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    idEntrega: idEntrega
+                    idRV: idRV
                 }),
             });
             
             const jsonStrDatos = await responseDatos.text();
             const datosEnJSON = JSON.parse(jsonStrDatos);
+
+            console.log('Datos de rúbrica para entrega', idEntrega, datosEnJSON);
             
             if (datosEnJSON.success && datosEnJSON.revisores && datosEnJSON.revisores.length > 0) {
+                console.log("AQUI ENTRE");
                 // Agregar todos los revisores de esta entrega
                 todosLosRevisores.push(...datosEnJSON.revisores);
             }
+
+            console.log("despues del if");
         }
 
         // Si no hay datos, salir
@@ -229,14 +236,9 @@ function cargarRubricaRevisor(index) {
 
 
 
-
-
-
 // =============================================
 //               CARGAR LA RÚBRICA
 // =============================================
-// ESTA FUNCIÓN ES PARA ALTERNAR ENTRE MOSTRAR Y OCULTAR LA RÚBRICA
-
 (function () {
 const $ = (sel, root = document) => root.querySelector(sel);
 const params = new URLSearchParams(window.location.search);
@@ -277,24 +279,24 @@ const rubricPanel = $('#rubric-panel');
 // toggleBtn.addEventListener('click', () => showRubric());
 // closeBtn.addEventListener('click', () => showRubric(false));
 
-$('#save-draft').addEventListener('click', () => {
-    const form = $('#rubric-form');
-    const data = new FormData(form);
-    const payload = {};
-    for (const [key, value] of data.entries()) {
-        if (payload[key]) {
-            if (Array.isArray(payload[key])) {
-                payload[key].push(value);
-            } else {
-                payload[key] = [payload[key], value];
-            }
-        } else {
-            payload[key] = value;
-        }
-    }
-    localStorage.setItem('rubricDraft:' + docId, JSON.stringify(payload));
-    alert('Borrador guardado localmente. Recuerda enviarlo antes de la fecha límite.');
-});
+// $('#save-draft').addEventListener('click', () => {
+//     const form = $('#rubric-form');
+//     const data = new FormData(form);
+//     const payload = {};
+//     for (const [key, value] of data.entries()) {
+//         if (payload[key]) {
+//             if (Array.isArray(payload[key])) {
+//                 payload[key].push(value);
+//             } else {
+//                 payload[key] = [payload[key], value];
+//             }
+//         } else {
+//             payload[key] = value;
+//         }
+//     }
+//     localStorage.setItem('rubricDraft:' + docId, JSON.stringify(payload));
+//     alert('Borrador guardado localmente. Recuerda enviarlo antes de la fecha límite.');
+// });
 
 
 })();
