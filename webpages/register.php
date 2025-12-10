@@ -158,7 +158,7 @@
 
                 <div class="actions">
                     <button type="button" class="btn-primary" onclick="registrar()">REGISTRAR</button>
-                    <a class="link-ghost" href="./login.html" aria-label="Crear cuenta nueva">YA TENGO CUENTA</a>
+                    <a class="link-ghost" href="./login.php" aria-label="Crear cuenta nueva">YA TENGO CUENTA</a>
                 </div>
             </form>
         </section>

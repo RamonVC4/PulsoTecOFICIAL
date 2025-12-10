@@ -14,7 +14,7 @@
         'INICIO': '../Index.html',
         'MIS PROYECTOS': './',
     }
-    const cerrar_sesion_link = './login.html';
+    const cerrar_sesion_link = './login.php';
 
     const header = select('.site-header');
     header.appendChild(createHeaderTop());
@@ -285,7 +285,7 @@
         const textoStatus = entrega.aceptado === null ? "PENDIENTE" :entrega.aceptado === 1 ? "ACEPTADO" : "DENEGADO";
 
         // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
-        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== null && primeraEntrega.aceptado !== 0;
+        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== 1 && primeraEntrega.aceptado !== 0;
         
         const header = el("header", {
             children: [
@@ -429,15 +429,14 @@
         }
 
         //meto para ver la rubrica 
-        if (entrega.aceptado != null) {
-            section.appendChild(
-                el("a", {
-                    class: "link",
-                    text: "Ver rubrica",
-                    attrs: { href: `./author-verRubrica.php?title=${titulo}&id=${entrega.id}` }
-                })
-            );
-        }
+        console.log("ESTO ES LA ENTREGA: ", entrega);
+        section.appendChild(
+            el("a", {
+                class: "link",
+                text: "Ver rubrica",
+                attrs: { href: `./author-verRubrica.php?title=${titulo}&id=${entrega.id}` }
+            })
+        );
 
         return section;
     }
