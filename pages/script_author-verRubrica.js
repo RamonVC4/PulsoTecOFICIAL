@@ -295,22 +295,4 @@ $('#save-draft').addEventListener('click', () => {
 });
 
 
-
-// Iniciar con rúbrica visible por defecto (solo en author-verRubrica)
-// Asegurarse de que se ejecute después de que el DOM esté listo y los elementos existan
-// function initRubricVisibility() {
-//     if (layout && rubricPanel) {
-//         showRubric(true);
-//     } else {
-//         // Si los elementos aún no existen, intentar de nuevo en el siguiente tick
-//         setTimeout(initRubricVisibility, 10);
-//     }
-// }
-
-// if (document.readyState === 'loading') {
-//     document.addEventListener('DOMContentLoaded', initRubricVisibility);
-// } else {
-//     // El DOM ya está listo, pero puede que los elementos aún no estén renderizados
-//     setTimeout(initRubricVisibility, 0);
-// }
 })();
