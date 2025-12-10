@@ -15,7 +15,7 @@ const urls = {
     'INICIO': '../Index.html',
     'ACERCA DE': './acerca-de.html',
 }
-const login_link = './login.html';
+const login_link = './login.php';
 
 const header = select('.site-header');
 header.appendChild(createHeaderTop());

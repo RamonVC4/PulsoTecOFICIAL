@@ -15,7 +15,7 @@
         'INICIO': '../Index.html',
         'MIS PROYECTOS': './',
     }
-    const cerrar_sesion_link = './login.html';
+    const cerrar_sesion_link = '../php/logout.php';
 
     const header = select('.site-header');
     header.appendChild(createHeaderTop());
