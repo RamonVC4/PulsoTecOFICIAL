@@ -47,7 +47,7 @@ if (isset($_GET['code'])) {
     
     echo '<h1>¡Autenticación exitosa!</h1>';
     echo '<p>El token se ha guardado correctamente. Ahora puedes subir archivos a Google Drive.</p>';
-    echo '<p><a href="../webpages/author.html">Volver a la aplicación</a></p>';
+    echo '<p><a href="../webpages/author.php">Volver a la aplicación</a></p>';
     exit;
 }
 
@@ -84,6 +84,6 @@ if ($client->isAccessTokenExpired()) {
     echo '<p>El token es válido. Puedes subir archivos a Google Drive.</p>';
 }
 
-echo '<p><a href="../webpages/author.html">Volver a la aplicación</a></p>';
+echo '<p><a href="../webpages/author.php">Volver a la aplicación</a></p>';
 
 ?>

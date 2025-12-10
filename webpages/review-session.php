@@ -1,3 +1,4 @@
+<?php require_once '../php/protect_revisor.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,7 +24,7 @@
             <div class="container">
                 <ul class="nav-list">
                     <li><a href="../Index.html">INICIO</a></li>
-                    <li><a href="./manager.html">BANDEJA</a></li>
+                    <li><a href="./revisor.php">BANDEJA</a></li>
                     <!-- <li><a href="#">AYUDA</a></li> -->
                     <li class="login"><a href="./login.html">CERRAR SESIÓN</a></li>
                 </ul>
@@ -31,21 +32,19 @@
         </nav>
     </header>
 
+<!-- <div class="pruebaVisor">
+</div> -->
+
+
 
     <!-- HEADER SECUNDARIO -->
     <main class="container container-review review-session-main">
         <header class="session-head">
             <div class="session-context">
-                <a class="back-link" href="./manager.html">← Regresar al panel</a>
+                <a class="back-link" href="./revisor.php">← Regresar al panel</a>
                 <h2 id="doc-title">Documento sin título</h2>
             </div>
             <div class="session-actions">
-                <select id="version-select" class="btn-secondary" style="margin-right: 10px; padding: 8px 12px;">
-                    <option value="">Seleccionar versión...</option>
-                </select>
-                <select id="revisor-select" class="btn-secondary" style="margin-right: 10px; padding: 8px 12px; display: none;">
-                    <option value="">Seleccionar revisor...</option>
-                </select>
                 <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
                 <button type="button" class="btn-primary" id="toggle-rubric">Abrir rúbrica</button>
             </div>
@@ -248,13 +247,14 @@
                         <h4>III. Justifique su decisión</h4>
                         <div class="comments-area">
                             <label for="comentarios-autores">Comentarios para los autores (Con el fin de mejorar la calidad del manuscrito)</label>
-                            <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales." readonly></textarea>
+                            <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales."></textarea>
                         </div>
                     </section>
-                    
-                    <!-- NOTA: El manager solo puede ver, no editar -->
-                    <div class="rubric-actions" style="opacity: 0.7; text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px; margin-top: 20px;">
-                        <p class="muted" style="margin: 0; font-size: 14px;">📖 <strong>Modo de solo lectura</strong> - El manager no puede modificar las rúbricas</p>
+
+                    <!-- BOTONES -->
+                    <div class="rubric-actions">
+                        <button type="button" id="save-draft" onclick="terminarRevision(false)" class="btn-secondary">Guardar borrador</button>
+                        <button type="button" onclick="terminarRevision(true)" class="btn-primary">Enviar dictamen</button>
                     </div>
                 </form>
             </aside>
@@ -262,7 +262,7 @@
     </main>
 
     <!-- SCRIPT PARA CARGAR LA RÚBRICA -->
-    <script src="../pages/script_manager-verRubrica.js"></script>
+    <script src="../pages/script_review-session.js"></script>
 </body>
 </html>
 

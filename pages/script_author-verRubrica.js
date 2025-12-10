@@ -1,5 +1,7 @@
 // Este js carga la vista de autor (revisión de su articulo) de PulsoTec.
 
+
+
 import {createHeaderTop, createHeaderNav} from '../components/header.js';
 import {select} from '../js/utils/dom.js';
 import {createRubric, createInnerSessionHead} from '../components/rubric.js';
@@ -11,7 +13,7 @@ import {createRubric, createInnerSessionHead} from '../components/rubric.js';
 
 const urls = {
     'INICIO': '../Index.html',
-    'BANDEJA': './author.html',
+    'BANDEJA': './author.php',
 }
 const cerrar_sesion_link = './login.html';
 
@@ -24,7 +26,7 @@ header.appendChild(createHeaderNav(urls, null, cerrar_sesion_link));
 //            CARGAR EL HEADER INTERNO
 // =============================================
 const innerSessionHead = select('.session-head');
-innerSessionHead.innerHTML = createInnerSessionHead('./author.html', false);
+innerSessionHead.innerHTML = createInnerSessionHead('./author.php', false);
 
 // Agregar selector de revisores después del header interno
 const sessionContext = innerSessionHead.querySelector('.session-context');
