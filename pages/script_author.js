@@ -14,7 +14,7 @@
         'INICIO': '../Index.html',
         'MIS PROYECTOS': './',
     }
-    
+
     const cerrar_sesion_link = '../php/logout.php';
 
 
@@ -283,11 +283,13 @@
         });
 
         //consigo el estado de la entrega
+        console.log("Entega es aceptado o no: ", entrega.aceptado);
+        console.log("Valor de primera entrega: ", primeraEntrega);
         const status = entrega.aceptado === null ? "chip-pending" : entrega.aceptado === 1 ? "chip-success": "chip-denied";
         const textoStatus = entrega.aceptado === null ? "PENDIENTE" :entrega.aceptado === 1 ? "ACEPTADO" : "DENEGADO";
 
         // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
-        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega; //&& primeraEntrega.aceptado !== 1 && primeraEntrega.aceptado !== 0;
+        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega !== null; // && primeraEntrega.aceptado !== 1 && primeraEntrega.aceptado !== 0
         
         const header = el("header", {
             children: [
@@ -907,6 +909,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
 
+        
         if (!(idAutores.includes(autorCorrespondenciaId) || id == autorCorrespondenciaId)) {
             alert("El autor de correspondencia debe ser un autor del proyecto.");
             return;
