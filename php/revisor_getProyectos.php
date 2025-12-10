@@ -16,6 +16,9 @@ while ($row = $result->fetch_assoc()) {
     $stmtRevisorVeredicto->execute();
     $veredictoResult = $stmtRevisorVeredicto->get_result();
     $veredictoRow = $veredictoResult->fetch_assoc();
+    
+    // terminado puede ser null si no hay veredicto aún
+    $terminado = ($veredictoRow && isset($veredictoRow['terminado'])) ? $veredictoRow['terminado'] : null;
 
     //consigo los datos especificos de las entregas de cada proyecto
     $stmtProyectosEntrega = $conn->prepare("SELECT e.id, e.numeroEntrega, e.pdfPath, e.entregado, e.aceptado, e.fechaLimite FROM entrega e WHERE e.idProyecto = ? ORDER BY numeroEntrega DESC");
@@ -42,7 +45,7 @@ while ($row = $result->fetch_assoc()) {
         'entregado' => $primerRow['entregado'],
         'aceptado' => $primerRow['aceptado'],
         'fechaEntrega' => $primerRow['fechaLimite'],
-        'terminado' => $veredictoRow['terminado']
+        'terminado' => $terminado  // Puede ser null si no hay veredicto aún
     ];
 
     $proyectos[] = [

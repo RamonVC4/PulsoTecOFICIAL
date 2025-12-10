@@ -38,10 +38,27 @@ if (!$stmt->execute()) {
     exit;
 }
 
-// 3. Crear registro en revisor_veredicto
-// CORRECCIÓN: Quitamos idEntrega porque no existe en la tabla revisor_veredicto del SQL
-$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, status, idEntrega, terminado) VALUES (?, ?, NULL, (SELECT MAX(numeroEntrega) FROM entrega WHERE idProyecto = ?), NULL)");
-$stmtVeredicto->bind_param("iii", $idRevisor, $idProyecto, $idProyecto);
+// 3. Obtener la última entrega del proyecto (o crear una si no existe)
+$stmtEntrega = $conn->prepare("SELECT id FROM entrega WHERE idProyecto = ? ORDER BY numeroEntrega DESC LIMIT 1");
+$stmtEntrega->bind_param("i", $idProyecto);
+$stmtEntrega->execute();
+$resultEntrega = $stmtEntrega->get_result();
+$rowEntrega = $resultEntrega->fetch_assoc();
+
+$idEntrega = null;
+if ($rowEntrega) {
+    $idEntrega = $rowEntrega['id'];
+} else {
+    // Si no hay entrega, crear la primera
+    $stmtCrearEntrega = $conn->prepare("INSERT INTO entrega (idProyecto, numeroEntrega, entregado) VALUES (?, 1, 0)");
+    $stmtCrearEntrega->bind_param("i", $idProyecto);
+    $stmtCrearEntrega->execute();
+    $idEntrega = $stmtCrearEntrega->insert_id;
+}
+
+// 4. Crear registro en revisor_veredicto con idEntrega
+$stmtVeredicto = $conn->prepare("INSERT INTO revisor_veredicto (idRevisor, idProyecto, idEntrega, status) VALUES (?, ?, ?, NULL)");
+$stmtVeredicto->bind_param("iii", $idRevisor, $idProyecto, $idEntrega);
 
 if ($stmtVeredicto->execute()) {
     echo json_encode(['success' => true, 'message' => 'Revisor asignado correctamente.']);

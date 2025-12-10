@@ -408,11 +408,24 @@
         }
 
         if (entrega.pdfPath) {
+            // Función para obtener URL de descarga de Drive
+            function getDownloadUrl(url) {
+                if (!url) return url;
+                
+                // Si es una URL de Drive, convertir a URL de descarga
+                const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+                }
+                
+                return url;
+            }
+            
             section.appendChild(
                 el("a", {
                     class: "link",
                     text: "Descargar PDF",
-                    attrs: { href: entrega.pdfPath, target: "_blank" }
+                    attrs: { href: getDownloadUrl(entrega.pdfPath), target: "_blank" }
                 })
             );
         }
@@ -823,144 +836,144 @@
     //         RENDERIZAR PROYECTO DE EJEMPLO
     // =============================================
 
-    function renderProyectoEjemplo() {
-        const board = document.querySelector('.project-list');
-        if (!board) return;
+    // function renderProyectoEjemplo() {
+    //     const board = document.querySelector('.project-list');
+    //     if (!board) return;
 
-        const proyectoEjemplo = {
-            id: 'ejemplo-1',
-            nombre: 'Proyecto de Ejemplo - Primera Revisión Completada',
-            entregas: [
-                {
-                    id: 'ejemplo-entrega-1',
-                    idProyecto: 'ejemplo-1',
-                    pdfPath: '../uploads/ejemplo-doc.pdf',
-                    entregado: 1,
-                    aceptado: 1, // Primera entrega revisada y aceptada (con cambios solicitados)
-                    fechaEntrega: '2025-01-15'
-                },
-                {
-                    id: 'ejemplo-entrega-2',
-                    idProyecto: 'ejemplo-1',
-                    pdfPath: null,
-                    entregado: 0, // Segunda entrega pendiente de subir
-                    aceptado: null,
-                    fechaEntrega: '2025-02-01'
-                }
-            ]
-        };
+    //     const proyectoEjemplo = {
+    //         id: 'ejemplo-1',
+    //         nombre: 'Proyecto de Ejemplo - Primera Revisión Completada',
+    //         entregas: [
+    //             {
+    //                 id: 'ejemplo-entrega-1',
+    //                 idProyecto: 'ejemplo-1',
+    //                 pdfPath: '../uploads/ejemplo-doc.pdf',
+    //                 entregado: 1,
+    //                 aceptado: 1, // Primera entrega revisada y aceptada (con cambios solicitados)
+    //                 fechaEntrega: '2025-01-15'
+    //             },
+    //             {
+    //                 id: 'ejemplo-entrega-2',
+    //                 idProyecto: 'ejemplo-1',
+    //                 pdfPath: null,
+    //                 entregado: 0, // Segunda entrega pendiente de subir
+    //                 aceptado: null,
+    //                 fechaEntrega: '2025-02-01'
+    //             }
+    //         ]
+    //     };
 
-        // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
-        const card = el("article", {
-            class: "card project-card",
-            attrs: {
-                "data-title": proyectoEjemplo.nombre,
-            }
-        });
+    //     // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
+    //     const card = el("article", {
+    //         class: "card project-card",
+    //         attrs: {
+    //             "data-title": proyectoEjemplo.nombre,
+    //         }
+    //     });
 
-        const e = proyectoEjemplo.entregas[0];
+    //     const e = proyectoEjemplo.entregas[0];
 
-        const header = el("header", { class: "project-card__header" });
+    //     const header = el("header", { class: "project-card__header" });
 
-        const headerInfo = el("div", {
-            children: [
-                el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
-                el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
-            ]
-        });
+    //     const headerInfo = el("div", {
+    //         children: [
+    //             el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
+    //             el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
+    //         ]
+    //     });
 
-        // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
-        const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
-        const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
+    //     // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
+    //     const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
+    //     const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
         
-        const status = el("span", {
-            class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
-            text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
-        });
+    //     const status = el("span", {
+    //         class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
+    //         text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
+    //     });
 
-        header.append(headerInfo, status);
+    //     header.append(headerInfo, status);
 
-        const grid = el("div", { class: "version-grid" });
-        grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
+    //     const grid = el("div", { class: "version-grid" });
+    //     grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
 
-        // Agregar la segunda entrega
-        if (proyectoEjemplo.entregas.length > 1) {
-            card.dataset.date = proyectoEjemplo.entregas[1].fechaEntrega;
+    //     // Agregar la segunda entrega
+    //     if (proyectoEjemplo.entregas.length > 1) {
+    //         card.dataset.date = proyectoEjemplo.entregas[1].fechaEntrega;
 
-            // Crear la carta de la segunda entrega, pasando la primera entrega para verificar estado
-            grid.appendChild(makeEntrega(proyectoEjemplo.entregas[1], proyectoEjemplo.nombre, false, proyectoEjemplo.entregas[0]));
-        }
+    //         // Crear la carta de la segunda entrega, pasando la primera entrega para verificar estado
+    //         grid.appendChild(makeEntrega(proyectoEjemplo.entregas[1], proyectoEjemplo.nombre, false, proyectoEjemplo.entregas[0]));
+    //     }
 
-        card.append(header, grid);
-        // Agregar al inicio de la lista
-        board.insertBefore(card, board.firstChild);
-    }
+    //     card.append(header, grid);
+    //     // Agregar al inicio de la lista
+    //     board.insertBefore(card, board.firstChild);
+    // }
 
-    // =============================================
-    //    RENDERIZAR PROYECTO DE EJEMPLO SIN REVISAR
-    // =============================================
+    // // =============================================
+    // //    RENDERIZAR PROYECTO DE EJEMPLO SIN REVISAR
+    // // =============================================
 
-    function renderProyectoEjemploSinRevisar() {
-        const board = document.querySelector('.project-list');
-        if (!board) return;
+    // function renderProyectoEjemploSinRevisar() {
+    //     const board = document.querySelector('.project-list');
+    //     if (!board) return;
 
-        const proyectoEjemplo = {
-            id: 'ejemplo-2',
-            nombre: 'Proyecto de Ejemplo - Primera Entrega Pendiente de Revisión',
-            entregas: [
-                {
-                    id: 'ejemplo-entrega-3',
-                    idProyecto: 'ejemplo-2',
-                    pdfPath: '../uploads/ejemplo-doc-2.pdf',
-                    entregado: 1,
-                    aceptado: null, // Primera entrega aún sin revisar
-                    fechaEntrega: '2025-01-20'
-                }
-            ]
-        };
+    //     const proyectoEjemplo = {
+    //         id: 'ejemplo-2',
+    //         nombre: 'Proyecto de Ejemplo - Primera Entrega Pendiente de Revisión',
+    //         entregas: [
+    //             {
+    //                 id: 'ejemplo-entrega-3',
+    //                 idProyecto: 'ejemplo-2',
+    //                 pdfPath: '../uploads/ejemplo-doc-2.pdf',
+    //                 entregado: 1,
+    //                 aceptado: null, // Primera entrega aún sin revisar
+    //                 fechaEntrega: '2025-01-20'
+    //             }
+    //         ]
+    //     };
 
-        // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
-        const card = el("article", {
-            class: "card project-card",
-            attrs: {
-                "data-title": proyectoEjemplo.nombre,
-            }
-        });
+    //     // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
+    //     const card = el("article", {
+    //         class: "card project-card",
+    //         attrs: {
+    //             "data-title": proyectoEjemplo.nombre,
+    //         }
+    //     });
 
-        const e = proyectoEjemplo.entregas[0];
+    //     const e = proyectoEjemplo.entregas[0];
 
-        const header = el("header", { class: "project-card__header" });
+    //     const header = el("header", { class: "project-card__header" });
 
-        const headerInfo = el("div", {
-            children: [
-                el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
-                el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
-            ]
-        });
+    //     const headerInfo = el("div", {
+    //         children: [
+    //             el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
+    //             el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
+    //         ]
+    //     });
 
-        // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
-        const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
-        const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
+    //     // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
+    //     const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
+    //     const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
         
-        const status = el("span", {
-            class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
-            text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
-        });
+    //     const status = el("span", {
+    //         class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
+    //         text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
+    //     });
 
-        header.append(headerInfo, status);
+    //     header.append(headerInfo, status);
 
-        const grid = el("div", { class: "version-grid" });
-        grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
+    //     const grid = el("div", { class: "version-grid" });
+    //     grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
 
-        card.append(header, grid);
-        // Agregar al inicio de la lista (después del primer ejemplo)
-        const firstChild = board.firstChild;
-        if (firstChild) {
-            board.insertBefore(card, firstChild.nextSibling);
-        } else {
-            board.appendChild(card);
-        }
-    }
+    //     card.append(header, grid);
+    //     // Agregar al inicio de la lista (después del primer ejemplo)
+    //     const firstChild = board.firstChild;
+    //     if (firstChild) {
+    //         board.insertBefore(card, firstChild.nextSibling);
+    //     } else {
+    //         board.appendChild(card);
+    //     }
+    // }
 
 
     // =============================================

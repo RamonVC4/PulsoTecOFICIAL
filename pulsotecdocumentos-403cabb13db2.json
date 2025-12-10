@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "pulsotecdocumentos",
+  "private_key_id": "403cabb13db2575bdcbb4832c4880485dff11453",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQDjPoWeondeY41u\nB/xpvdC1MDCnaqwT2eAeL/ZxDY+cxmi6WxIm6EaC3I3P8NcdFWTLv4ZRj2lL0f19\n6fggzB/yOu79cc2+YznIB0QGIzyjx+pML4ZZXU3zY3G60TLETvNWvfdtUVJ6TrF4\n6fPkkZwhxg8SwZkv5TbAhbXu8c9xFkQzRgxevrHZ0rP+pg7C4aj1x8NC8l5P7bPI\n0SH4yoL+deDDzkj4l0ThqzY+ldnwSYfF23oWPtHAgEMejPM/pWEqe6j3wXs/mFwb\nj7br66a+6o873vpIWRhl5tf1kV0b9GHDOxiHJwGdhOKgRLchfrxgcADwG13Kr4CI\ng9sJKQOZAgMBAAECgf8WMQTbeQIvNYmaNS1xJhg7mXkm4EPtrFk2mXh3kdt0c+vG\nRx5+rjA0l1VB+UMIlA5D13BGhrrBrMAUi8Svbz+vaBHuri5paUc7QXpjHw3M8Ljw\nt7NnBrWWDyAMHmHWyd75mZOQGWD0kLrEFBS9PXsB0VWnf0B2bOvr4SLjMroPUO43\nw8v+/w4TC0LL0WZjLh9vHG+kN9WuhkxCI3CRXxxWKqYAzUgLdl1skCEZvtlDBBrW\nrOAu2AdqXHJGUqQ/eJX1Wxm2Wz/gnelf/r6excxTyVXBsROcCaaKROKiKZfNbGcg\nrcpbWwPgSt3vz6KYP19WpjeLC7iCWs/LTz1NMpECgYEA9/WBxSlux/SkDeWKSzfw\nt1qp7bhKj8qqyQuzsQEfy2pRm5FjI5ke4PHUxda8ypSzM4qtT/vWdZwAOSj3n7Kb\nCalPsrYyqHkIuiiW/bp034777c2xqy0ewpAtBKpsWdeeKrkjvjtCUadayJXNDX8A\nfwXPGHZkdVh1grZSALFTQFUCgYEA6p0LzsbKRVTPDiKKZUePjygU7I4ySm0aKma6\nIg4UaKXIQ3V8tk2dJ6jlQKaR5lK7iOuDApgov+MQ0D+gbG0qw781mWXW5Nxo1Tub\nVruG+V0lSfMGDpTv/f+CRO5+2qqRjY5f3wz1W6tVsUs0XcyniUXtI/HnZ+IX/EvV\nWTSj6jUCgYAjCQFpBk2s2xhDDmfX8POGNL1F5YBDiPNQrOKa4/nGGCOnw4cqhHwk\ndIcH3SuXxCL96V5Lqt3GiGBPs0YpvmbBmra0HaJSw6dEBnAvMaVJ4T4ff6zW7u0l\nuJFj02Cz4Q9sIfS28FCSkP720JPEkGlViVCVuETBf9o6ueAkUOnecQKBgFS/6lYF\npWeqHSmj/I5dbVRvTC+vpicQhlUuyqomn+S1jkQgGq7YFp8O+dGC2k1zMV9ig+7Z\n/E5kvdwcP90rCjmvxrLlAN2naQ8t+w03rKhDp4axDU0TLCZ6uBoidRyUZQPXnHY8\nfh1hJRFoc0A2/4YtBl7nsYnrOHLhCe6xf0zJAoGARsDFLlhc9IrydNbqRt35N/yo\nRugRu1kCLv54d4GGqsi00dI8evBeJ0Lpz9gsdg9nBn77w2fQdceQllhQZhKnli+G\nFpUvuGSGMXgK6RQsWHIHckxxCEc4UPMW47EqGQP+dx0kUYsgHM3x8vfSZOvM/yl4\nF6T27JKd3bbiQdBGvrk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "admin-832@pulsotecdocumentos.iam.gserviceaccount.com",
+  "client_id": "101162291203388191008",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/admin-832%40pulsotecdocumentos.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
