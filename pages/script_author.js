@@ -408,11 +408,24 @@
         }
 
         if (entrega.pdfPath) {
+            // Función para obtener URL de descarga de Drive
+            function getDownloadUrl(url) {
+                if (!url) return url;
+                
+                // Si es una URL de Drive, convertir a URL de descarga
+                const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+                }
+                
+                return url;
+            }
+            
             section.appendChild(
                 el("a", {
                     class: "link",
                     text: "Descargar PDF",
-                    attrs: { href: entrega.pdfPath, target: "_blank" }
+                    attrs: { href: getDownloadUrl(entrega.pdfPath), target: "_blank" }
                 })
             );
         }

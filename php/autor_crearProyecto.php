@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once 'db.php';
+require_once 'drive_config.php';
+require_once 'drive_upload.php';
 header('Content-Type: application/json');
 
 //valido que no tenga el proyecto un nombre que el usuario ya usó
@@ -21,15 +23,28 @@ $autoresIds = json_decode($_POST['autores'], true);
 $autorCorrespId = $_POST['autorCorrespondenciaId'];
 $areaDeConocimiento = $_POST['areaDeConocimiento'];
 
-//guardo el PDF aqui
-$uploadsDir = '../uploads/'; 
-$filename = basename($pdf['name']);
-$targetPath = $uploadsDir . uniqid() . '-' . $filename; //le pongo una uniqid para evitar sobreescrituras
-
-if (!move_uploaded_file($pdf['tmp_name'], $targetPath)){
+// Validar que el archivo se subió correctamente
+if (!isset($pdf) || $pdf['error'] !== UPLOAD_ERR_OK) {
     echo json_encode(['success' => false, 'message' => 'Error al subir el archivo.']);
     exit;
 }
+
+$filename = basename($pdf['name']);
+$tempPath = $pdf['tmp_name'];
+
+// ID de la carpeta en Google Drive (se usa el de drive_config.php si está definido)
+$driveFolderId = defined('DRIVE_FOLDER_ID') ? DRIVE_FOLDER_ID : null;
+
+// Subir a Google Drive
+$driveResult = uploadToDrive($tempPath, $filename, $driveFolderId);
+
+if (!$driveResult['success']) {
+    echo json_encode(['success' => false, 'message' => 'Error al subir el archivo a Drive: ' . $driveResult['error']]);
+    exit;
+}
+
+// Obtener la URL de visualización (para iframe)
+$driveUrl = $driveResult['viewUrl'];
 
 //inserto el proyecto en la base de datos
 //inserto un proyecto con id y nombre
@@ -60,17 +75,27 @@ if (!empty($autoresIds)) {
     }   
 }
 
+
+
+
+
+
+
+
+
 //si hubo error regreso
 if ($stmtAutorProyecto->affected_rows === 0) {
     echo json_encode(['success' => false, 'message' => 'Error al asociar autor y proyecto: ' . $stmtAutorProyecto->error]);
     exit;
 }
 
-//por ultimo, creo la entrega
+
+//por ultimo, creo la entrega con la URL de Drive
 $numeroEntrega = 1;
 $stmtEntrega = $conn->prepare("INSERT INTO entrega (idProyecto, numeroEntrega, pdfPath, entregado) VALUES (?, ?, ?, 1)");
-$stmtEntrega->bind_param("sis", $projectId, $numeroEntrega, $targetPath);
+$stmtEntrega->bind_param("sis", $projectId, $numeroEntrega, $driveUrl);
 $stmtEntrega->execute();
+
 
 //si hubo error regreso
 if ($stmtEntrega->affected_rows === 0) {
