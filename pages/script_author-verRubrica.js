@@ -24,7 +24,7 @@ header.appendChild(createHeaderNav(urls, null, cerrar_sesion_link));
 //            CARGAR EL HEADER INTERNO
 // =============================================
 const innerSessionHead = select('.session-head');
-innerSessionHead.innerHTML = createInnerSessionHead('./author.html');
+innerSessionHead.innerHTML = createInnerSessionHead('./author.html', false);
 
 // Agregar selector de revisores después del header interno
 const sessionContext = innerSessionHead.querySelector('.session-context');
@@ -48,7 +48,7 @@ if (sessionContext) {
 // =============================================
 
 const rubric = select('.rubric-panel');
-rubric.innerHTML = createRubric();
+rubric.innerHTML = createRubric('author', false);
 
 
 
@@ -249,28 +249,28 @@ $('#rubric-doc-id').value = docId;
 
 const layout = $('#session-layout');
 const rubricPanel = $('#rubric-panel');
-const toggleBtn = $('#toggle-rubric');
-const closeBtn = $('#close-rubric');
+// const toggleBtn = $('#toggle-rubric');
+// const closeBtn = $('#close-rubric');
 
 // Declarar la variable rubricVisible
-let rubricVisible = true;
+// let rubricVisible = true;
 
-const showRubric = (show) => {
-    rubricVisible = typeof show === 'boolean' ? show : !rubricVisible;
-    if (rubricVisible) {
-        if (rubricPanel) rubricPanel.hidden = false;
-        if (layout) layout.classList.add('is-rubric-open');
-        if (toggleBtn) toggleBtn.textContent = 'Cerrar rúbrica';
-    } else {
-        if (layout) layout.classList.remove('is-rubric-open');
-        if (toggleBtn) toggleBtn.textContent = 'Abrir rúbrica';
-        window.setTimeout(() => {
-            if (layout && !layout.classList.contains('is-rubric-open')) {
-                if (rubricPanel) rubricPanel.hidden = true;
-            }
-        }, 260);
-    }
-};
+// const showRubric = (show) => {
+//     rubricVisible = typeof show === 'boolean' ? show : !rubricVisible;
+//     if (rubricVisible) {
+//         if (rubricPanel) rubricPanel.hidden = false;
+//         if (layout) layout.classList.add('is-rubric-open');
+//         if (toggleBtn) toggleBtn.textContent = 'Cerrar rúbrica';
+//     } else {
+//         if (layout) layout.classList.remove('is-rubric-open');
+//         if (toggleBtn) toggleBtn.textContent = 'Abrir rúbrica';
+//         window.setTimeout(() => {
+//             if (layout && !layout.classList.contains('is-rubric-open')) {
+//                 if (rubricPanel) rubricPanel.hidden = true;
+//             }
+//         }, 260);
+//     }
+// };
 
 // toggleBtn.addEventListener('click', () => showRubric());
 // closeBtn.addEventListener('click', () => showRubric(false));
@@ -298,19 +298,19 @@ $('#save-draft').addEventListener('click', () => {
 
 // Iniciar con rúbrica visible por defecto (solo en author-verRubrica)
 // Asegurarse de que se ejecute después de que el DOM esté listo y los elementos existan
-function initRubricVisibility() {
-    if (layout && rubricPanel) {
-        showRubric(true);
-    } else {
-        // Si los elementos aún no existen, intentar de nuevo en el siguiente tick
-        setTimeout(initRubricVisibility, 10);
-    }
-}
+// function initRubricVisibility() {
+//     if (layout && rubricPanel) {
+//         showRubric(true);
+//     } else {
+//         // Si los elementos aún no existen, intentar de nuevo en el siguiente tick
+//         setTimeout(initRubricVisibility, 10);
+//     }
+// }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRubricVisibility);
-} else {
-    // El DOM ya está listo, pero puede que los elementos aún no estén renderizados
-    setTimeout(initRubricVisibility, 0);
-}
+// if (document.readyState === 'loading') {
+//     document.addEventListener('DOMContentLoaded', initRubricVisibility);
+// } else {
+//     // El DOM ya está listo, pero puede que los elementos aún no estén renderizados
+//     setTimeout(initRubricVisibility, 0);
+// }
 })();
