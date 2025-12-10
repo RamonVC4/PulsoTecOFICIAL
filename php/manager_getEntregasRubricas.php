@@ -18,15 +18,34 @@ $stmtEntregas->execute();
 $resultEntregas = $stmtEntregas->get_result();
 
 $entregas = [];
+$primeraEntregaId = null;
+
 while ($row = $resultEntregas->fetch_assoc()) {
     $idEntrega = $row['id'];
     
+    // Guardar el ID de la primera entrega para asignar registros antiguos sin idEntrega
+    if ($primeraEntregaId === null) {
+        $primeraEntregaId = $idEntrega;
+    }
+    
     // Obtener todas las rúbricas de esta entrega
-    $stmtRubricas = $conn->prepare("SELECT rv.idRevisor, rv.datos, rv.terminado, r.nombre, r.primerApellido, r.segundoApellido, r.correo 
-                                    FROM revisor_veredicto rv 
-                                    JOIN revisor r ON rv.idRevisor = r.id 
-                                    WHERE rv.idProyecto = ? AND rv.idEntrega = ?");
-    $stmtRubricas->bind_param("ii", $idProyecto, $idEntrega);
+    // Buscar tanto por idEntrega específico como por registros sin idEntrega (para la primera entrega)
+    if ($idEntrega == $primeraEntregaId) {
+        // Para la primera entrega, también buscar registros sin idEntrega (registros antiguos)
+        $stmtRubricas = $conn->prepare("SELECT rv.idRevisor, rv.datos, rv.terminado, r.nombre, r.primerApellido, r.segundoApellido, r.correo 
+                                        FROM revisor_veredicto rv 
+                                        JOIN revisor r ON rv.idRevisor = r.id 
+                                        WHERE rv.idProyecto = ? AND (rv.idEntrega = ? OR rv.idEntrega IS NULL)");
+        $stmtRubricas->bind_param("ii", $idProyecto, $idEntrega);
+    } else {
+        // Para otras entregas, solo buscar por idEntrega específico
+        $stmtRubricas = $conn->prepare("SELECT rv.idRevisor, rv.datos, rv.terminado, r.nombre, r.primerApellido, r.segundoApellido, r.correo 
+                                        FROM revisor_veredicto rv 
+                                        JOIN revisor r ON rv.idRevisor = r.id 
+                                        WHERE rv.idProyecto = ? AND rv.idEntrega = ?");
+        $stmtRubricas->bind_param("ii", $idProyecto, $idEntrega);
+    }
+    
     $stmtRubricas->execute();
     $resultRubricas = $stmtRubricas->get_result();
     

@@ -141,7 +141,7 @@ async function cargarRevisores() {
 
         if (selector) {
             selector.innerHTML = revisoresData.map((revisor, index) => 
-                `<option value="${index}">${revisor.nombre} ${revisor.terminado ? '✓' : '(En progreso)'}</option>`
+                `<option value="${index}">Revisor ${index+1} ${revisor.terminado ? '✓' : '(En progreso)'}</option>`
             ).join('');
             
             // Cargar la primera rúbrica por defecto

@@ -130,35 +130,81 @@ function seleccionarRevisor(index) {
 
 // Cargar rúbrica del revisor seleccionado
 function cargarRubrica() {
+    // Primero limpiar todos los campos
+    limpiarRubrica();
+    
     if (!revisorActual || !revisorActual.datosRubrica) {
-        limpiarRubrica();
         return;
     }
     
     try {
-        const formObj = JSON.parse(revisorActual.datosRubrica);
+        // Verificar que los datos no estén vacíos
+        const datosStr = revisorActual.datosRubrica.trim();
+        if (!datosStr || datosStr === '' || datosStr === '{}' || datosStr === 'null') {
+            return;
+        }
+        
+        const formObj = JSON.parse(datosStr);
         const form = document.getElementById('rubric-form');
         
-        // Llenar el formulario
+        if (!form || !formObj || typeof formObj !== 'object') {
+            return;
+        }
+        
+        // Llenar el formulario SOLO con los valores que existen en los datos
         for (const [key, value] of Object.entries(formObj)) {
+            // Ignorar valores null, undefined, vacíos o que no sean válidos
+            if (value === null || value === undefined || value === '' || value === 'null' || value === 'undefined') {
+                continue;
+            }
+            
             const field = form.elements[key];
             if (!field) continue;
             
             if (field instanceof RadioNodeList || field.length > 1) {
+                // Para grupos de radio/checkbox
+                // Primero desmarcar todos
+                Array.from(field).forEach(el => {
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = false;
+                    }
+                });
+                
+                // Luego marcar solo el que coincide con el valor guardado
                 Array.from(field).forEach(el => {
                     if (el.type === 'checkbox' || el.type === 'radio') {
                         if (Array.isArray(value)) {
-                            el.checked = value.includes(el.value);
+                            if (value.includes(el.value)) {
+                                el.checked = true;
+                            }
                         } else {
-                            el.checked = el.value === value;
+                            // Comparación estricta de strings
+                            if (String(el.value) === String(value)) {
+                                el.checked = true;
+                            }
                         }
                     }
                 });
             } else {
+                // Para campos individuales
                 if (field.type === 'checkbox' || field.type === 'radio') {
-                    field.checked = Array.isArray(value) ? value.includes(field.value) : field.value === value;
+                    // Desmarcar primero
+                    field.checked = false;
+                    
+                    // Solo marcar si el valor coincide exactamente
+                    if (Array.isArray(value)) {
+                        if (value.includes(field.value)) {
+                            field.checked = true;
+                        }
+                    } else {
+                        // Comparación estricta de strings
+                        if (String(field.value) === String(value)) {
+                            field.checked = true;
+                        }
+                    }
                 } else {
-                    field.value = value;
+                    // Para inputs de texto, textarea, etc.
+                    field.value = value || '';
                 }
             }
         }
@@ -168,13 +214,23 @@ function cargarRubrica() {
     }
 }
 
-// Limpiar rúbrica
+// Limpiar rúbrica - Asegurar que todos los campos queden sin marcar
 function limpiarRubrica() {
     const form = document.getElementById('rubric-form');
+    if (!form) return;
+    
     Array.from(form.elements).forEach(el => {
+        // Ignorar botones, submits y campos hidden
+        if (el.type === 'button' || el.type === 'submit' || el.type === 'hidden') {
+            return;
+        }
+        
+        // Para checkboxes y radios, desmarcar
         if (el.type === 'checkbox' || el.type === 'radio') {
             el.checked = false;
-        } else if (el.type !== 'button' && el.type !== 'submit') {
+        } 
+        // Para otros campos (text, textarea, number, etc.), limpiar valor
+        else {
             el.value = '';
         }
     });
