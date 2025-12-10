@@ -1,23 +1,19 @@
 <?php
 
 // Datos conexión
+// $host = "localhost";
+// $user = "root";
+// $pass = "root";
+// $port = "8889";
+// $db = "pulsotec";
+
 $host = "pulsotec-pulsotec.g.aivencloud.com";
 $user = "avnadmin";
 $pass = "AVNS_D0TghQZ5koF26QhoHxo";
 $port = "24265";
 $db = "pulsotec";
 
-
-$conn = new mysqli($host, $user, $pass,$db, $port, null);
-mysqli_ssl_set(
-    $conn,
-    null,        // client key
-    null,        // client cert
-    "ca.pem",    // CA cert
-    null,        // cipher
-    null
-);
-
+$conn = new mysqli($host, $user, $pass,$db, $port);
 if ($conn->connect_error) {
     echo json_encode(["status" => "error", "message" => "DB error"]);
     exit;
