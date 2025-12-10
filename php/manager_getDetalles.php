@@ -11,6 +11,14 @@ if ($idProyecto === 0) {
      exit;
 }
 
+// Verificar si hay segunda entrega creada (significa que los 3 revisores terminaron la primera)
+$stmtSegundaEntrega = $conn->prepare("SELECT COUNT(*) as count FROM entrega WHERE idProyecto = ? AND numeroEntrega = 2");
+$stmtSegundaEntrega->bind_param("i", $idProyecto);
+$stmtSegundaEntrega->execute();
+$resultSegundaEntrega = $stmtSegundaEntrega->get_result();
+$rowSegundaEntrega = $resultSegundaEntrega->fetch_assoc();
+$tieneSegundaEntrega = ($rowSegundaEntrega && $rowSegundaEntrega['count'] > 0);
+
 // Traemos correo del revisor, el JSON de feedback y si ya terminó
 $sql = "SELECT 
             r.id AS revisor_id,
@@ -38,10 +46,14 @@ while ($row = $result->fetch_assoc()) {
         $feedback = new stdClass();
     }
 
+    // Si hay segunda entrega, significa que todos los revisores terminaron la primera entrega
+    // así que marcamos como terminado
+    $terminado = $tieneSegundaEntrega ? true : ($row['terminado'] == 1);
+
     $interacciones[] = [
         'revisor_id' => $row['revisor_id'],
         'revisor_email' => $row['revisor_correo'],
-        'terminado' => $row['terminado'] == 1, // Convertimos a booleano real
+        'terminado' => $terminado, // Convertimos a booleano real
         'fecha_limite' => $row['fechaLimite'],
         'feedback' => $feedback
     ];
