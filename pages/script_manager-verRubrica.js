@@ -1,207 +1,320 @@
+// Variables globales
+let entregasData = [];
+let revisoresData = [];
+let entregaActual = null;
+let revisorActual = null;
 
+// Función para convertir URL de Drive a URL de preview
+function convertToDrivePreviewUrl(url) {
+    if (!url) return '';
     
+    if (url.includes('drive.google.com/file/d/') && url.includes('/preview')) {
+        return url;
+    }
+    
+    const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+    }
+    
+    return url;
+}
 
-        async function cargarTabla() {
-            const dataDeBDD = await fetch('../php/revisor_getDatosRubrica.php', {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    pdfPath: (new URLSearchParams(window.location.search)).get('doc')
-                }),
-            });
-            const jsonStr = await dataDeBDD.text();
+// Función para obtener URL de descarga
+function getDownloadUrl(url) {
+    if (!url) return url;
+    
+    const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) {
+        return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    }
+    
+    return url;
+}
 
-            //si no tenia guardado nada, salir
-            if (!jsonStr) return;
+// Cargar entregas del proyecto
+async function cargarEntregas() {
+    const params = new URLSearchParams(window.location.search);
+    const idProyecto = params.get('doc');
+    const docTitle = params.get('title') || 'Documento sin título';
+    
+    if (!idProyecto) {
+        alert('No se proporcionó el ID del proyecto');
+        return;
+    }
+    
+    document.getElementById('doc-title').textContent = docTitle;
+    
+    try {
+        const response = await fetch(`../php/manager_getEntregasRubricas.php?idProyecto=${idProyecto}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+            alert('Error al cargar las entregas: ' + (data.message || 'Error desconocido'));
+            return;
+        }
+        
+        entregasData = data.entregas;
+        
+        // Llenar selector de versiones
+        const versionSelect = document.getElementById('version-select');
+        versionSelect.innerHTML = '<option value="">Seleccionar versión...</option>';
+        
+        entregasData.forEach((entrega, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `Versión ${entrega.numeroEntrega}${entrega.entregado ? ' (Entregada)' : ' (Pendiente)'}`;
+            versionSelect.appendChild(option);
+        });
+        
+        // Si hay entregas, seleccionar la primera por defecto
+        if (entregasData.length > 0) {
+            versionSelect.value = '0';
+            seleccionarVersion(0);
+        }
+        
+    } catch (error) {
+        console.error('Error al cargar entregas:', error);
+        alert('Error al cargar las entregas del proyecto');
+    }
+}
 
-            console.log(jsonStr);   
-            const datosEnJSON = JSON.parse(jsonStr);
-            if (!datosEnJSON.datosRubrica) return;
-            const formObj = JSON.parse(datosEnJSON.datosRubrica);
+// Seleccionar versión
+function seleccionarVersion(index) {
+    if (index < 0 || index >= entregasData.length) return;
+    
+    entregaActual = entregasData[index];
+    
+    // Cargar documento
+    const visualizador = document.querySelector('#visorPDF');
+    if (entregaActual.pdfPath) {
+        visualizador.src = convertToDrivePreviewUrl(entregaActual.pdfPath);
+    } else {
+        visualizador.src = '';
+    }
+    
+    // Cargar revisores de esta entrega
+    revisoresData = entregaActual.rubricas || [];
+    
+    // Llenar selector de revisores
+    const revisorSelect = document.getElementById('revisor-select');
+    if (revisoresData.length > 0) {
+        revisorSelect.style.display = 'block';
+        revisorSelect.innerHTML = '<option value="">Seleccionar revisor...</option>';
+        
+        revisoresData.forEach((revisor, idx) => {
+            const option = document.createElement('option');
+            option.value = idx;
+            option.textContent = `${revisor.nombre} ${revisor.terminado ? '✓' : '(En progreso)'}`;
+            revisorSelect.appendChild(option);
+        });
+        
+        // Seleccionar el primer revisor por defecto
+        revisorSelect.value = '0';
+        seleccionarRevisor(0);
+    } else {
+        revisorSelect.style.display = 'none';
+        revisorSelect.innerHTML = '<option value="">No hay revisores para esta versión</option>';
+        // Limpiar rúbrica
+        limpiarRubrica();
+    }
+}
 
-            form = document.getElementById('rubric-form');
+// Seleccionar revisor
+function seleccionarRevisor(index) {
+    if (index < 0 || index >= revisoresData.length) return;
+    
+    revisorActual = revisoresData[index];
+    cargarRubrica();
+}
 
-           for (const [key, value] of Object.entries(formObj)) {
-                const field = form.elements[key];
-                if (!field) continue;
-
-                // SI ES NODELIST, esto llena checkboxes o radios con mismo name
-                if (field instanceof RadioNodeList || field.length > 1) {
-                    Array.from(field).forEach(el => {
-                        if (el.type === 'checkbox' || el.type === 'radio') {
-                            if (Array.isArray(value)) {
-                                el.checked = value.includes(el.value);
-                            } else {
-                                el.checked = el.value === value;
+// Cargar rúbrica del revisor seleccionado
+function cargarRubrica() {
+    // Primero limpiar todos los campos
+    limpiarRubrica();
+    
+    if (!revisorActual || !revisorActual.datosRubrica) {
+        return;
+    }
+    
+    try {
+        // Verificar que los datos no estén vacíos
+        const datosStr = revisorActual.datosRubrica.trim();
+        if (!datosStr || datosStr === '' || datosStr === '{}' || datosStr === 'null') {
+            return;
+        }
+        
+        const formObj = JSON.parse(datosStr);
+        const form = document.getElementById('rubric-form');
+        
+        if (!form || !formObj || typeof formObj !== 'object') {
+            return;
+        }
+        
+        // Llenar el formulario SOLO con los valores que existen en los datos
+        for (const [key, value] of Object.entries(formObj)) {
+            // Ignorar valores null, undefined, vacíos o que no sean válidos
+            if (value === null || value === undefined || value === '' || value === 'null' || value === 'undefined') {
+                continue;
+            }
+            
+            const field = form.elements[key];
+            if (!field) continue;
+            
+            if (field instanceof RadioNodeList || field.length > 1) {
+                // Para grupos de radio/checkbox
+                // Primero desmarcar todos
+                Array.from(field).forEach(el => {
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = false;
+                    }
+                });
+                
+                // Luego marcar solo el que coincide con el valor guardado
+                Array.from(field).forEach(el => {
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        if (Array.isArray(value)) {
+                            if (value.includes(el.value)) {
+                                el.checked = true;
+                            }
+                        } else {
+                            // Comparación estricta de strings
+                            if (String(el.value) === String(value)) {
+                                el.checked = true;
                             }
                         }
-                    });
-                } else {
-                    //SI SOLO ES UN ELEMENTO, esto llena el resto, dehecho principalmente inputs de texto
-                    if (field.type === 'checkbox' || field.type === 'radio') {
-                        field.checked = Array.isArray(value) ? value.includes(field.value) : field.value === value;
-                    } else {
-                        field.value = value;
                     }
+                });
+            } else {
+                // Para campos individuales
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    // Desmarcar primero
+                    field.checked = false;
+                    
+                    // Solo marcar si el valor coincide exactamente
+                    if (Array.isArray(value)) {
+                        if (value.includes(field.value)) {
+                            field.checked = true;
+                        }
+                    } else {
+                        // Comparación estricta de strings
+                        if (String(field.value) === String(value)) {
+                            field.checked = true;
+                        }
+                    }
+                } else {
+                    // Para inputs de texto, textarea, etc.
+                    field.value = value || '';
                 }
             }
-
-            //desactivo la rubrica si ya esta terminada
-            if (datosEnJSON.terminado) {
-                const form = document.getElementById('rubric-form');
-                const botonEnviar = form.querySelector('button.btn-primary');
-                const botonBorrador = form.querySelector('button#save-draft');
-                Array.from(form.elements).forEach(el => el.disabled = true);
-                botonEnviar.disabled = true;
-                botonBorrador.disabled = true;
-            }
         }
+    } catch (error) {
+        console.error('Error al cargar rúbrica:', error);
+        limpiarRubrica();
+    }
+}
 
-
-
-
-    //esta funcion se ejecuta al cargar la pagina
-    document.addEventListener('DOMContentLoaded', () => {
-        cargarTabla(); // llama a la función que obtiene los proyectos y los renderiza<script>
-        const formFueraDeLaFunc = document.getElementById('rubric-form');
-        // Función para validar el formulario
-        const validarForm = () => {
-
-            const allRadios = formFueraDeLaFunc.querySelectorAll('input[type="radio"]');
-
-            // Validar que se haya elegido un dictamen
-            dictamenSeleccionado = Array.from(allRadios)
-                .some(r => r.name === 'dictamen' && r.checked);
-
-            //Validar que se hayan escrito comentarios
-            comentariosEscritos = document.getElementById('comentarios-autores').value.trim() !== '';
-
-            // guardar el estado de la verificacion
-            tablaLlena = (dictamenSeleccionado && comentariosEscritos );
-        };
-
-        // Escuchar cambios en el formulario
-        formFueraDeLaFunc.addEventListener('change', validarForm);
-        formFueraDeLaFunc.addEventListener('input', validarForm);
-
-        // Ejecutar al cargar por si hay datos prellenados
-        validarForm();
-
-
-        //APARTE DE ESTO, VAMOS A PONER EN EL VISUALIZADOR AL PDF
-        const visualizador = document.querySelector('#visorPDF');
-        const params = new URLSearchParams(window.location.search);
-        pdfPath = params.get('doc');
-        visualizador.src = pdfPath;
+// Limpiar rúbrica - Asegurar que todos los campos queden sin marcar
+function limpiarRubrica() {
+    const form = document.getElementById('rubric-form');
+    if (!form) return;
+    
+    Array.from(form.elements).forEach(el => {
+        // Ignorar botones, submits y campos hidden
+        if (el.type === 'button' || el.type === 'submit' || el.type === 'hidden') {
+            return;
+        }
+        
+        // Para checkboxes y radios, desmarcar
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            el.checked = false;
+        } 
+        // Para otros campos (text, textarea, number, etc.), limpiar valor
+        else {
+            el.value = '';
+        }
     });
+}
 
-
-        async function terminarRevision(terminado) {
-            if (terminado && !tablaLlena){
-                alert('Por favor, complete todos los campos obligatorios antes de enviar el dictamen.');
-                return;
-            }
-            //guardamos la form como json
-            const form = document.getElementById('rubric-form');
-            const data = new FormData(form);
-            // Convert FormData to plain object
-            const formObj = {};
-            for (const [key, value] of data.entries()) {
-                if (formObj[key]) {
-                    // handle multiple values (checkboxes, multi-select)
-                    formObj[key] = [].concat(formObj[key], value);
-                } else {
-                    formObj[key] = value;
-                }
-            }
-
-            const params = new URLSearchParams(window.location.search);
-            pdfPath = params.get('doc');
-            // mandar con fetch
-            const response = await fetch(terminado ? '../php/revisor_terminarRevision.php' : '../php/revisor_guardarBorrador.php', {
-                method: 'POST',
-                body: JSON.stringify({formObj,pdfPath}),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                alert('Dictamen enviado con éxito.');
-                window.location.href = './revisor.html'; //TODO
-            } else {
-                alert('Error al enviar el dictamen: ' + result.message);
-            }
+// Deshabilitar todos los campos de edición (solo lectura para manager)
+function deshabilitarEdicion() {
+    const form = document.getElementById('rubric-form');
+    Array.from(form.elements).forEach(el => {
+        if (el.type !== 'button' && el.type !== 'submit' && el.type !== 'hidden') {
+            el.disabled = true;
+            el.readOnly = true;
         }
+    });
+    
+    // Ocultar botones de acción
+    const saveDraft = document.getElementById('save-draft');
+    if (saveDraft) saveDraft.style.display = 'none';
+}
 
-    (function () {
-        const $ = (sel, root = document) => root.querySelector(sel);
-        const params = new URLSearchParams(window.location.search);
-        const docId = params.get('doc') || 'doc-sin-id';
-        const docTitle = params.get('title') || 'Documento sin título';
-
-        const docData = {
-            title: docTitle,
-        };
-
-        $('#doc-title').textContent = docData.title;
-        $('#rubric-doc-id').value = docId;
-
-        const layout = $('#session-layout');
-        const rubricPanel = $('#rubric-panel');
-        const toggleBtn = $('#toggle-rubric');
-        const closeBtn = $('#close-rubric');
-
-
-
-
-
-
-        let rubricVisible = false;
-        const showRubric = (show) => {
-            rubricVisible = typeof show === 'boolean' ? show : !rubricVisible;
-            if (rubricVisible) {
-                rubricPanel.hidden = false;
-                layout.classList.add('is-rubric-open');
-                toggleBtn.textContent = 'Cerrar rúbrica';
-            } else {
-                layout.classList.remove('is-rubric-open');
-                toggleBtn.textContent = 'Abrir rúbrica';
-                window.setTimeout(() => {
-                    if (!layout.classList.contains('is-rubric-open')) {
-                        rubricPanel.hidden = true;
-                    }
-                }, 260);
-            }
-        };
-
-        toggleBtn.addEventListener('click', () => showRubric());
-        closeBtn.addEventListener('click', () => showRubric(false));
-
-
-
-
-        $('#save-draft').addEventListener('click', () => {
-            const form = $('#rubric-form');
-            const data = new FormData(form);
-            const payload = {};
-            for (const [key, value] of data.entries()) {
-                if (payload[key]) {
-                    if (Array.isArray(payload[key])) {
-                        payload[key].push(value);
-                    } else {
-                        payload[key] = [payload[key], value];
-                    }
-                } else {
-                    payload[key] = value;
+// Inicializar cuando se carga la página
+document.addEventListener('DOMContentLoaded', () => {
+    // Deshabilitar edición inmediatamente
+    deshabilitarEdicion();
+    
+    // Cargar entregas
+    cargarEntregas();
+    
+    // Event listeners
+    const versionSelect = document.getElementById('version-select');
+    const revisorSelect = document.getElementById('revisor-select');
+    const downloadBtn = document.getElementById('download-btn');
+    const toggleBtn = document.getElementById('toggle-rubric');
+    const closeBtn = document.getElementById('close-rubric');
+    
+    versionSelect.addEventListener('change', (e) => {
+        const index = parseInt(e.target.value);
+        if (!isNaN(index)) {
+            seleccionarVersion(index);
+        }
+    });
+    
+    revisorSelect.addEventListener('change', (e) => {
+        const index = parseInt(e.target.value);
+        if (!isNaN(index)) {
+            seleccionarRevisor(index);
+        }
+    });
+    
+    downloadBtn.addEventListener('click', () => {
+        if (entregaActual && entregaActual.pdfPath) {
+            window.open(getDownloadUrl(entregaActual.pdfPath), '_blank');
+        } else {
+            alert('No hay documento disponible para descargar');
+        }
+    });
+    
+    // Toggle rúbrica
+    let rubricVisible = false;
+    const layout = document.getElementById('session-layout');
+    const rubricPanel = document.getElementById('rubric-panel');
+    
+    const showRubric = (show) => {
+        rubricVisible = typeof show === 'boolean' ? show : !rubricVisible;
+        if (rubricVisible) {
+            rubricPanel.hidden = false;
+            layout.classList.add('is-rubric-open');
+            toggleBtn.textContent = 'Cerrar rúbrica';
+        } else {
+            layout.classList.remove('is-rubric-open');
+            toggleBtn.textContent = 'Abrir rúbrica';
+            setTimeout(() => {
+                if (!layout.classList.contains('is-rubric-open')) {
+                    rubricPanel.hidden = true;
                 }
-            }
-            localStorage.setItem('rubricDraft:' + docId, JSON.stringify(payload));
-            alert('Borrador guardado localmente. Recuerda enviarlo antes de la fecha límite.');
-        });
-
-        $('#download-btn').addEventListener('click', () => {
-            alert('Descarga simulada. Conecta este botón con el PDF del manuscrito.');
-        });
-
-        // Iniciar con rúbrica oculta para dispositivos grandes
-        showRubric(false);
-    })();
+            }, 260);
+        }
+    };
+    
+    toggleBtn.addEventListener('click', () => showRubric());
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => showRubric(false));
+    }
+    
+    // Iniciar con rúbrica oculta
+    showRubric(false);
+});

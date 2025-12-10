@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once 'db.php';
+require_once 'drive_config.php';
+require_once 'drive_upload.php';
 header('Content-Type: application/json');
 
 // Validar que el usuario esté autenticado
@@ -82,25 +84,31 @@ if ($primeraEntrega['aceptado'] == 0) {
     exit;
 }
 
-// Guardar el archivo
+// Subir el archivo a Google Drive
 $archivo = $_FILES['archivo'];
-$uploadsDir = '../uploads/';
 $filename = basename($archivo['name']);
-$targetPath = $uploadsDir . uniqid() . '-' . $filename;
+$tempPath = $archivo['tmp_name'];
 
-if (!move_uploaded_file($archivo['tmp_name'], $targetPath)) {
-    echo json_encode(['success' => false, 'message' => 'Error al guardar el archivo']);
+// ID de la carpeta en Google Drive (se usa el de drive_config.php si está definido)
+$driveFolderId = defined('DRIVE_FOLDER_ID') ? DRIVE_FOLDER_ID : null;
+
+// Subir a Google Drive
+$driveResult = uploadToDrive($tempPath, $filename, $driveFolderId);
+
+if (!$driveResult['success']) {
+    echo json_encode(['success' => false, 'message' => 'Error al subir el archivo a Drive: ' . $driveResult['error']]);
     exit;
 }
 
-// Actualizar la entrega en la base de datos
+// Obtener la URL de visualización (para iframe)
+$driveUrl = $driveResult['viewUrl'];
+
+// Actualizar la entrega en la base de datos con la URL de Drive
 $stmtUpdate = $conn->prepare("UPDATE entrega SET pdfPath = ?, entregado = 1 WHERE id = ?");
-$stmtUpdate->bind_param("si", $targetPath, $idEntrega);
+$stmtUpdate->bind_param("si", $driveUrl, $idEntrega);
 $stmtUpdate->execute();
 
 if ($stmtUpdate->affected_rows === 0) {
-    // Si falla la actualización, eliminar el archivo subido
-    unlink($targetPath);
     echo json_encode(['success' => false, 'message' => 'Error al actualizar la base de datos']);
     exit;
 }

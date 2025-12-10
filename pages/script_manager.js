@@ -565,8 +565,9 @@
         elements.slotsGrid.querySelectorAll('.slot-rubric').forEach(button => {
             button.addEventListener('click', () => {
                 const projectId = button.dataset.project;
-                const reviewerId = button.dataset.reviewer;
-                window.location.href = `./manager-verRubrica.html?doc=${projectId}&reviewer=${reviewerId}`;
+                const project = getProject(projectId);
+                const projectTitle = project ? encodeURIComponent(project.title) : '';
+                window.location.href = `./manager-verRubrica.html?doc=${projectId}&title=${projectTitle}`;
             });
         });
 
@@ -696,8 +697,9 @@
         elements.rubricGrid.querySelectorAll('.rubric-open').forEach(button => {
             button.addEventListener('click', () => {
                 const projectId = button.dataset.project;
-                const reviewerId = button.dataset.reviewer;
-                window.location.href = `./manager-verRubrica.html?doc=${projectId}&reviewer=${reviewerId}`;
+                const project = getProject(projectId);
+                const projectTitle = project ? encodeURIComponent(project.title) : '';
+                window.location.href = `./manager-verRubrica.html?doc=${projectId}&title=${projectTitle}`;
             });
         });
     }

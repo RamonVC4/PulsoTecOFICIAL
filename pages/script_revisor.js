@@ -6,10 +6,16 @@
     // Tabs para la bandeja
     $$('.board-tabs .tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            $$('.board-tabs .tab').forEach(t => t.classList.remove('is-active'));
+            $$('.board-tabs .tab').forEach(t => {
+                t.classList.remove('is-active');
+                t.setAttribute('aria-selected', 'false');
+            });
             tab.classList.add('is-active');
+            tab.setAttribute('aria-selected', 'true');
             $$('.panel').forEach(panel => panel.classList.remove('is-active'));
             $('#' + tab.dataset.target).classList.add('is-active');
+            // Re-renderizar para actualizar mensajes vacíos
+            renderAll();
         });
     });
 
@@ -108,9 +114,14 @@
         const lists = document.querySelectorAll(`[data-sync="${type}"]`);
         if (!lists.length) return;
 
-        const source = state[type]
-            .slice()
-            .sort((a, b) => parseDate(b[getSortKey(type)]) - parseDate(a[getSortKey(type)]));
+        // Obtener y filtrar los proyectos según la búsqueda
+        let source = state[type].slice();
+        
+        // Aplicar filtro de búsqueda si existe
+        source = filterProjectsBySearch(source);
+        
+        // Ordenar
+        source.sort((a, b) => parseDate(b[getSortKey(type)]) - parseDate(a[getSortKey(type)]));
 
         lists.forEach(list => {
             const limit = Number(list.dataset.limit) || source.length;
@@ -127,7 +138,15 @@
             if (emptyId) {
                 const emptyElement = document.getElementById(emptyId);
                 if (emptyElement) {
-                    emptyElement.hidden = source.length > 0;
+                    // Verificar si el panel/pestaña está activa
+                    const isPanelActive = list.classList.contains('panel') 
+                        ? list.classList.contains('is-active')
+                        : true; // Para elementos que no son paneles (como las cards), siempre mostrar
+                    
+                    // Mostrar mensaje vacío solo si:
+                    // 1. El panel está activo (o no es un panel)
+                    // 2. No hay resultados después del filtro
+                    emptyElement.hidden = !isPanelActive || source.length > 0;
                 }
             }
         });
@@ -229,6 +248,53 @@
         const [item] = state.new.splice(index, 1);
         state.pending.push(item);
         renderAll();
+    }
+
+
+    const searchInput = document.getElementById('search');
+    let searchQuery = '';
+    
+    function searchProjects() {
+        if (!searchInput) return;
+        searchQuery = searchInput.value.toLowerCase().trim();
+        renderAll();
+    }
+
+    // Filtrar proyectos según la búsqueda
+    function filterProjectsBySearch(projects) {
+        if (!searchQuery) return projects;
+        
+        // Filtrar por título
+        return projects.filter(project => {
+            const titleMatch = project.title.toLowerCase().includes(searchQuery);
+            
+            // También buscar en otros campos si existen
+            const assignedMatch = project.assigned 
+                ? project.assigned.toLowerCase().includes(searchQuery)
+                : false;
+            
+            const verdictMatch = project.verdict
+                ? project.verdict.toLowerCase().includes(searchQuery)
+                : false;
+            
+            return titleMatch || assignedMatch || verdictMatch;
+        });
+    }
+
+    if (searchInput) {
+        // Buscar mientras escribes
+        searchInput.addEventListener('input', searchProjects);
+        
+        // Buscar cuando presionas Enter
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchProjects();
+            }
+        });
+        
+        // Buscar cuando se limpia el campo (botón X en input type="search")
+        searchInput.addEventListener('search', searchProjects);
     }
 
     document.addEventListener('click', async event => {

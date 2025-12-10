@@ -13,18 +13,13 @@ if ($idEntrega === 0) {
 }
 
 // Obtener los datos de la rúbrica de todas las que haya para esta entrega
-// Hacer JOIN con la tabla revisor para obtener los datos del revisor
+// NO incluir información personal del revisor (nombre, correo) para mantener anonimato
 $stmtRevisorRubrica = $conn->prepare("
     SELECT 
         rv.idRevisor,
         rv.datos,
-        rv.terminado,
-        r.nombre,
-        r.primerApellido,
-        r.segundoApellido,
-        r.correo
+        rv.terminado
     FROM revisor_veredicto rv
-    JOIN revisor r ON rv.idRevisor = r.id
     WHERE rv.idEntrega = ?
 ");
 $stmtRevisorRubrica->bind_param("i", $idEntrega);
@@ -37,17 +32,17 @@ if (!$result) {
     exit;
 }
 
-// Construir array con todos los revisores y sus datos
+// Construir array con todos los revisores y sus datos (sin información personal)
 $revisores = [];
+$indice = 1;
 while ($row = $result->fetch_assoc()) {
-    $nombreCompleto = trim(($row['nombre'] ?? '') . ' ' . ($row['primerApellido'] ?? '') . ' ' . ($row['segundoApellido'] ?? ''));
     $revisores[] = [
         'idRevisor' => $row['idRevisor'],
-        'correo' => $row['correo'] ?? '',
-        'nombre' => $nombreCompleto ?: ($row['correo'] ?? 'Revisor sin nombre'),
+        'nombre' => 'Revisor ' . $indice, // Nombre genérico, no el real
         'datosRubrica' => $row['datos'] ?? '{}',
         'terminado' => $row['terminado'] ?? 0
     ];
+    $indice++;
 }
 
 // Regreso todos los revisores con sus datos

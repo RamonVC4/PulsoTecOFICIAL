@@ -88,7 +88,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const visualizador = document.querySelector('#visorPDF');
     const params = new URLSearchParams(window.location.search);
     pdfPath = params.get('doc');
-    visualizador.src = pdfPath;
+    
+    // Función para convertir URL de Drive a URL de preview (para iframe)
+    function convertToDrivePreviewUrl(url) {
+        if (!url) return '';
+        
+        // Si ya es una URL de preview de Drive, retornarla tal cual
+        if (url.includes('drive.google.com/file/d/') && url.includes('/preview')) {
+            return url;
+        }
+        
+        // Si es una URL de Drive pero no es preview, convertirla
+        const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) {
+            return `https://drive.google.com/file/d/${match[1]}/preview`;
+        }
+        
+        // Si es una URL local (uploads), intentar convertirla o retornarla tal cual
+        // Para archivos locales, podrías usar un visor de PDF local
+        return url;
+    }
+    
+    visualizador.src = convertToDrivePreviewUrl(pdfPath);
 });
 
     // Función para mostrar modal de CURP
@@ -117,7 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-            
+
+
             document.body.appendChild(modal);
             
             const curpInput = modal.querySelector('#curp-input');
@@ -131,8 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 reject(new Error('Cancelado por el usuario'));
             };
             
+
+
             const validarYEnviar = async () => {
+                
+                console.log("pasó validarYEnviar");
+                
                 const curp = curpInput.value.trim().toUpperCase();
+                console.log("curp: ",curp);
                 
                 if (!curp) {
                     errorDiv.textContent = 'Por favor ingresa tu CURP';
@@ -140,13 +168,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                if (curp.length !== 18) {
-                    errorDiv.textContent = 'El CURP debe tener 18 caracteres';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
+                // if (curp.length !== 18) {
+                //     errorDiv.textContent = 'El CURP debe tener 18 caracteres';
+                //     errorDiv.style.display = 'block';
+                //     return;
+                // }
                 
                 // Validar CURP con el servidor
+                console.log("voy a andar a llamar validarCURP");
+
                 try {
                     const response = await fetch('../php/revisor_validarCURP.php', {
                         method: 'POST',
@@ -156,10 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         credentials: 'same-origin',
                         body: JSON.stringify({ curp: curp })
                     });
-                    
+                    console.log("pasó response");
                     const result = await response.json();
-                    
+                    console.log("pasó result");
                     if (result.success) {
+                        console.log("pasó success");
                         document.body.removeChild(modal);
                         resolve(curp);
                     } else {
@@ -171,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorDiv.style.display = 'block';
                 }
             };
+            console.log("pasó validarYEnviar");
             
             submitBtn.addEventListener('click', validarYEnviar);
             cancelBtn.addEventListener('click', cerrarModal);
@@ -328,7 +360,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('#download-btn').addEventListener('click', () => {
-        alert('Descarga simulada. Conecta este botón con el PDF del manuscrito.');
+        const params = new URLSearchParams(window.location.search);
+        const pdfPath = params.get('doc');
+        
+        if (!pdfPath) {
+            alert('No hay documento disponible para descargar.');
+            return;
+        }
+        
+        // Función para obtener URL de descarga de Drive
+        function getDownloadUrl(url) {
+            if (!url) return url;
+            
+            // Si es una URL de Drive, convertir a URL de descarga
+            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (match) {
+                return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+            }
+            
+            return url;
+        }
+        
+        // Abrir en nueva pestaña para descargar
+        window.open(getDownloadUrl(pdfPath), '_blank');
     });
 
     // Iniciar con rúbrica oculta para dispositivos grandes
