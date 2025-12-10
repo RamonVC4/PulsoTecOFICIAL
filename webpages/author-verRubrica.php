@@ -1,4 +1,6 @@
+<?php require_once '../php/protect_author.php'; ?>
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">

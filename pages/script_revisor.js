@@ -1,4 +1,6 @@
 
+
+
 (function () {
     const $ = (sel, root=document) => root.querySelector(sel);
     const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
@@ -45,7 +47,7 @@
                 //Solo defino los campos que de verdad uso, no todos los que definió G
                 //los meto a pending, new o completed segun corresponda
                 //TODO LO SIGUIENTE ES UNSAFE, TENGO QUE CAMBIARLO PARA QUE USE SESSION DE PHP MEJOR
-                const ruta = `review-session.html?doc=${proy.entregas[proy.entregas.length-1].pdfPath}&title=${proy.nombre}`;
+                const ruta = `review-session.php?doc=${proy.entregas[proy.entregas.length-1].pdfPath}&title=${proy.nombre}`;
                 console.log("dentro de lo que le pone el switch ese");
                 console.log(proy);
                 switch (proy.entregas[proy.entregas.length-1].terminado) {
