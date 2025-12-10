@@ -7,7 +7,10 @@
  * @returns {string} - Elemento HTML del header interno
  */
 
-export function createInnerSessionHead(urlPanel) {
+export function createInnerSessionHead(urlPanel, showToggleRubricButton = true) {
+
+    const toggleButton = showToggleRubricButton ? `<button type="button" class="btn-primary" id="toggle-rubric">Abrir rúbrica</button>` : '';
+
     return `
         <div class="session-context">
             <a class="back-link" href="${urlPanel}">← Regresar al panel</a>
@@ -15,7 +18,7 @@ export function createInnerSessionHead(urlPanel) {
         </div>
         <div class="session-actions">
             <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
-            <button type="button" class="btn-primary" id="toggle-rubric">Abrir rúbrica</button>
+            ${toggleButton}
         </div>
     `;
 }
@@ -27,7 +30,7 @@ export function createInnerSessionHead(urlPanel) {
  * @returns {string} - Elemento HTML de la rúbrica
  */
 
-export function createRubric(role = 'author') {
+export function createRubric(role = 'author', showCloseButton = true) {
 
     return `
         <form id="rubric-form" class="rubric-form" method="post" novalidate>
@@ -36,7 +39,7 @@ export function createRubric(role = 'author') {
             <!-- CABECERA -->
             <div class="rubric-head">
                 <h3>Evaluación de Artículo de Revista PulsoTec</h3>
-                <button type="button" class="btn-close" id="close-rubric" aria-label="Cerrar rúbrica">×</button>
+                ${showCloseButton ? `<button type="button" class="btn-close" id="close-rubric" aria-label="Cerrar rúbrica">×</button>` : ''}    
             </div>
             
 
