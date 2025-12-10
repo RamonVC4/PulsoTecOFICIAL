@@ -92,7 +92,27 @@
         const visualizador = document.querySelector('#visorPDF');
         const params = new URLSearchParams(window.location.search);
         pdfPath = params.get('doc');
-        visualizador.src = pdfPath;
+        
+        // Función para convertir URL de Drive a URL de preview (para iframe)
+        function convertToDrivePreviewUrl(url) {
+            if (!url) return '';
+            
+            // Si ya es una URL de preview de Drive, retornarla tal cual
+            if (url.includes('drive.google.com/file/d/') && url.includes('/preview')) {
+                return url;
+            }
+            
+            // Si es una URL de Drive pero no es preview, convertirla
+            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (match) {
+                return `https://drive.google.com/file/d/${match[1]}/preview`;
+            }
+            
+            // Si es una URL local (uploads), retornarla tal cual
+            return url;
+        }
+        
+        visualizador.src = convertToDrivePreviewUrl(pdfPath);
     });
 
 
