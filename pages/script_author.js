@@ -1,7 +1,6 @@
     // Este js carga la vista de autor (panel principal) de PulsoTec.
 
-    console.log("script_author.js cargado");
-
+    //console.log("script_author.js cargado");  //este es un buen console.log, no lo quiten, solo comentenlo
 
     import {select} from '../js/utils/dom.js';
     import {createHeaderTop, createHeaderNav} from '../components/header.js';
@@ -168,7 +167,6 @@
                 item.addEventListener('click', () => {
                     input.value = `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}`;
                     input.dataset.authorId = autor.id;//TODO usar esto mejor para conseguir las ids
-                    console.log(input.dataset);
                     ocultarDropdown();
                 });
 
@@ -282,8 +280,6 @@
             class: `version ${isInitial ? "version-initial" : "version-revised"} ${entrega.entregado ? "is-ready" : "is-await"}`
         });
 
-        console.log("TITULO: ", titulo);
-        console.log("ENTREGA.aceptado: ", entrega.aceptado);
         //consigo el estado de la entrega
         const status = entrega.aceptado === null ? "chip-pending" : entrega.aceptado === 1 ? "chip-success": "chip-denied";
         const textoStatus = entrega.aceptado === null ? "PENDIENTE" :entrega.aceptado === 1 ? "ACEPTADO" : "DENEGADO";
@@ -434,7 +430,6 @@
 
         //meto para ver la rubrica 
         if (entrega.aceptado != null) {
-            console.log("entro a ver rubrica");
             section.appendChild(
                 el("a", {
                     class: "link",
@@ -475,7 +470,6 @@
         const board = document.querySelector('.project-list');
         board.innerHTML = ''; // quita los proyectos placeholder
 
-        console.log(projects);
         projects.forEach(proj => {
             // Validar que el proyecto tenga entregas
             if (!proj.entregas || proj.entregas.length === 0) {
@@ -819,7 +813,6 @@
     export async function loadProjects() {
         const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
         const data = await res.json();
-        console.log(data);
         if (!data.success) {
             console.error(data.message);
             return;
@@ -839,27 +832,20 @@
             return [];
         }
 
-        //try {
-            const res = await fetch(`../php/buscarAutores.php`, {
-                credentials: "same-origin"
-            });
-            const data = await res.json();                
+        const res = await fetch(`../php/buscarAutores.php`, {
+            credentials: "same-origin"
+        });
+        const data = await res.json();                
 
-            console.log(data);
+        // Filtrar por nombre o correo
+        const queryLower = query.toLowerCase();
+        return data.autores.filter(autor => 
+            autor.nombre.toLowerCase().includes(queryLower) ||
+            autor.correo.toLowerCase().includes(queryLower) ||
+            autor.primerApellido.toLowerCase().includes(queryLower) ||
+            autor.segundoApellido.toLowerCase().includes(queryLower)
 
-            // Filtrar por nombre o correo
-            const queryLower = query.toLowerCase();
-            return data.autores.filter(autor => 
-                autor.nombre.toLowerCase().includes(queryLower) ||
-                autor.correo.toLowerCase().includes(queryLower) ||
-                autor.primerApellido.toLowerCase().includes(queryLower) ||
-                autor.segundoApellido.toLowerCase().includes(queryLower)
-
-            );
-        //} catch (error) {
-        //    console.error('Error al buscar autores:', error);
-        //    return [];
-        //}
+        );
     }
 
 
@@ -920,11 +906,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
 
-        console.log("VALORS")
-        console.log(idAutores);
-        console.log(id);
-        console.log(autorCorrespondenciaId);
-        console.log(idAutores.includes(autorCorrespondenciaId));
         if (!(idAutores.includes(autorCorrespondenciaId) || id == autorCorrespondenciaId)) {
             alert("El autor de correspondencia debe ser un autor del proyecto.");
             return;

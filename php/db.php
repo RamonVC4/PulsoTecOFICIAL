@@ -27,26 +27,30 @@ if ($conn->connect_error) {
     // 1. PREPARE
     $preparedStmt = $conn->prepare($sqlstmt);
     if (!$preparedStmt) {
-        echo "❌ Error al preparar la consulta: " . $conn->error;
+        echo "Error al preparar la consulta: " . $conn->error;
+        throw new Exception("Error al preparar la consulta: " . $conn->error);
         return false;
     }
 
     // 2. BIND PARAMS
     if (!$preparedStmt->bind_param($paramTypes, ...$paramValues)) {
-        echo "❌ Error en bind_param: " . $preparedStmt->error;
+        echo "Error en bind_param: " . $preparedStmt->error;
+        throw new Exception("Error en bind_param: " . $preparedStmt->error);
         return false;
     }
 
     // 3. EXECUTE
     if (!$preparedStmt->execute()) {
-        echo "❌ Error al ejecutar la consulta: " . $preparedStmt->error;
+        echo "Error al ejecutar la consulta: " . $preparedStmt->error;
+        throw new Exception("Error al ejecutar la consulta: " . $preparedStmt->error);
         return false;
     }
 
     // 4. GET RESULT
     $result = $preparedStmt->get_result();
     if ($preparedStmt->error) {
-        echo "❌ Error al obtener resultados: " . $preparedStmt->error;
+        echo "Error al obtener resultados: " . $preparedStmt->error;
+        throw new Exception("Error al obtener resultados: " . $preparedStmt->error);
         return false;
     }
 
