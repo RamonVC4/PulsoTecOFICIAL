@@ -424,7 +424,7 @@
             section.appendChild(
                 el("a", {
                     class: "link",
-                    text: "Descargar PDF",
+                    text: "Descargar DOCX",
                     attrs: { href: getDownloadUrl(entrega.pdfPath), target: "_blank" }
                 })
             );
