@@ -26,7 +26,7 @@ header.appendChild(createHeaderNav(urls, null, cerrar_sesion_link));
 //            CARGAR EL HEADER INTERNO
 // =============================================
 const innerSessionHead = select('.session-head');
-innerSessionHead.innerHTML = createInnerSessionHead('./author.php', false);
+innerSessionHead.innerHTML = createInnerSessionHead('./author.php', false, false);
 
 // Agregar selector de revisores después del header interno
 const sessionContext = innerSessionHead.querySelector('.session-context');
