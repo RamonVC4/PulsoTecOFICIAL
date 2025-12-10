@@ -1,4 +1,6 @@
+<?php require_once '../php/protect_revisor.php'; ?>
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">

@@ -1,4 +1,5 @@
 
+
 (function () {
     const MAX_REVIEWERS = 3;
     const PAGE_SIZE = 4;
@@ -567,7 +568,7 @@
                 const projectId = button.dataset.project;
                 const project = getProject(projectId);
                 const projectTitle = project ? encodeURIComponent(project.title) : '';
-                window.location.href = `./manager-verRubrica.html?doc=${projectId}&title=${projectTitle}`;
+                window.location.href = `./manager-verRubrica.php?doc=${projectId}&title=${projectTitle}`;
             });
         });
 
@@ -699,7 +700,7 @@
                 const projectId = button.dataset.project;
                 const project = getProject(projectId);
                 const projectTitle = project ? encodeURIComponent(project.title) : '';
-                window.location.href = `./manager-verRubrica.html?doc=${projectId}&title=${projectTitle}`;
+                window.location.href = `./manager-verRubrica.php?doc=${projectId}&title=${projectTitle}`;
             });
         });
     }

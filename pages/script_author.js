@@ -434,7 +434,7 @@
                 el("a", {
                     class: "link",
                     text: "Ver rubrica",
-                    attrs: { href: `./author-verRubrica.html?title=${titulo}&id=${entrega.id}` }
+                    attrs: { href: `./author-verRubrica.php?title=${titulo}&id=${entrega.id}` }
                 })
             );
         }
