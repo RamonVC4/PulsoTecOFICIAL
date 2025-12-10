@@ -117,7 +117,7 @@ if (!($resultFueAceptado->fetch_assoc()['aceptado'] !== null)) {
 
     //si ya todos revisaron, creo la segunda entrega
     if ($result->fetch_assoc()['revisoresTerminaron'] === 3) {
-        q("INSERT INTO ENTREGA (idProyecto,numeroEntrega,entregado,fechaLimite) VALUES (?,2,0,NOW())", "i", [$idProyecto]);//TODO CAMBIAR FECHA LIMITE
+        q("INSERT INTO entrega (idProyecto,numeroEntrega,entregado,fechaLimite) VALUES (?,2,0,NOW())", "i", [$idProyecto]);//TODO CAMBIAR FECHA LIMITE
     }
 }
 

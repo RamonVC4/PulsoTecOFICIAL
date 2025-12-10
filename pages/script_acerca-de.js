@@ -13,9 +13,9 @@ import {creators} from '../config/config.js';
 
 const urls = {
     'INICIO': '../Index.html',
-    'ACERCA DE': './acerca-de.html',
+    'ACERCA DE': './acerca-de.php',
 }
-const login_link = './login.html';
+const login_link = './login.php';
 
 const header = select('.site-header');
 header.appendChild(createHeaderTop());

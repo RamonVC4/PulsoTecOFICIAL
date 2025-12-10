@@ -46,7 +46,7 @@ function checkSession($requiredRole) {
  */
 function requireAuth($requiredRole) {
     if (!checkSession($requiredRole)) {
-        header('Location: ../webpages/login.html');
+        header('Location: ../webpages/login.php');
         exit;
     }
 }
