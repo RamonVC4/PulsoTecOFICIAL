@@ -287,7 +287,7 @@
         const textoStatus = entrega.aceptado === null ? "PENDIENTE" :entrega.aceptado === 1 ? "ACEPTADO" : "DENEGADO";
 
         // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
-        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== 1 && primeraEntrega.aceptado !== 0;
+        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega; //&& primeraEntrega.aceptado !== 1 && primeraEntrega.aceptado !== 0;
         
         const header = el("header", {
             children: [
