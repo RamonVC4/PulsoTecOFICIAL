@@ -129,7 +129,7 @@ $idProyecto = $entregaDeQueProyecto['id'];
 
 
 // a los revisores que no han dado veredicto final, le pongo segunda version de revisor veredicto
-$resultadoLosQueFaltan = q("SELECT idRevisor FROM revisor_veredicto WHERE idProyecto = ? AND idEntrega = ?", "ii", [$idProyecto, $idEntrega]);
+$resultadoLosQueFaltan = q("SELECT idRevisor FROM revisor_veredicto WHERE idProyecto = ? AND idEntrega = ((select id from entrega where idProyecto = ? order by id asc limit 1)) AND status IS NULL", "ii", [$idProyecto, $idProyecto]);
 while ($row = $resultadoLosQueFaltan->fetch_assoc()) {
     q("INSERT INTO revisor_veredicto (idRevisor, idProyecto, idEntrega) VALUES (?,?,(select id from entrega where idProyecto = ? order by id desc limit 1))", "iii", [$row['idRevisor'], $idProyecto, $idProyecto]);
 }
