@@ -282,9 +282,11 @@
             class: `version ${isInitial ? "version-initial" : "version-revised"} ${entrega.entregado ? "is-ready" : "is-await"}`
         });
 
+        console.log("TITULO: ", titulo);
+        console.log("ENTREGA.aceptado: ", entrega.aceptado);
         //consigo el estado de la entrega
-        const status = entrega.aceptado?? "chip-null" === "chip-null"? "chip-null": entrega.aceptado? "chip-success": "chip-denied";
-        const textoStatus = entrega.aceptado?? "PENDIENTE" === "PENDIENTE"? "PENDIENTE": entrega.aceptado? "ACEPTADO": "DENEGADO";
+        const status = entrega.aceptado === null ? "chip-pending" : entrega.aceptado === 1 ? "chip-success": "chip-denied";
+        const textoStatus = entrega.aceptado === null ? "PENDIENTE" :entrega.aceptado === 1 ? "ACEPTADO" : "DENEGADO";
 
         // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
         const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== null && primeraEntrega.aceptado !== 0;
@@ -295,8 +297,8 @@
                     ? el("h4", { text: "Pendiente" })
                     : el("h4", { text: titulo }),
                 el("span", {
-                    class: `chip ${entrega.entregado ? "chip-success" : "chip-pending"} ${status}`,
-                    text: entrega.entregado ? (textoStatus) : "Pendiente"
+                    class: `chip ${status}`,
+                    text: `${textoStatus}`,
                 })
             ]
         });
@@ -815,166 +817,18 @@
 
     //esta funcion obtiene los proyectos del autor
     export async function loadProjects() {
-       // try {
-            const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
-            const data = await res.json();
-            console.log(data);
-            if (!data.success) {
-                console.error(data.message);
-                return;
-            }
-            renderProjects(data.proyectos);
-            // Agregar proyectos de ejemplo
-            renderProyectoEjemplo();
-            renderProyectoEjemploSinRevisar();
-        //} catch (error) {
-        //    console.error("Error al cargar proyectos:", error);
-        //}
+        const res = await fetch("../php/autor_getProyectos.php", { credentials: "same-origin" });
+        const data = await res.json();
+        console.log(data);
+        if (!data.success) {
+            console.error(data.message);
+            return;
+        }
+        renderProjects(data.proyectos);
+        // Agregar proyectos de ejemplo
+        renderProyectoEjemplo();
+        renderProyectoEjemploSinRevisar();
     }
-
-    // =============================================
-    //         RENDERIZAR PROYECTO DE EJEMPLO
-    // =============================================
-
-    // function renderProyectoEjemplo() {
-    //     const board = document.querySelector('.project-list');
-    //     if (!board) return;
-
-    //     const proyectoEjemplo = {
-    //         id: 'ejemplo-1',
-    //         nombre: 'Proyecto de Ejemplo - Primera Revisión Completada',
-    //         entregas: [
-    //             {
-    //                 id: 'ejemplo-entrega-1',
-    //                 idProyecto: 'ejemplo-1',
-    //                 pdfPath: '../uploads/ejemplo-doc.pdf',
-    //                 entregado: 1,
-    //                 aceptado: 1, // Primera entrega revisada y aceptada (con cambios solicitados)
-    //                 fechaEntrega: '2025-01-15'
-    //             },
-    //             {
-    //                 id: 'ejemplo-entrega-2',
-    //                 idProyecto: 'ejemplo-1',
-    //                 pdfPath: null,
-    //                 entregado: 0, // Segunda entrega pendiente de subir
-    //                 aceptado: null,
-    //                 fechaEntrega: '2025-02-01'
-    //             }
-    //         ]
-    //     };
-
-    //     // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
-    //     const card = el("article", {
-    //         class: "card project-card",
-    //         attrs: {
-    //             "data-title": proyectoEjemplo.nombre,
-    //         }
-    //     });
-
-    //     const e = proyectoEjemplo.entregas[0];
-
-    //     const header = el("header", { class: "project-card__header" });
-
-    //     const headerInfo = el("div", {
-    //         children: [
-    //             el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
-    //             el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
-    //         ]
-    //     });
-
-    //     // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
-    //     const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
-    //     const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
-        
-    //     const status = el("span", {
-    //         class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
-    //         text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
-    //     });
-
-    //     header.append(headerInfo, status);
-
-    //     const grid = el("div", { class: "version-grid" });
-    //     grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
-
-    //     // Agregar la segunda entrega
-    //     if (proyectoEjemplo.entregas.length > 1) {
-    //         card.dataset.date = proyectoEjemplo.entregas[1].fechaEntrega;
-
-    //         // Crear la carta de la segunda entrega, pasando la primera entrega para verificar estado
-    //         grid.appendChild(makeEntrega(proyectoEjemplo.entregas[1], proyectoEjemplo.nombre, false, proyectoEjemplo.entregas[0]));
-    //     }
-
-    //     card.append(header, grid);
-    //     // Agregar al inicio de la lista
-    //     board.insertBefore(card, board.firstChild);
-    // }
-
-    // // =============================================
-    // //    RENDERIZAR PROYECTO DE EJEMPLO SIN REVISAR
-    // // =============================================
-
-    // function renderProyectoEjemploSinRevisar() {
-    //     const board = document.querySelector('.project-list');
-    //     if (!board) return;
-
-    //     const proyectoEjemplo = {
-    //         id: 'ejemplo-2',
-    //         nombre: 'Proyecto de Ejemplo - Primera Entrega Pendiente de Revisión',
-    //         entregas: [
-    //             {
-    //                 id: 'ejemplo-entrega-3',
-    //                 idProyecto: 'ejemplo-2',
-    //                 pdfPath: '../uploads/ejemplo-doc-2.pdf',
-    //                 entregado: 1,
-    //                 aceptado: null, // Primera entrega aún sin revisar
-    //                 fechaEntrega: '2025-01-20'
-    //             }
-    //         ]
-    //     };
-
-    //     // Renderizar el proyecto de ejemplo usando la misma lógica que renderProjects
-    //     const card = el("article", {
-    //         class: "card project-card",
-    //         attrs: {
-    //             "data-title": proyectoEjemplo.nombre,
-    //         }
-    //     });
-
-    //     const e = proyectoEjemplo.entregas[0];
-
-    //     const header = el("header", { class: "project-card__header" });
-
-    //     const headerInfo = el("div", {
-    //         children: [
-    //             el("h3", { class: "project-title", text: proyectoEjemplo.nombre }),
-    //             el("p", { class: "project-description", text: `Proyecto cargado el ${e.fechaEntrega}` })
-    //         ]
-    //     });
-
-    //     // Determinar el estado general del proyecto (PENDIENTE hasta que se cierre)
-    //     const ultimaEntrega = proyectoEjemplo.entregas[proyectoEjemplo.entregas.length - 1];
-    //     const proyectoCerrado = ultimaEntrega.aceptado !== null && ultimaEntrega.aceptado !== undefined;
-        
-    //     const status = el("span", {
-    //         class: `project-status ${proyectoCerrado && ultimaEntrega.aceptado === 1 ? 'chip-success' : ""}`,
-    //         text: proyectoCerrado && ultimaEntrega.aceptado === 1 ? "Aceptado" : "Pendiente"
-    //     });
-
-    //     header.append(headerInfo, status);
-
-    //     const grid = el("div", { class: "version-grid" });
-    //     grid.appendChild(makeEntrega(e, proyectoEjemplo.nombre, true));
-
-    //     card.append(header, grid);
-    //     // Agregar al inicio de la lista (después del primer ejemplo)
-    //     const firstChild = board.firstChild;
-    //     if (firstChild) {
-    //         board.insertBefore(card, firstChild.nextSibling);
-    //     } else {
-    //         board.appendChild(card);
-    //     }
-    // }
-
 
     // =============================================
     //               BUSCAR AUTORES EN LA BD
