@@ -397,6 +397,7 @@
             // Agregar event listener para el botón
             submitBtn.addEventListener('click', () => {
                 subirSegundaEntrega(entrega.id);
+                console.log("entrega id: ", entrega.id);
             });
 
             uploadForm.appendChild(dropzone);
@@ -634,7 +635,9 @@
                 credentials: "same-origin"
             });
 
+            //const data = await res.json();
             const data = await res.json();
+            //console.log("res text: \n", data);
 
             if (!data.success) {
                 alert(data.message || 'Error al subir la segunda entrega.');
