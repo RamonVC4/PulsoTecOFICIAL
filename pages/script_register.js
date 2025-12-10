@@ -205,7 +205,7 @@
             return;
         }else{
             alert("Registro exitoso.");
-            window.location.href = "./login.html";
+            window.location.href = "./login.php";
         }
 
         //valido el email mandando un correo TODO no se si necesito hacer esto

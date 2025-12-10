@@ -64,7 +64,7 @@
                 <!-- ACCIONES -->
                 <div class="actions">
                     <button type="button" class="btn-primary" onclick="goToPage()">ACCEDER</button>
-                    <a class="link-ghost" href="./register.html" aria-label="Crear cuenta nueva">NO TENGO UN USUARIO</a>
+                    <a class="link-ghost" href="./register.php" aria-label="Crear cuenta nueva">NO TENGO UN USUARIO</a>
                 </div>
             </form>
         </section>
