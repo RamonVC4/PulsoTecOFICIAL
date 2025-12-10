@@ -39,11 +39,12 @@ if (!$row || $password != $row['contra']) {
 session_start();
 
 $_SESSION['user_id'] = $row['id'];
+$_SESSION['user_role'] = $role;
 
 $routes = [
-    "autor" => "../webpages/author.html"."?id=" . $row['id'],
-    "manager" => "../webpages/manager.html"."?id=" . $row['id'],
-    "revisor" => "../webpages/revisor.html"."?id=" . $row['id']
+    "autor" => "../webpages/author.php"."?id=" . $row['id'],
+    "manager" => "../webpages/manager.php"."?id=" . $row['id'],
+    "revisor" => "../webpages/revisor.php"."?id=" . $row['id']
 ];
 
 echo json_encode([

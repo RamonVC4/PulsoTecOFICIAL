@@ -1,6 +1,6 @@
-//COMENTÉ RENDER HISTORY Y UPDATE METRICS
-
+<?php require_once '../php/protect_manager.php'; ?>
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -757,7 +757,7 @@
                 button.addEventListener('click', () => {
                     const projectId = button.dataset.project;
                     const reviewerId = button.dataset.reviewer;
-                    window.location.href = `./manager-verRubrica.html?doc=${projectId}&reviewer=${reviewerId}`;
+                    window.location.href = `./manager-verRubrica.php?doc=${projectId}&reviewer=${reviewerId}`;
                 });
             });
 
@@ -888,7 +888,7 @@
                 button.addEventListener('click', () => {
                     const projectId = button.dataset.project;
                     const reviewerId = button.dataset.reviewer;
-                    window.location.href = `./manager-verRubrica.html?doc=${projectId}&reviewer=${reviewerId}`;
+                    window.location.href = `./manager-verRubrica.php?doc=${projectId}&reviewer=${reviewerId}`;
                 });
             });
         }

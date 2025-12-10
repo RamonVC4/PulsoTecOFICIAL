@@ -7,9 +7,10 @@
  * @returns {string} - Elemento HTML del header interno
  */
 
-export function createInnerSessionHead(urlPanel, showToggleRubricButton = true) {
+export function createInnerSessionHead(urlPanel, showToggleRubricButton = true, showDownloadButton = true) {
 
     const toggleButton = showToggleRubricButton ? `<button type="button" class="btn-primary" id="toggle-rubric">Abrir rúbrica</button>` : '';
+    const downloadButton = showDownloadButton ? `<button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>` : '';
 
     return `
         <div class="session-context">
@@ -17,7 +18,7 @@ export function createInnerSessionHead(urlPanel, showToggleRubricButton = true) 
             <h2 id="doc-title">Documento sin título</h2>
         </div>
         <div class="session-actions">
-            <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
+            ${downloadButton}
             ${toggleButton}
         </div>
     `;

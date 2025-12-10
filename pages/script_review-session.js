@@ -1,5 +1,4 @@
 
-
     async function cargarTabla() {
         const dataDeBDD = await fetch('../php/revisor_getDatosRubrica.php', {
             method: 'POST',
@@ -287,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
         if (result.success) {
             alert('Dictamen enviado con éxito.');
-            window.location.href = './revisor.html'; //TODO
+            window.location.href = './revisor.php'; //TODO
         } else {
             alert('Error al enviar el dictamen: ' + result.message);
         }
