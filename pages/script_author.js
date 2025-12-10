@@ -283,11 +283,12 @@
         });
 
         //consigo el estado de la entrega
-        const status = entrega.aceptado?? "chip-null" === "chip-null"? "chip-null": entrega.aceptado? "chip-success": "chip-denied";
-        const textoStatus = entrega.aceptado?? "PENDIENTE" === "PENDIENTE"? "PENDIENTE": entrega.aceptado? "ACEPTADO": "DENEGADO";
+        const status = entrega.aceptado === null || entrega.aceptado === undefined ? "chip-null" : entrega.aceptado ? "chip-success" : "chip-denied";
+        const textoStatus = entrega.aceptado === null || entrega.aceptado === undefined ? "PENDIENTE" : entrega.aceptado ? "ACEPTADO" : "DENEGADO";
 
-        // Si es la segunda entrega, no está entregada, y la primera fue revisada y no rechazada definitivamente
-        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== null && primeraEntrega.aceptado !== 0;
+        // Si es la segunda entrega, no está entregada, y la primera fue revisada y no fue definitivamente aceptada (aceptado !== 1)
+        // Esto permite subir segunda entrega si fue rechazada (0) o si pasó a segunda entrega (null pero hay segunda entrega)
+        const esSegundaEntregaConFormulario = !isInitial && !entrega.entregado && primeraEntrega && primeraEntrega.aceptado !== 1;
         
         const header = el("header", {
             children: [
