@@ -15,7 +15,8 @@ const urls = {
     'INICIO': '../Index.html',
     'BANDEJA': './author.php',
 }
-const cerrar_sesion_link = './login.php';
+
+const cerrar_sesion_link = '../php/logout.php';
 
 const header = select('.site-header');
 header.appendChild(createHeaderTop());

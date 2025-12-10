@@ -27,7 +27,7 @@
                     <li><a href="../Index.html">INICIO</a></li>
                     <li><a href="./manager.php">BANDEJA</a></li>
                     <!-- <li><a href="#">AYUDA</a></li> -->
-                    <li class="login"><a href="./login.php">CERRAR SESIÓN</a></li>
+                    <li class="login"><a href="../php/logout.php">CERRAR SESIÓN</a></li>
                 </ul>
             </div>
         </nav>
