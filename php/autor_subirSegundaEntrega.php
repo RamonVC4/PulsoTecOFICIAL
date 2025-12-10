@@ -60,29 +60,29 @@ if ($entrega['entregado'] == 1) {
     exit;
 }
 
-// Verificar que la primera entrega fue revisada y no rechazada definitivamente
-$stmtPrimera = $conn->prepare("SELECT e.aceptado FROM entrega e WHERE e.idProyecto = ? AND e.numeroEntrega = 1");
-$stmtPrimera->bind_param("i", $entrega['idProyecto']);
-$stmtPrimera->execute();
-$resultPrimera = $stmtPrimera->get_result();
+// // Verificar que la primera entrega fue revisada y no rechazada definitivamente
+// $stmtPrimera = $conn->prepare("SELECT e.aceptado FROM entrega e WHERE e.idProyecto = ? AND e.numeroEntrega = 1");
+// $stmtPrimera->bind_param("i", $entrega['idProyecto']);
+// $stmtPrimera->execute();
+// $resultPrimera = $stmtPrimera->get_result();
 
-if ($resultPrimera->num_rows === 0) {
-    echo json_encode(['success' => false, 'message' => 'No se encontró la primera entrega']);
-    exit;
-}
+// if ($resultPrimera->num_rows === 0) {
+//     echo json_encode(['success' => false, 'message' => 'No se encontró la primera entrega']);
+//     exit;
+// }
 
-$primeraEntrega = $resultPrimera->fetch_assoc();
+// $primeraEntrega = $resultPrimera->fetch_assoc();
 
-// Verificar que la primera entrega fue revisada (aceptado no es NULL) y no fue rechazada definitivamente (aceptado != 0)
-if ($primeraEntrega['aceptado'] === null) {
-    echo json_encode(['success' => false, 'message' => 'La primera entrega aún no ha sido revisada']);
-    exit;
-}
+// // Verificar que la primera entrega fue revisada (aceptado no es NULL) y no fue rechazada definitivamente (aceptado != 0)
+// if ($primeraEntrega['aceptado'] === null) {
+//     echo json_encode(['success' => false, 'message' => 'La primera entrega aún no ha sido revisada']);
+//     exit;
+// }
 
-if ($primeraEntrega['aceptado'] == 0) {
-    echo json_encode(['success' => false, 'message' => 'La primera entrega fue rechazada definitivamente']);
-    exit;
-}
+// if ($primeraEntrega['aceptado'] == 0) {
+//     echo json_encode(['success' => false, 'message' => 'La primera entrega fue rechazada definitivamente']);
+//     exit;
+// }
 
 // Subir el archivo a Google Drive
 $archivo = $_FILES['archivo'];
@@ -111,6 +111,18 @@ $stmtUpdate->execute();
 if ($stmtUpdate->affected_rows === 0) {
     echo json_encode(['success' => false, 'message' => 'Error al actualizar la base de datos']);
     exit;
+}
+
+// checo la entrega de que proyecto es
+$resultDeQueProyecto = q("SELECT p.id FROM entrega e JOIN proyecto p ON e.idProyecto = p.id WHERE e.id = ?","i",[$idEntrega]);
+$entregaDeQueProyecto = $resultDeQueProyecto->fetch_assoc();
+// ahora tengo la id
+$idProyecto = $entregaDeQueProyecto['id'];
+
+// a los revisores que no han dado veredicto final, le pongo segunda version de revisor veredicto
+$resultadoLosQueFaltan = q("SELECT idRevisor FROM revisor_veredicto WHERE idProyecto = idEntrega = ? AND", "i", [$idEntrega]);
+while ($row = $resultadoLosQueFaltan->fetch_assoc()) {
+    q("INSERT INTO revisor_veredicto (idRevisor, idProyecto, idEntrega) VALUES (?,?,(select id from entrega where idProyecto = ? order by id desc limit 1))", "iii", [$row['idRevisor'], $idProyecto, $idProyecto]);
 }
 
 echo json_encode(['success' => true, 'message' => 'Segunda entrega subida exitosamente']);
