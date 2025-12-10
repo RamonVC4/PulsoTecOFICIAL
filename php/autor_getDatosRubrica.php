@@ -5,9 +5,9 @@ header('Content-Type: application/json');
 
 // Leo el idEntrega
 $data = json_decode(file_get_contents("php://input"), true);
-$idEntrega = isset($data['idEntrega']) ? intval($data['idEntrega']) : 0;
+$idRV = isset($data['idRV']) ? intval($data['idRV']) : 0;
 
-if ($idEntrega === 0) {
+if ($idRV === 0) {
     echo json_encode(['success' => false, 'message' => 'ID de entrega inválido']);
     exit;
 }
@@ -20,9 +20,9 @@ $stmtRevisorRubrica = $conn->prepare("
         rv.datos,
         rv.terminado
     FROM revisor_veredicto rv
-    WHERE rv.idEntrega = ?
+    WHERE rv.id = ?
 ");
-$stmtRevisorRubrica->bind_param("i", $idEntrega);
+$stmtRevisorRubrica->bind_param("i", $idRV);
 $stmtRevisorRubrica->execute();
 $result = $stmtRevisorRubrica->get_result();
 

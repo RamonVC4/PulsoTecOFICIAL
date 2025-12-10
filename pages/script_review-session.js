@@ -285,7 +285,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const result = await response.json();
         if (result.success) {
-            alert('Dictamen enviado con éxito.');
+            if (terminado) {
+                alert('Dictamen enviado con éxito.');
+            }
             window.location.href = './revisor.php'; //TODO
         } else {
             alert('Error al enviar el dictamen: ' + result.message);
