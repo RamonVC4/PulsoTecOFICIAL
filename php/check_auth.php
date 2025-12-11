@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents("php://input"), true);
 $requiredRole = $data['role'] ?? '';
 
+//Validar autenticación para el acceso
 if (checkSession($requiredRole)) {
     echo json_encode([
         'authenticated' => true,

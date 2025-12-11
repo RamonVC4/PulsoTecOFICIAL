@@ -204,7 +204,7 @@
                 return;
             }
 
-            // Debounce: esperar 300ms después de que el usuario deje de escribir
+            // timer de 300ms para poner la busqueda
             timeoutId = setTimeout(async () => {
                 const resultados = await buscarAutores(query);
                 renderizarResultados(resultados);
@@ -212,7 +212,7 @@
             }, 300);
         });
 
-        // Event listener para cuando el input recibe foco
+        // Event listener para el input
         input.addEventListener('focus', async () => {
             const query = input.value.trim();
             if (query.length >= 2) {
@@ -222,7 +222,7 @@
             }
         });
 
-        // Event listener para navegación con teclado
+        // Event listener para teclado
         input.addEventListener('keydown', (e) => {
             const items = dropdown.querySelectorAll('.author-autocomplete-item');
             
@@ -359,6 +359,7 @@
                     "aria-hidden": "true"
                 }
             });
+            //la flechita para arriba
             svg.innerHTML = `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="16"></line>`;
             
             const pText = el("p");
@@ -411,11 +412,11 @@
         }
 
         if (entrega.pdfPath) {
-            // Función para obtener URL de descarga de Drive
+            // Función para obtener URL de  Drive
             function getDownloadUrl(url) {
                 if (!url) return url;
                 
-                // Si es una URL de Drive, convertir a URL de descarga
+                // convertir a URL de descarga
                 const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
                 if (match) {
                     return `https://drive.google.com/uc?export=download&id=${match[1]}`;
@@ -544,6 +545,7 @@
 
         if (!input) { return; }
 
+        //convertir a megas
         function setInfo(file) {
             if (!info) { return; }
             if (!file) { info.textContent = ''; return; }
@@ -552,6 +554,7 @@
             info.textContent = file.name + ' · ' + formatted;
         }
 
+        //para cuando te pones encima del dropzone
         ['dragenter', 'dragover'].forEach(function (eventName) {
             zone.addEventListener(eventName, function (event) {
                 event.preventDefault();
@@ -560,6 +563,7 @@
             });
         });
 
+        //salir de la zona del dropzone
         ['dragleave', 'drop'].forEach(function (eventName) {
             zone.addEventListener(eventName, function (event) {
                 event.preventDefault();
@@ -568,20 +572,26 @@
             });
         });
 
+
+        //cuando lo suelto
         zone.addEventListener('drop', function (event) {
+            //checo que si tenga un archivo
             if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+                //lo guardo en el input
                 var file = event.dataTransfer.files[0];
                 input.files = event.dataTransfer.files;
                 setInfo(file);
             }
         });
 
+        //si hay un trigger, hago que abra el input
         if (trigger) {
             trigger.addEventListener('click', function () {
                 input.click();
             });
         }
 
+        //cuando cambie el input, actualizo la info
         input.addEventListener('change', function () {
             setInfo(input.files && input.files[0]);
         });
@@ -628,6 +638,7 @@
             submitBtn.textContent = 'Subiendo...';
         }
 
+        //sube la segunda entrega
         try {
             const res = await fetch("../php/autor_subirSegundaEntrega.php", {
                 method: "POST",
@@ -732,66 +743,6 @@
         let filteredCards = allCards.slice();
         let currentPage = 1;
 
-        function updateVisibility() {
-            const total = filteredCards.length;
-            const totalPages = Math.max(1, Math.ceil(total / pageSize));
-            currentPage = Math.min(currentPage, totalPages);
-
-            const start = (currentPage - 1) * pageSize;
-            const end = start + pageSize;
-            const visibleSet = new Set(filteredCards.slice(start, end));
-
-
-            allCards.forEach(card => {
-                card.hidden = !visibleSet.has(card);
-            });
-
-            emptyState.hidden = !(total > 0); //|| !searchInput.value.trim());
-            emptySearch.hidden = !(total > 0);
-            pagination.hidden = total <= pageSize;
-            pageIndicator.textContent = total ? currentPage + ' / ' + totalPages : '0 / 0';
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= totalPages;
-        }
-
-        function applySearch(value) {
-            const term = value.trim().toLowerCase();
-            if (!term) {
-                filteredCards = allCards.slice();
-            } else {
-                filteredCards = allCards.filter(card => {
-                    const title = (card.dataset.title || card.querySelector('.project-title')?.textContent || '').toLowerCase();
-                    const author = (card.dataset.author || '').toLowerCase();
-                    const date = (card.dataset.date || '').toLowerCase();
-                    return title.includes(term) || author.includes(term) || date.includes(term);
-                });
-            }
-            currentPage = 1;
-            updateVisibility();
-        }
-
-        // if (searchInput) {
-        //     searchInput.addEventListener('input', event => {
-        //         applySearch(event.target.value);
-        //     });
-        // }
-
-        prevBtn.addEventListener('click', () => {
-            if (currentPage <= 1) { return; }
-            currentPage -= 1;
-            updateVisibility();
-            board.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-
-        nextBtn.addEventListener('click', () => {
-            const totalPages = Math.max(1, Math.ceil(filteredCards.length / pageSize));
-            if (currentPage >= totalPages) { return; }
-            currentPage += 1;
-            updateVisibility();
-            board.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-
-        updateVisibility();
     })();
 
 

@@ -14,6 +14,7 @@ function convertToDrivePreviewUrl(url) {
         return url;
     }
     
+    //validación con regex
     const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
     if (match) {
         return `https://drive.google.com/file/d/${match[1]}/preview`;
@@ -26,6 +27,7 @@ function convertToDrivePreviewUrl(url) {
 function getDownloadUrl(url) {
     if (!url) return url;
     
+    //validacion con regex
     const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
     if (match) {
         return `https://drive.google.com/uc?export=download&id=${match[1]}`;

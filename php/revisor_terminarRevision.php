@@ -74,8 +74,12 @@ if ($respuestas['dictamen'] === "no_recomendar"){
 
 //si se llegó a un veredicto tengo que checar si ya hay exactamente 2 veredictos para elegir si pasa o no
 if($seLlegoAUnVeredicto){
-    $stmtRevisorVeredicto = $conn->prepare("SELECT status FROM revisor_veredicto WHERE idProyecto = ? AND status IS NOT NULL AND idEntrega = ? AND terminado = 1;");
-    $stmtRevisorVeredicto->bind_param("ii", $idProyecto, $idEntrega);
+    // $stmtRevisorVeredicto = $conn->prepare("SELECT status FROM revisor_veredicto WHERE idProyecto = ? AND status IS NOT NULL AND idEntrega = ? AND terminado = 1;");
+    // $stmtRevisorVeredicto->bind_param("ii", $idProyecto, $idEntrega);
+
+    $stmtRevisorVeredicto = $conn->prepare("SELECT status FROM revisor_veredicto WHERE idProyecto = ? AND status IS NOT NULL AND terminado = 1;");
+    $stmtRevisorVeredicto->bind_param("i", $idProyecto);
+
     $stmtRevisorVeredicto->execute();
     $resultRevisorVeredicto = $stmtRevisorVeredicto->get_result();
 
