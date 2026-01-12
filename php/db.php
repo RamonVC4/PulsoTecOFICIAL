@@ -1,10 +1,10 @@
 <?php
 // Datos conexión
-$host = "localhost";
-$user = "root";
-$pass = "";
-$port = "3306";
-$db = "pulsotec";
+$host = getenv('DB_HOST') ?: 'localhost';
+$user = getenv('DB_USER') ?: 'root';
+$pass = getenv('DB_PASS') ?: '';
+$port = getenv('DB_PORT') ?: '3306';
+$db   = getenv('DB_NAME') ?: 'pulsotec';
 
 $conn = new mysqli($host, $user, $pass,$db, $port);
 if ($conn->connect_error) {
