@@ -776,8 +776,8 @@
         }
         renderProjects(data.proyectos);
         // Agregar proyectos de ejemplo
-        renderProyectoEjemplo();
-        renderProyectoEjemploSinRevisar();
+        //renderProyectoEjemplo(); //TODO eliminar
+        //renderProyectoEjemploSinRevisar();
     }
 
     // =============================================

@@ -29,9 +29,12 @@ $client->addScope(Drive::DRIVE);
 $client->setAccessType('offline');
 $client->setPrompt('select_account consent');
 
-// URL de redirección (debe coincidir con la configurada en Google Cloud Console)
-$redirectUri = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . 
-               "://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/drive_auth.php';
+$redirectUri =
+    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
+    . '://' . $_SERVER['HTTP_HOST']
+    . dirname($_SERVER['PHP_SELF'])
+    . '/drive_auth.php';
+
 $client->setRedirectUri($redirectUri);
 
 // Si recibimos un código de autorización
