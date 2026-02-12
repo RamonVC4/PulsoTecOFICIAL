@@ -121,13 +121,13 @@
 
                 </div>
 
-                <div id="project-empty-search" class="project-empty-search" hidden>
+                <!-- <div id="project-empty-search" class="project-empty-search" hidden>
                     <p>No encontramos artículos que coincidan con tu búsqueda.</p>
                 </div>
                 
                 <div id="project-empty" class="project-empty">
                     <p>Ups! Parece que aún no has subido ningún artículo</p>
-                </div>
+                </div> -->
 
                 <div class="project-pagination" id="project-pagination">
                     <button type="button" class="btn-secondary project-page-btn" id="project-prev" aria-label="Proyectos anteriores">Anterior</button>
