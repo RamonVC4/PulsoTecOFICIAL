@@ -150,7 +150,7 @@
         // Función para renderizar los resultados
         function renderizarResultados(resultados) {
             dropdown.innerHTML = '';
-            autores = resultados;
+            autores = resultados; // creo que esto no se usa
 
             if (resultados.length === 0) {
                 const empty = document.createElement('div');
@@ -168,7 +168,6 @@
                 
                 item.addEventListener('click', () => {
                     input.value = `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}`;
-                    input.dataset.authorId = autor.id;//TODO usar esto mejor para conseguir las ids
                     ocultarDropdown();
                 });
 
@@ -245,7 +244,6 @@
                     e.preventDefault();
                     if (selectedIndex >= 0 && autores[selectedIndex]) {
                         input.value = autores[selectedIndex].nombre;
-                        input.dataset.authorId = autores[selectedIndex].id;
                         ocultarDropdown();
                     }
                     break;
@@ -818,9 +816,9 @@
         const inputs = authorsContainer.querySelectorAll('input[data-author-input]');
         const idAutores = [];
 
-        inputs.forEach(input => {
-            idAutores.push(input.dataset.authorId);
-        });
+        //busco en la BDD los id de los autores basado en los inputs, y los guardo en idAutores
+
+        let autoresValidos = true;
 
         //consigo todos los autores de la bdd
         const respuestaAutores = await fetch("../php/buscarAutores.php", { credentials: "same-origin" });
@@ -830,7 +828,21 @@
             return;
         }
 
-        let autoresValidos = true;
+        for (const input of inputs) {
+            const nombreCompleto = input.value.trim();
+            if (!nombreCompleto) {
+                continue; // Si el input está vacío, lo ignoro
+            }
+
+            //busco el autor en la bdd
+            const autor = autoresBdd.autores.find(autor => `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}` === nombreCompleto);
+            if (!autor) {
+                autoresValidos = false;
+                return;
+            }
+            idAutores.push(autor.id);
+        }
+        
 
         if (!autoresValidos) {
             alert("Alguno de los autores ingresados no existen en la base de datos.");
@@ -849,7 +861,16 @@
             alert("Por favor selecciona un autor de correspondencia.");
             return;
         }
-        let autorCorrespondenciaId = autorCorrespondencia.dataset.authorId;
+
+        //busco el autor de correspondencia en la base de datos para conseguir su id
+        let autorCorrespondenciaId = null;
+        for (const autor of autoresBdd.autores) {
+            const nombreCompleto = `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}`;
+            if (nombreCompleto === autorCorrespondencia.value) {
+                autorCorrespondenciaId = autor.id;
+                break;
+            }
+        }
 
         if (!autorCorrespondenciaId) {
             alert("Por favor selecciona un autor de correspondencia.");
