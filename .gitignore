@@ -10,6 +10,8 @@ pulsoTecinfinityfree.zip
 ca.pem
 .env
 
+*.zip
+
 # Google Drive OAuth
 #drive_credentials.json
 #drive_token.json
