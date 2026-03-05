@@ -226,7 +226,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function validarFormManual(){
+        const formFueraDeLaFunc = document.getElementById('rubric-form');
+         const allRadios = formFueraDeLaFunc.querySelectorAll('input[type="radio"]');
+
+        // Validar que se haya elegido un dictamen
+        dictamenSeleccionado = Array.from(allRadios)
+            .some(r => r.name === 'dictamen' && r.checked);
+
+        //Validar que se hayan escrito comentarios
+        comentariosEscritos = document.getElementById('comentarios-autores').value.trim() !== '';
+
+        // guardar el estado de la verificacion
+        tablaLlena = (dictamenSeleccionado && comentariosEscritos );
+    }
+
     async function terminarRevision(terminado) {
+        validarFormManual();
         if (terminado && !tablaLlena){
             alert('Por favor, complete todos los campos obligatorios antes de enviar el dictamen.');
             return;
