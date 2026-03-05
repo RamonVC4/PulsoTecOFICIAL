@@ -13,5 +13,5 @@ ca.pem
 *.zip
 
 # Google Drive OAuth
-#drive_credentials.json
-#drive_token.json
+drive_credentials.json
+drive_token.json
