@@ -12,7 +12,7 @@
 
     const urls = {
         'INICIO': '../Index.html',
-        'MIS PROYECTOS': './',
+        'MIS PROYECTOS': './author.php',
     }
 
     const cerrar_sesion_link = '../php/logout.php';
