@@ -99,6 +99,26 @@ body {
     border-radius: 50%;
     border: 2px solid #fff;
 }
+
+
+
+
+
+/* SOPORTE DE LA CARD */
+.card-soporte {
+    position:fixed !important;
+    z-index: 100 !important;
+    padding: 0.3rem  2rem !important;
+    
+    bottom: 10px;
+    left: 10px;
+}
+
+
+
+
+
+
 /* Page body placeholder */
 main.hero {
     min-height: calc(100vh - 88px - 48px);
