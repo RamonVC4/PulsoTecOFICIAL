@@ -107,7 +107,7 @@
 
                         <!-- agregar area de conocimiento para revisor -->
                         <div class="field" id="areaConocimientoDiv">
-                            <label for="area-conocimiento">Área de conocimiento</label>
+                            <label for="area-conocimiento">Área de conocimiento principal</label>
                                 <select id="area-conocimiento" name="area-conocimiento" required>
                                     <option value="0" selected>Seleccione una opción</option>
                                     <option value="1">Ingeniería Química y Bioquímica</option>
@@ -121,6 +121,8 @@
                                     <option value="9">Administración</option>
                                     <option value="10">Investigación Educativa</option>
                                 </select>
+                                <small style="color: #888;">(No te preocupes, podrás agrega y/o eliminar areas de conocimiento más adelante)</small>
+
                         </div>
                        
 
