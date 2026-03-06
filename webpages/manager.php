@@ -585,7 +585,7 @@
             //AQUI TAMBIEN FILTRAMOS A LOS REVISORES QUE NO SEAN DE LA MISMA AREA QUE EL PROYECTO
             const availableReviewers = reviewers.filter(reviewer => {
                 const estaOcupado = assignedIds.some(occupiedId => String(occupiedId) === String(reviewer.id));
-                const esDelArea = getProject(activeProjectId).idArea in reviewer.areas
+                const esDelArea = reviewer.areas.includes(getProject(activeProjectId).idArea)
                 return !estaOcupado && esDelArea; 
             });
 

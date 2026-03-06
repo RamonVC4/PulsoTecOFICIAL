@@ -25,6 +25,5 @@ while ($row = $result->fetch_assoc()) {
         'areas' => $areas
     ];
 }
-
 echo json_encode(['success' => true, 'revisores' => $revisores]);
 ?>
