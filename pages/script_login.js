@@ -41,10 +41,19 @@
         const password = document.getElementById('password').value;
 
         //hago un fetch a php
+
+        const user_data = {
+            correo: correo,
+            password: password, 
+            role: role,
+        };
+
+        
+
         const res = await fetch("../php/login.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ correo, password, role }),
+            body: JSON.stringify(user_data),
             credentials: "same-origin" // para enviar cookies de la sesion
         });
 
@@ -56,6 +65,7 @@
         }
 
         console.log(data);
+        sessionStorage.setItem("user_data", JSON.stringify(data));
         window.location.href = data.redirect;
     }
 

@@ -34,6 +34,7 @@ export const creators = Object.freeze([
  * @type {Object} - Lista de áreas de conocimiento
  */
 
+
 export const areasDeConocimiento = Object.freeze({
     0: "Seleccione una área de conocimiento",
     1: "Ingeniería Química y Bioquímica",
