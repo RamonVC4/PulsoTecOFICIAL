@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../styles/styles_revisor.css">
 </head>
 <body>
+     <!-- HEADER -->
     <header class="site-header">
         <div class="header-top">
             <div class="container">
@@ -22,12 +23,17 @@
                 <ul class="nav-list">
                     <li><a href="../Index.html">INICIO</a></li>
                     <li><a href="#">DOCUMENTOS</a></li>
+                    <li><a href="./RevisorAreas.php">Areas de conocimiento</a></li>
                     <!-- <li><a href="#">AYUDA</a></li> -->
                     <li class="login"><a href="../php/logout.php">CERRAR SESIÓN</a></li>
                 </ul>
             </div>
         </nav>
     </header>
+
+
+
+
     
     <main class="container revisor-main">
         <section class="revisor-overview">

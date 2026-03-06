@@ -2,10 +2,27 @@
     require_once 'db.php';
     session_start();
     
-    $nuevaAreaRecibida = json_decode(file_get_contents('php://input'),true);
-    $idRevisor = $_SESSION['user_id'];
+    header("Content-Type: application/json");
 
+    $nuevaAreaRecibida = json_decode(file_get_contents('php://input'),true);
+
+
+    if (!$nuevaAreaRecibida || !isset($nuevaAreaRecibida['idArea'])) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "idArea not provided"
+        ]);
+        exit;
+    }
+
+    $idRevisor = $_SESSION['user_id'];
     $idArea = $nuevaAreaRecibida['idArea'];
 
+
+
     q("INSERT INTO revisor_areaDeConocimiento (idRevisor,idAreaDeConocimiento) VALUES (?,?);", "ii", [$idRevisor,$idArea]);
+
+    echo json_encode([
+        "status" => "ok"
+    ]);
 ?>
