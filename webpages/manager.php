@@ -229,7 +229,8 @@
                             id: p.id, 
                             title: p.title, 
                             author: p.author || 'Autor pendiente', 
-                            area: p.area || 'General', 
+                            area: p.area || 'General',
+                            idArea: p.idArea, 
                             submitted: p.submitted, 
                             due: '2025-12-01', 
                             stage: stageName, 
@@ -581,9 +582,11 @@
             const assignedIds = getAssigned(project);
             
             // Convertimos todo a String para asegurar que "1" sea igual a 1
+            //AQUI TAMBIEN FILTRAMOS A LOS REVISORES QUE NO SEAN DE LA MISMA AREA QUE EL PROYECTO
             const availableReviewers = reviewers.filter(reviewer => {
                 const estaOcupado = assignedIds.some(occupiedId => String(occupiedId) === String(reviewer.id));
-                return !estaOcupado; 
+                const esDelArea = getProject(activeProjectId).idArea in reviewer.areas
+                return !estaOcupado && esDelArea; 
             });
 
             elements.slotsSection.hidden = false;

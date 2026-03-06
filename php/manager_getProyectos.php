@@ -105,7 +105,8 @@ try {
             'area' => $nombreArea,  // <--- ¡Aquí va el nombre real!
             'stage' => $ultimoEstado,
             'entregas' => $entregas,
-            'conteo_revisores' => $numRevisores
+            'conteo_revisores' => $numRevisores,
+            'idArea' => $idArea //añadi idArea para mas facil diferenciar de que area es para filtar revisores
         ];
     }
 
