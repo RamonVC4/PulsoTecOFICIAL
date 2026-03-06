@@ -14,7 +14,6 @@ async function obtener_areas() {
 }
 
 async function addKnowledge(idArea) {
-    alert("entró");
     const res = await fetch("../php/revisor_addArea.php", {
         method: "POST",
         headers: {
@@ -33,7 +32,6 @@ async function addKnowledge(idArea) {
 }
 
 async function removeKnowledge(idArea) {
-    alert("entró");
     const res = await fetch("../php/revisor_removerArea.php", {
         method: "POST",
         headers: {
@@ -80,15 +78,17 @@ function createOptionCard(area, doknow) {
                 return;
             }
 
+            alert("Area de Conocimiento eliminada correctamente");
             elements.otherAreas.appendChild(card);
         } else {
-            const res = await addKnowledge(area.id);
+             const res = await addKnowledge(area.id);
 
             if (!res || res.status !== "ok") {
                 alert("Error actualizando los datos");
                 return;
             }
 
+            alert("Area de Conocimiento agregada correctamente");
             elements.ownAreas.appendChild(card);
         }
 
@@ -112,8 +112,10 @@ function createOptionCard(area, doknow) {
 
 
 (async () => {
+    console.log("entro");
     const data = await obtener_areas();
     
+    console.log("salio");
     console.log(data);
     //const areas = data.areas;
     const areas = Object.values(data.areas || {});
