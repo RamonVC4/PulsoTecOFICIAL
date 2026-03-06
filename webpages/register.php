@@ -121,7 +121,7 @@
                                     <option value="9">Administración</option>
                                     <option value="10">Investigación Educativa</option>
                                 </select>
-                                <small style="color: #888;">(No te preocupes, podrás agrega y/o eliminar areas de conocimiento más adelante)</small>
+                                <small style="color: #888;">(No te preocupes, podrás agregar y/o eliminar areas de conocimiento más adelante)</small>
 
                         </div>
                        
