@@ -13,6 +13,46 @@ async function obtener_areas() {
     return await res.json();
 }
 
+async function addKnowledge(idArea) {
+    alert("entró");
+    const res = await fetch("../php/revisor_addArea.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idArea
+        }),
+        credentials: "same-origin"
+    });
+
+    // const data = await res.json();
+    const text = await res.text();
+    console.log(text);
+    return JSON.parse(text);
+}
+
+async function removeKnowledge(idArea) {
+    alert("entró");
+    const res = await fetch("../php/revisor_removerArea.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idArea
+        }),
+        credentials: "same-origin"
+    });
+
+    // const data = await res.json();
+    const text = await res.text();
+    console.log(text);
+    return JSON.parse(text);
+}
+
+
+
 function createOptionCard(area, doknow) {
     const card = document.createElement("div");
     card.classList.add("area-option");
@@ -23,12 +63,41 @@ function createOptionCard(area, doknow) {
     card.classList.add("card-conocimiento");
     card.innerHTML = `
         <p>${area.name}</p>
-        <button class="know-button">${action}</button>
+        <button class="know-button ${action}">${action}</button>
     `;
 
     //card.textContent = area.name;
 
+    const button = card.querySelector(".know-button");
+
     
+    button.addEventListener("click", async () => {
+        if (doknow) {
+           const res = await removeKnowledge(area.id);
+
+            if (!res || res.status !== "ok") {
+                alert("Error actualizando los datos");
+                return;
+            }
+
+            elements.otherAreas.appendChild(card);
+        } else {
+            const res = await addKnowledge(area.id);
+
+            if (!res || res.status !== "ok") {
+                alert("Error actualizando los datos");
+                return;
+            }
+
+            elements.ownAreas.appendChild(card);
+        }
+
+        doknow = !doknow;
+        button.textContent = doknow ? "quitar" : "agregar";
+
+        button.classList.toggle("agregar");
+        button.classList.toggle("quitar");
+    });
 
 
     if (doknow) {
