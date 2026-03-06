@@ -138,6 +138,10 @@
         </section>
     </main>
 
+    <div id="soporte" class="card card-soporte">
+        <p>soporte: soporte.pulsotec.sirec@gmail.com</p>
+    </div>
+
 
     <!-- SCRIPT DE LA PÁGINA DE AUTOR -->
     <script type="module" src="../pages/script_author.js"></script>

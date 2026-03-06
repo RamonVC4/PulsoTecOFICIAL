@@ -129,6 +129,10 @@
         </section>
     </main>
 
+    <div id="soporte" class="card card-soporte">
+        <p>soporte: soporte.pulsotec.sirec@gmail.com</p>
+    </div>
+
     <!-- SCRIPT PARA EL REVISOR -->
     <script src="../pages/script_revisor.js"></script>
 </body>
