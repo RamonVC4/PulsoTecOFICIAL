@@ -107,7 +107,7 @@ export function createRubric(role = 'author', showCloseButton = true) {
 
             <!-- DICTAMEN -->
             <section class="rubric-section">
-                <h4>II. Según su dictamen, el trabajo debería ser</h4>
+                <h4>III. Según su dictamen, el trabajo debería ser</h4>
                 <div class="recommendations-grid">
                     <fieldset class="recommendations">
                         <legend>Recomendaciones del árbitro</legend>
@@ -121,7 +121,7 @@ export function createRubric(role = 'author', showCloseButton = true) {
 
             <!-- JUSTIFICACIÓN -->
             <section class="rubric-section">
-                <h4>III. Justifique su decisión</h4>
+                <h4>IV. Justifique su decisión</h4>
                 <div class="comments-area">
                     <label for="comentarios-autores">Comentarios para los autores (Con el fin de mejorar la calidad del manuscrito)</label>
                     <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales."></textarea>

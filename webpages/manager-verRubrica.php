@@ -98,7 +98,7 @@
 
                     <!-- ASPECTOS A EVALUAR -->
                     <section class="rubric-section">
-                        <h4>I. Según la revisión que hizo del documento, conteste los siguientes criterios</h4>
+                        <h4>II. Según la revisión que hizo del documento, conteste los siguientes criterios</h4>
                         <p class="muted small">Marque con una opción por criterio. Los criterios no evaluados se ponderarán con una calificación de cero.</p>
                         <div class="table-wrapper">
                             <table class="rubric-table">
@@ -233,7 +233,7 @@
 
                     <!-- DICTAMEN -->
                     <section class="rubric-section">
-                        <h4>II. Según su dictamen, el trabajo debería ser</h4>
+                        <h4>III. Según su dictamen, el trabajo debería ser</h4>
                         <div class="recommendations-grid">
                             <fieldset class="recommendations">
                                 <legend>Recomendaciones del árbitro</legend>
@@ -247,7 +247,7 @@
 
                     <!-- JUSTIFICACIÓN -->
                     <section class="rubric-section">
-                        <h4>III. Justifique su decisión</h4>
+                        <h4>IV. Justifique su decisión</h4>
                         <div class="comments-area">
                             <label for="comentarios-autores">Comentarios para los autores (Con el fin de mejorar la calidad del manuscrito)</label>
                             <textarea id="comentarios-autores" name="comentarios_autores" rows="5" placeholder="Escriba observaciones, sugerencias y recomendaciones puntuales." readonly></textarea>
