@@ -48,7 +48,7 @@
                 <select id="revisor-select" class="btn-secondary" style="margin-right: 10px; padding: 8px 12px; display: none;">
                     <option value="">Seleccionar revisor...</option>
                 </select>
-                <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
+                <button type="button" class="btn-secondary" id="download-btn">Descargar DOCX</button>
                 <button type="button" class="btn-primary" id="toggle-rubric">Abrir rúbrica</button>
             </div>
         </header>

@@ -45,7 +45,7 @@
                 <h2 id="doc-title">Documento sin título</h2>
             </div>
             <div class="session-actions">
-                <button type="button" class="btn-secondary" id="download-btn">Descargar PDF</button>
+                <button type="button" class="btn-secondary" id="download-btn">Descargar DOCX</button>
                 <button type="button" class="btn-primary" id="toggle-rubric">Abrir rúbrica</button>
             </div>
         </header>
