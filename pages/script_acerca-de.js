@@ -12,7 +12,7 @@ import {creators} from '../config/config.js';
 // =============================================
 
 const urls = {
-    'INICIO': '../Index.html',
+    'INICIO': '../index.html',
     'ACERCA DE': './acerca-de.php',
 }
 const login_link = './login.php';

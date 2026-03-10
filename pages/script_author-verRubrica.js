@@ -12,7 +12,7 @@ import {createRubric, createInnerSessionHead} from '../components/rubric.js';
 // =============================================
 
 const urls = {
-    'INICIO': '../Index.html',
+    'INICIO': '../index.html',
     'BANDEJA': './author.php',
 }
 

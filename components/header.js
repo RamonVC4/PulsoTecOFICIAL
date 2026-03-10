@@ -12,7 +12,7 @@ export function createHeaderTop() {
     const header_top = create('div', ['header-top']);
     header_top.innerHTML = `
         <div class="container">
-            <div class="logo-text">PT<span class="gold"></span></div>
+            <div class="logo-text"><span class="gold"></span></div>
             <h1 class="title">PULSO<span class="gold">TEC</span></h1>
         </div>
     `;
