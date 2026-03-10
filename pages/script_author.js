@@ -11,7 +11,7 @@
     // =============================================
 
     const urls = {
-        'INICIO': '../Index.html',
+        'INICIO': '../index.html',
         'MIS PROYECTOS': './author.php',
     }
 

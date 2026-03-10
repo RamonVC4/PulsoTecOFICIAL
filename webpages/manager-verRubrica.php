@@ -17,14 +17,14 @@
     <header class="site-header">
         <div class="header-top">
             <div class="container">
-                <div class="logo-text">PT</div>
+                <div class="logo-text"></div>
                 <h1 class="title">PULSO<span class="gold">TEC</span></h1>
             </div>
         </div>
         <nav class="nav-bar">
             <div class="container">
                 <ul class="nav-list">
-                    <li><a href="../Index.html">INICIO</a></li>
+                    <li><a href="../index.html">INICIO</a></li>
                     <li><a href="./manager.php">BANDEJA</a></li>
                     <!-- <li><a href="#">AYUDA</a></li> -->
                     <li class="login"><a href="../php/logout.php">CERRAR SESIÓN</a></li>

@@ -40,11 +40,19 @@ body {
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 44px;
-    font-weight: 600;
-    letter-spacing: 2px;
+
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("https://www.itlalaguna.edu.mx/Nuestro%20Tec/Logo%20y%20Mascota/logotec22-transp2.gif");
+    height: 100%;
+    width: 90px; 
+    zoom: 130%;
 }
+
 .logo-text .gold { color: var(--brand-gold); }
+
+
 .title {
     position: absolute;
     left: 50%;

@@ -204,10 +204,15 @@ body.login-page {
 
 .direccion-field {
     display: grid;
-    grid-template-areas: "direccion direccion direccion direccion" 
+    /* grid-template-areas: "direccion direccion direccion direccion" 
                             "numero numero colonia colonia" 
                             "calle calle calle calle" 
-                            "ciudad ciudad estado estado";
+                            "ciudad ciudad estado estado"; */
+
+    grid-template-areas: "calle calle calle numero" 
+                        "colonia colonia colonia colonia" 
+                            "ciudad ciudad estado estado" 
+                            "pais pais pais pais";
 
     gap: 10px;
 }
@@ -229,6 +234,10 @@ body.login-page {
 }
 .direccion-field #estado {
     grid-area: estado;
+}
+
+.direccion-field #pais {
+    grid-area: pais;
 }
 
 

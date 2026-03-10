@@ -13,7 +13,7 @@
     <main class="login-container">
         
         <header class="return-to-index-header">
-            <a href="../Index.html">VOLVER A INICIO</a>
+            <a href="../index.html">VOLVER A INICIO</a>
         </header>
 
         <section class="card" role="region" aria-labelledby="login-title">

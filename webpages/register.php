@@ -121,7 +121,7 @@
                                     <option value="9">Administración</option>
                                     <option value="10">Investigación Educativa</option>
                                 </select>
-                                <small style="color: #888;">(No te preocupes, podrás agrega y/o eliminar areas de conocimiento más adelante)</small>
+                                <small style="color: #888;">(No te preocupes, podrás agregar y/o eliminar areas de conocimiento más adelante)</small>
 
                         </div>
                        
@@ -149,6 +149,7 @@
                                 <input id="colonia" name="colonia" type="text" inputmode="text" autocomplete="colonia" required placeholder="Ingresa tu colonia">
                                 <input id="ciudad" name="ciudad" type="text" inputmode="text" autocomplete="ciudad" required placeholder="Ingresa tu ciudad">
                                 <input id="estado" name="estado" type="text" inputmode="text" autocomplete="estado" required placeholder="Ingresa tu estado">
+                                <input id="pais" name="pais" type="text" inputmode="text" autocomplete="país" required placeholder="Ingresa tu país">
                             </div>
                         </div>
 

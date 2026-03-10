@@ -1,0 +1,17 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block hidden files and VCS folders (.git, .env, etc.)
+    RewriteRule (^|/)\. - [F,L]
+
+    # Block direct access to sensitive credentials/tokens
+    RewriteRule (^|/)(drive_credentials\.json|drive_token\.json|service-account\.json)$ - [F,L,NC]
+
+    # Block direct access to SQL dumps and maintenance/docs files
+    RewriteRule (^|/)(pulsotec_script\.sql|sql_script/.*|README\.md|composer\.(json|lock))$ - [F,L,NC]
+
+    # Block utility/auth/test endpoints not meant for public use
+    RewriteRule (^|/)php/(drive_auth|testdrive|test)\.php$ - [F,L,NC]
+</IfModule>
