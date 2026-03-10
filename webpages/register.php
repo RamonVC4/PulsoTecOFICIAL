@@ -149,6 +149,7 @@
                                 <input id="colonia" name="colonia" type="text" inputmode="text" autocomplete="colonia" required placeholder="Ingresa tu colonia">
                                 <input id="ciudad" name="ciudad" type="text" inputmode="text" autocomplete="ciudad" required placeholder="Ingresa tu ciudad">
                                 <input id="estado" name="estado" type="text" inputmode="text" autocomplete="estado" required placeholder="Ingresa tu estado">
+                                <input id="pais" name="pais" type="text" inputmode="text" autocomplete="país" required placeholder="Ingresa tu país">
                             </div>
                         </div>
 
