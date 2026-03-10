@@ -148,6 +148,8 @@
         calle = document.querySelector('#calle').value;
         numeroDeCalle = document.querySelector('#numero').value;
         colonia = document.querySelector('#colonia').value;   
+        //pais (nuevo) 
+        pais = document.querySelector('#pais').value;
 
         if (roleElegido.value === 'revisor') {
             
@@ -189,7 +191,7 @@
         //ahora que tengo todo, lo envio al backend
         //TODO VERIFICAR QUE NO HAYA UN USUARIO CON LA MISMA CURP PORQUE ESO SIGNIFICA QUE YA SE REGISTRO
         role = roleElegido.value;
-        const jsonAMandar = JSON.stringify({role, correo, password, nombre, apellidoPaterno, apellidoMaterno, curp, areaDeConocimiento, orcid, estado, ciudad, calle, numeroDeCalle, colonia, institucion });
+        const jsonAMandar = JSON.stringify({role, correo, password, nombre, apellidoPaterno, apellidoMaterno, curp, areaDeConocimiento, orcid, estado, ciudad, calle, numeroDeCalle, colonia, pais, institucion });
         console.log("jsonAMandar", jsonAMandar);
 
         const res = await fetch("../php/registro.php", {

@@ -1,4 +1,5 @@
 <?php
+//colonia, pais, institución
 // Desactivar reporte de errores HTML
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
@@ -27,6 +28,8 @@ $cuerpo = $data;
 $tabla = $data['role'];
 $contrarParaMeter = $cuerpo['password'];//password_hash($cuerpo['password'], PASSWORD_DEFAULT); TODO descomentar
 
+$pais = isset($cuerpo['pais']) ? $cuerpo['pais'] : null;
+
 //hago el insert porque se supone que ya verifiqué todo 
 if($tabla == 'revisor'){
     $stmt = $conn->prepare("INSERT INTO revisor (nombre, correo, contra, primerApellido, segundoApellido, CURP, areaDeConocimiento) VALUES (?, ?, ?, ?, ?, ?, ?);");
@@ -37,12 +40,12 @@ if($tabla == 'revisor'){
     $stmt->bind_param("sssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['curp'], $cuerpo['areaDeConocimiento']);
 }  
 else{
-    $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+    $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
     if (!$stmt) {
         echo json_encode(['success' => false, 'message' => 'Error al preparar consulta: ' . $conn->error]);
         exit;
     }
-    $stmt->bind_param("ssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia']);
+    $stmt->bind_param("sssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia'], $pais);
 }
     
 if (!$stmt->execute()) {
