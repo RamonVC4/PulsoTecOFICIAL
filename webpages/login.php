@@ -19,7 +19,6 @@
         <section class="card" role="region" aria-labelledby="login-title">
             <h1 id="login-title" class="card-title">ACCEDER COMO</h1>
 
-            <!-- <form class="login-form" action="login.php" method="post" autocomplete="on" novalidate> -->
             <form class="login-form" autocomplete="on" novalidate>
                 <!-- Role switcher -->
                 <div class="role-switch" role="tablist" aria-label="Seleccionar rol">
@@ -64,6 +63,8 @@
                 <!-- ACCIONES -->
                 <div class="actions">
                     <button type="button" class="btn-primary" onclick="goToPage()">ACCEDER</button>
+                    <a class="link-ghost" href="./recuperarPassword.html" aria-label="Crear cuenta nueva">OLVIDE MI CONTRASEÑA</a>
+                    <br>
                     <a class="link-ghost" href="./register.php" aria-label="Crear cuenta nueva">NO TENGO UN USUARIO</a>
                 </div>
             </form>

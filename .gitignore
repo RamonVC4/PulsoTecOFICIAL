@@ -15,3 +15,6 @@ ca.pem
 # Google Drive OAuth
 drive_credentials.json
 drive_token.json
+
+#otras librerias
+PHPMailer-master
