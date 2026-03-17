@@ -26,9 +26,14 @@ if (!$data || !isset($data['role'])) {
 
 $cuerpo = $data;
 $tabla = $data['role'];
-$contrarParaMeter = $cuerpo['password'];//password_hash($cuerpo['password'], PASSWORD_DEFAULT); TODO descomentar
+$contrarParaMeter = password_hash($cuerpo['password'], PASSWORD_DEFAULT);
+$pais = isset($cuerpo['pais']) ? trim($cuerpo['pais']) : '';
 
-$pais = isset($cuerpo['pais']) ? $cuerpo['pais'] : null;
+function autorTieneColumnaPais($conn) {
+    $query = "SHOW COLUMNS FROM autor LIKE 'pais'";
+    $result = $conn->query($query);
+    return $result && $result->num_rows > 0;
+}
 
 //hago el insert porque se supone que ya verifiqué todo 
 if($tabla == 'revisor'){
@@ -40,12 +45,22 @@ if($tabla == 'revisor'){
     $stmt->bind_param("sssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['curp'], $cuerpo['areaDeConocimiento']);
 }  
 else{
-    $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-    if (!$stmt) {
-        echo json_encode(['success' => false, 'message' => 'Error al preparar consulta: ' . $conn->error]);
-        exit;
+    // Compatibilidad: hay instancias donde "autor" no tiene la columna "pais"
+    if (autorTieneColumnaPais($conn)) {
+        $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        if (!$stmt) {
+            echo json_encode(['success' => false, 'message' => 'Error al preparar consulta: ' . $conn->error]);
+            exit;
+        }
+        $stmt->bind_param("sssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia'], $pais);
+    } else {
+        $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        if (!$stmt) {
+            echo json_encode(['success' => false, 'message' => 'Error al preparar consulta: ' . $conn->error]);
+            exit;
+        }
+        $stmt->bind_param("ssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia']);
     }
-    $stmt->bind_param("sssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia'], $pais);
 }
     
 if (!$stmt->execute()) {

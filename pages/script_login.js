@@ -38,8 +38,13 @@
     export async function goToPage() {
         //consigo los datos
         const role = document.querySelector('input[name="role"]:checked')?.value;
-        const correo = document.getElementById('correo').value;
+        const correo = document.getElementById('correo').value.trim();
         const password = document.getElementById('password').value;
+
+        if (!role || !correo || !password) {
+            alert("Completa correo, contraseña y rol.");
+            return;
+        }
 
         //hago un fetch a php
 
@@ -51,23 +56,27 @@
 
         
 
-        const res = await fetch("../php/login.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user_data),
-            credentials: "same-origin" // para enviar cookies de la sesion
-        });
+        try {
+            const res = await fetch("../php/login.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(user_data),
+                credentials: "same-origin" // para enviar cookies de la sesion
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!data.success) {
-            alert("Datos incorrectos, por favor verifique los campos.");
-            return;
+            if (!data.success) {
+                alert("Datos incorrectos, por favor verifica los campos.");
+                return;
+            }
+
+            sessionStorage.setItem("user_data", JSON.stringify(data));
+            window.location.href = data.redirect;
+        } catch (error) {
+            console.error("Error en login:", error);
+            alert("No se pudo iniciar sesión. Inténtalo de nuevo.");
         }
-
-        console.log(data);
-        sessionStorage.setItem("user_data", JSON.stringify(data));
-        window.location.href = data.redirect;
     }
 
 

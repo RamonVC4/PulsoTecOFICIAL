@@ -1,12 +1,13 @@
 <?php
-require '../PHPMailer-master/src/PHPMailer.php';
-require '../PHPMailer-master/src/SMTP.php';
-require '../PHPMailer-master/src/Exception.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 function enviarCorreo($cuerpo,$destinatario){
     $mail = new PHPMailer(true);
 
+    try {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
@@ -23,5 +24,8 @@ function enviarCorreo($cuerpo,$destinatario){
         $mail->Body = $cuerpo;
 
         $mail->send();
+    } catch (Exception $e) {
+        error_log('Error enviando correo: ' . $e->getMessage());
+    }
 }
 ?>

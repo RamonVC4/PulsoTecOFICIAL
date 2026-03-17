@@ -134,22 +134,26 @@
             return;
         }
         
-        roleElegido = document.querySelector('input[name="role"]:checked');
+        const roleElegido = document.querySelector('input[name="role"]:checked');
+        if (!roleElegido) {
+            alert("Por favor selecciona un rol.");
+            return;
+        }
 
         //datos extra del revisor
-        areaDeConocimiento = document.querySelector('#area-conocimiento').value;
-        curp = document.querySelector('#curp').value;
+        const areaDeConocimiento = document.querySelector('#area-conocimiento')?.value ?? '0';
+        const curp = document.querySelector('#curp')?.value ?? '';
 
         //datos extra del autor
-        orcid = document.querySelector('#orcid').value;
-        institucion = document.querySelector('#institucion').value;
-        estado = document.querySelector('#estado').value;
-        ciudad = document.querySelector('#ciudad').value;
-        calle = document.querySelector('#calle').value;
-        numeroDeCalle = document.querySelector('#numero').value;
-        colonia = document.querySelector('#colonia').value;   
-        //pais (nuevo) 
-        pais = document.querySelector('#pais').value;
+        const orcid = document.querySelector('#orcid')?.value ?? '';
+        const institucion = document.querySelector('#institucion')?.value ?? '';
+        const estado = document.querySelector('#estado')?.value ?? '';
+        const ciudad = document.querySelector('#ciudad')?.value ?? '';
+        const calle = document.querySelector('#calle')?.value ?? '';
+        const numeroDeCalle = document.querySelector('#numero')?.value ?? '';
+        const colonia = document.querySelector('#colonia')?.value ?? '';
+        // Puede no existir en algunas versiones del formulario
+        const pais = document.querySelector('#pais')?.value ?? '';
 
         if (roleElegido.value === 'revisor') {
             
@@ -190,28 +194,32 @@
 
         //ahora que tengo todo, lo envio al backend
         //TODO VERIFICAR QUE NO HAYA UN USUARIO CON LA MISMA CURP PORQUE ESO SIGNIFICA QUE YA SE REGISTRO
-        role = roleElegido.value;
+        const role = roleElegido.value;
         const jsonAMandar = JSON.stringify({role, correo, password, nombre, apellidoPaterno, apellidoMaterno, curp, areaDeConocimiento, orcid, estado, ciudad, calle, numeroDeCalle, colonia, pais, institucion });
         console.log("jsonAMandar", jsonAMandar);
 
-        const res = await fetch("../php/registro.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: jsonAMandar,
-            credentials: "same-origin" // para enviar cookies de la sesion
-        });
+        try {
+            const res = await fetch("../php/registro.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: jsonAMandar,
+                credentials: "same-origin" // para enviar cookies de la sesion
+            });
 
-        const data = await res.json();
-        if (!data.success) {
-            alert("algo salio mal: " + data.message);
-            return;
-        }else{
+            const data = await res.json();
+            if (!data.success) {
+                alert("Algo salió mal: " + (data.message || "No se pudo registrar."));
+                return;
+            }
+
             alert("Registro exitoso.");
             window.location.href = "./login.php";
+        } catch (error) {
+            console.error("Error al registrar:", error);
+            alert("No se pudo completar el registro. Inténtalo de nuevo.");
         }
 
         //valido el email mandando un correo TODO no se si necesito hacer esto
             //si es valido, lo envio al backend
             //si no es valido, muestro error
     }
-
