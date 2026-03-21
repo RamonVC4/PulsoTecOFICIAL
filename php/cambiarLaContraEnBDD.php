@@ -15,11 +15,10 @@
     }
 
     //actualizo la bdd
-    q("UPDATE $rol rol join tokens t ON rol.correo = t.correo SET rol.contra = ?
-    WHERE hashToken = ?", "ss",[$hashToken,$newPassword]);        
+    q("UPDATE $rol rol join tokens t ON rol.correo = t.correo SET rol.contra = ? WHERE hashToken = ?" , "ss",[$newPassword,$hashToken]);        
 
     echo json_encode(["status" => "ok"]);
 
     //elimino el token para invalidarlo
-    //q("DELETE FROM tokens WHERE hashToken = ?","s",[$hashToken]);
+    q("DELETE FROM tokens WHERE hashToken = ?","s",[$hashToken]);
 ?>

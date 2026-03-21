@@ -52,7 +52,7 @@ import { apiFetch } from "./loading.js";
         const jsonResultante = await getJsonSafely(response);
         
         alert("contraseña cambiada con exito");
-        window.location.href ="../index.html";
+        //window.location.href ="../index.html";
     }
 
     window.cambiarLaContraEnBDD = cambiarLaContraEnBDD;

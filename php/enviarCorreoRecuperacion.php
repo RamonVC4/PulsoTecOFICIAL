@@ -29,7 +29,7 @@ require_once 'utils.php';
             "sss",
             [$rol,$data['correo'],hash('sha256',$token)]);
         //envio correo de recuperacion        
-        enviarCorreo("Una solicitud de cambio de contraseña se recibió para su correo, puede hacerlo siguiendo el siguiente link\n www.sirec.itlalaguna.edu.mx/webpages/cambiarContra.php?token=$token&rol=$rol \n\n si no fue usted, ignore este correo",
+        enviarCorreo("Una solicitud de cambio de contraseña se recibió para su correo, puede hacerlo siguiendo el siguiente link\n sirec.itlalaguna.edu.mx/webpages/cambiarContra.php?token=$token&rol=$rol \n\n si no fue usted, ignore este correo",
                     $data['correo']);
     }
     //si no existe

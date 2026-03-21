@@ -153,7 +153,7 @@
                             </div>
                             
                             <div class="actions">
-                            <button type="button" class="btn-primary" id="boton-reestablecer-contra" onclick="cambiarLaContraEnBDD('<?php echo $rol;?>','<?php echo $hashToken;?>')">CAMBIAR CONTRASEÑA</button>
+                            <button type="button" class="btn-primary" id="boton-reestablecer-contra" onclick="cambiarLaContraEnBDD('<?php echo $rol;?>','<?php echo $token;?>')">CAMBIAR CONTRASEÑA</button>
                     </div>
                 </div>                      
             </div>
