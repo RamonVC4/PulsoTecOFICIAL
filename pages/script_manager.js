@@ -17,7 +17,6 @@
             const data = await response.json();
             if (data.success) {
                 reviewers = data.revisores;
-                console.log("Revisores cargados:", reviewers);
             }
         } catch (error) {
             console.error("Error cargando revisores:", error);
@@ -54,8 +53,6 @@
                         reviews: {}   
                     };
                 });
-
-                console.log("Proyectos cargados:", projects);
                 
                 // 1. Primero dibujamos la lista
                 renderAll(); 
@@ -932,31 +929,6 @@
         }
     }
 
-    // function renderHistory() {
-    //     elements.historyTable.innerHTML = '';
-    //     projects
-    //         .slice()
-    //         .sort((a, b) => new Date(b.submitted) - new Date(a.submitted))
-    //         .forEach(project => {
-    //             const row = document.createElement('tr');
-    //             const reviewerNames = getAssigned(project).map(id => getReviewer(id)?.name || '—').join(', ') || 'Sin asignar';
-    //             row.innerHTML = `
-    //                 <td><code>${project.id}</code></td>
-    //                 <td>
-    //                     <div class="history-project">
-    //                         <strong>${project.title}</strong>
-    //                         <span class="muted small">${project.author}</span>
-    //                     </div>
-    //                 </td>
-    //                 <td><span class="status-pill ${statusClass(project.stage)}">${project.stage}</span></td>
-    //                 <td>${project.rubric.status}${project.rubric.score && project.rubric.score !== '—' ? ` · ${project.rubric.score}` : ''}</td>
-    //                 <td>${reviewerNames}</td>
-    //                 <td>${project.rubric.updated ? formatDate(project.rubric.updated, shortDate) : formatDate(project.submitted, shortDate)}</td>
-    //             `;
-    //             elements.historyTable.appendChild(row);
-    //         });
-    // }
-
     function updateMetrics() {
         const total = projects.length;
         const open = projects.filter(project => getAssigned(project).length < MAX_REVIEWERS).length;
@@ -1034,7 +1006,6 @@
 
 
     async function initManager() {
-    console.log("Iniciando sistema...");
     await fetchReviewers(); // 1. Primero revisores
     await fetchProjects();  // 2. Luego proyectos
 }

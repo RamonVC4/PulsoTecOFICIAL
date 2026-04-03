@@ -1,6 +1,6 @@
     // Este js carga la vista de autor (panel principal) de PulsoTec.
 
-    //console.log("script_author.js cargado");  //este es un buen console.log, no lo quiten, solo comentenlo
+    //console.log("script_author.js cargado");  //este es un buen mensaje, no lo quiten, solo comentenlo
 
     import {select} from '../js/utils/dom.js';
     import {createHeaderTop, createHeaderNav} from '../components/header.js';
@@ -281,8 +281,6 @@
         });
 
         //consigo el estado de la entrega
-        console.log("Entega es aceptado o no: ", entrega.aceptado);
-        console.log("Valor de primera entrega: ", primeraEntrega);
         const status = entrega.aceptado === null ? "chip-pending" : entrega.aceptado === 1 ? "chip-success": "chip-denied";
         const textoStatus = entrega.aceptado === null ? "PENDIENTE" :entrega.aceptado === 1 ? "ACEPTADO" : "DENEGADO";
 
@@ -396,7 +394,6 @@
             // Agregar event listener para el botón
             submitBtn.addEventListener('click', () => {
                 subirSegundaEntrega(entrega.id);
-                console.log("entrega id: ", entrega.id);
             });
 
             uploadForm.appendChild(dropzone);
@@ -433,7 +430,6 @@
         }
 
         //meto para ver la rubrica 
-        console.log("ESTO ES LA ENTREGA: ", entrega);
         section.appendChild(
             el("a", {
                 class: "link",
@@ -488,12 +484,7 @@
             });
 
             const e = proj.entregas[0];
-            console.log("ENTRERGASD ASAAAAAA");
-            console.log(proj);
-            console.log(e);
-
             const header = el("header", { class: "project-card__header" });
-
             const headerInfo = el("div", {
                 children: [
                     el("h3", { class: "project-title", text: proj.nombre }),
@@ -644,9 +635,7 @@
                 credentials: "same-origin"
             });
 
-            //const data = await res.json();
             const data = await res.json();
-            //console.log("res text: \n", data);
 
             if (!data.success) {
                 alert(data.message || 'Error al subir la segunda entrega.');
@@ -661,7 +650,6 @@
             // Recargar los proyectos para mostrar el estado actualizado
             loadProjects();
         } catch (error) {
-            console.error('Error al subir la segunda entrega:', error);
             alert('Error al subir la segunda entrega. Por favor intenta de nuevo.');
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -825,6 +813,7 @@
         const autoresBdd = await respuestaAutores.json();
         if (!autoresBdd.success) {
             console.error(autoresBdd.message);
+            alert("Error al cargar los autores de la BDD, contacte soporte");
             return;
         }
 
@@ -838,6 +827,7 @@
             const autor = autoresBdd.autores.find(autor => `${autor.nombre} ${autor.primerApellido} ${autor.segundoApellido}` === nombreCompleto);
             if (!autor) {
                 autoresValidos = false;
+                alert('Uno o más de los autores no aparecen registrados, verifique que haya escrito bien los nombres completos (nombre y apellidos)');
                 return;
             }
             idAutores.push(autor.id);
@@ -907,7 +897,6 @@
         formData.append('autores', JSON.stringify(idAutores));
         formData.append('autorCorrespondenciaId', autorCorrespondenciaId);
         formData.append('areaDeConocimiento', areaDeConocimiento);
-        console.log("formData: ", formData)
         try {
             const res = await fetch("../php/autor_crearProyecto.php", {
                 method: "POST",
@@ -921,8 +910,8 @@
             try {
                 data = JSON.parse(text);
             } catch (parseError) {
-                console.error('Error al parsear JSON. Respuesta del servidor:', text);
-                alert('Error del servidor. Por favor verifica la consola para más detalles.');
+                console.error('Error al parsear JSON. Respuesta del servidor:', text);//maravilloso mensaje de debug, no lo quiten
+                alert('Error del servidor. Por favor comnunicate con soporte.');
                 return;
             }
 
@@ -934,7 +923,7 @@
                 alert("Proyecto creado con éxito.");
             }
         } catch (error) {
-            console.error('Error al crear proyecto:', error);
+            console.error('Error al crear proyecto:', error);//maravilloso mensaje de debug, no lo quiten
             alert('Error al crear el proyecto. Por favor intenta de nuevo.');
         }
     }
@@ -956,5 +945,3 @@
     window.loadProjects = loadProjects;
     window.buscarAutores = buscarAutores;
     window.subirSegundaEntrega = subirSegundaEntrega;
-
-    console.log("funciones disponibles:", window.agregarAutor);

@@ -25,9 +25,7 @@ async function addKnowledge(idArea) {
         credentials: "same-origin"
     });
 
-    // const data = await res.json();
     const text = await res.text();
-    console.log(text);
     return JSON.parse(text);
 }
 
@@ -43,9 +41,7 @@ async function removeKnowledge(idArea) {
         credentials: "same-origin"
     });
 
-    // const data = await res.json();
     const text = await res.text();
-    console.log(text);
     return JSON.parse(text);
 }
 
@@ -112,15 +108,10 @@ function createOptionCard(area, doknow) {
 
 
 (async () => {
-    console.log("entro");
     const data = await obtener_areas();
     
-    console.log("salio");
-    console.log(data);
     //const areas = data.areas;
     const areas = Object.values(data.areas || {});
-
-    
     
     Object.entries(areasDeConocimiento).forEach(([id, name]) => {
         if (id === "0") return;

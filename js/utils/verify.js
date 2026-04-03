@@ -7,7 +7,7 @@ export async function getJsonSafely(resp){
             try {
                 return JSON.parse(text);
             } catch {
-                console.log(text);
+                console.warn(text);
                 throw new Error("Respuesta no es json, es: " + text);
             }
     }else{

@@ -27,8 +27,6 @@
     })();
 
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM cargado');
-    
         function updateVisibility() {
             const role = document.querySelector('input[name="role"]:checked').value;
     
@@ -47,8 +45,6 @@
                 elements.orcidDiv.classList.add('hidden');
                 elements.institucionDiv.classList.add('hidden');
                 elements.direccionDiv.classList.add('hidden');
-
-                console.log('Todo bien')
             } else {
                 elements.curpDiv.classList.add('hidden');
                 elements.areaConocimientoDiv.classList.add('hidden');
@@ -56,7 +52,6 @@
                 elements.orcidDiv.classList.remove('hidden');
                 elements.institucionDiv.classList.remove('hidden');
                 elements.direccionDiv.classList.remove('hidden');
-                console.log('Todo bien')
             }
         }
     
@@ -123,7 +118,6 @@
         //verifico que las contraseñas sean iguales
         const password = document.querySelector('#password').value;
         const passwordConfirm = document.querySelector('#password-confirm').value;
-        console.log("passwords", password, passwordConfirm);
         if (password !== passwordConfirm) {
             alert("Las contraseñas no coinciden.");
             return;
@@ -190,7 +184,6 @@
         //ahora que tengo todo, lo envio al backend
         role = roleElegido.value;
         const jsonAMandar = JSON.stringify({role, correo, password, nombre, apellidoPaterno, apellidoMaterno, curp, areaDeConocimiento, orcid, estado, ciudad, calle, numeroDeCalle, colonia, pais, institucion });
-        console.log("jsonAMandar", jsonAMandar);
 
         //checo que no este registrado ya
         const respuestaCorreo = await fetch('../php/checarSiYaEstaRegistrado.php',

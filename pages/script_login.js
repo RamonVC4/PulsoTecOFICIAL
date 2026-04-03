@@ -65,7 +65,6 @@
             return;
         }
 
-        console.log(data);
         sessionStorage.setItem("user_data", JSON.stringify(data));
         window.location.href = data.redirect;
     }

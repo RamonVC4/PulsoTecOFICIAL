@@ -12,7 +12,6 @@
         //si no tenia guardado nada, salir
         if (!jsonStr) return;
 
-        console.log(jsonStr);   
         const datosEnJSON = JSON.parse(jsonStr);
         if (!datosEnJSON.datosRubrica) return;
         const formObj = JSON.parse(datosEnJSON.datosRubrica);
@@ -155,26 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             const validarYEnviar = async () => {
-                
-                console.log("pasó validarYEnviar");
-                
                 const curp = curpInput.value.trim().toUpperCase();
-                console.log("curp: ",curp);
                 
                 if (!curp) {
                     errorDiv.textContent = 'Por favor ingresa tu CURP';
                     errorDiv.style.display = 'block';
                     return;
                 }
-                
-                // if (curp.length !== 18) {
-                //     errorDiv.textContent = 'El CURP debe tener 18 caracteres';
-                //     errorDiv.style.display = 'block';
-                //     return;
-                // }
-                
-                // Validar CURP con el servidor
-                console.log("voy a andar a llamar validarCURP");
 
                 try {
                     const response = await fetch('../php/revisor_validarCURP.php', {
@@ -185,11 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         credentials: 'same-origin',
                         body: JSON.stringify({ curp: curp })
                     });
-                    console.log("pasó response");
                     const result = await response.json();
-                    console.log("pasó result");
                     if (result.success) {
-                        console.log("pasó success");
                         document.body.removeChild(modal);
                         resolve(curp);
                     } else {
@@ -201,8 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorDiv.style.display = 'block';
                 }
             };
-            console.log("pasó validarYEnviar");
-            
             submitBtn.addEventListener('click', validarYEnviar);
             cancelBtn.addEventListener('click', cerrarModal);
             closeBtn.addEventListener('click', cerrarModal);
@@ -293,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         pdfPath = params.get('doc');
         // mandar con fetch
-        console.log("voy a andar a llamar terminarrevision");
         const response = await fetch(terminado ? '../php/revisor_terminarRevision.php' : '../php/revisor_guardarBorrador.php', {
             method: 'POST',
             body: JSON.stringify({formObj,pdfPath}),
