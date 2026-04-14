@@ -14,6 +14,9 @@ function enviarCorreo($cuerpo,$destinatario){
         $mail->Password = 'gmqj ucde dzez ifas';
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
+
         //$mail->SMTPDebug = 2;
         //$mail->Debugoutput = 'echo';
 
