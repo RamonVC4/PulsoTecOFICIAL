@@ -35,6 +35,9 @@ export const creators = Object.freeze([
  */
 
 
+/**
+ * EL UNICO LUGAR QUE NO USA ESTE ES manager_getProyectos.php
+ */
 export const areasDeConocimiento = Object.freeze({
  0: "Seleccione una área de conocimiento",
     1: "Procesos químicos, bioquímica y biotecnología",

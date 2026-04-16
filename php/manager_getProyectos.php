@@ -24,16 +24,16 @@ try {
     // 1. DICCIONARIO DE ÁREAS (Copiado del JS a PHP)
     // Esto permite traducir el número al nombre antes de enviarlo
     $diccionarioAreas = [
-        1 => "Ingeniería Química y Bioquímica",
-        2 => "Ingeniería Industrial",
-        3 => "Sistemas Computacionales y TI",
-        4 => "Ingeniería en Gestión Empresarial",
-        5 => "Ingeniería Eléctrica y Electrónica",
-        6 => "Ingeniería Mecánica y Mecatrónica",
-        7 => "Ingeniería en Energías Renovables",
-        8 => "Ingeniería en Semiconductores",
-        9 => "Administración",
-        10 => "Investigación Educativa"
+        1 => "Procesos químicos, bioquímica y biotecnología",
+        2 => "Procesos industriales y optimización de operaciones",
+        3 => "Tecnologías de la información y sistemas computacionales",
+        4 => "Gestión organizacional, innovación y desarrollo empresarial",
+        5 => "Sistemas eléctricos, electrónicos y tecnologías asociadas",
+        6 => "Diseño mecánico, manufactura y sistemas mecatrónicos",
+        7 => "Energía, sustentabilidad y tecnologías renovables",
+        8 => "Semiconductores, microelectrónica y tecnologías emergentes",
+        9 => "Administración y gestión organizacional",
+        10 => "Investigación educativa y desarrollo académico"
     ];
 
     // 2. Consulta simplificada
