@@ -42,14 +42,10 @@
     .then(data => {
         if (data.success) {
             // Aquí se procesa la información recibida
-            console.log('Proyectos recibidos:', data.proyectos);
             data.proyectos.forEach(proy => {
-                //Solo defino los campos que de verdad uso, no todos los que definió G
                 //los meto a pending, new o completed segun corresponda
                 //TODO LO SIGUIENTE ES UNSAFE, TENGO QUE CAMBIARLO PARA QUE USE SESSION DE PHP MEJOR
                 const ruta = `review-session.php?doc=${proy.entregas[proy.entregas.length-1].pdfPath}&title=${proy.nombre}`;
-                console.log("dentro de lo que le pone el switch ese");
-                console.log(proy);
                 switch (proy.entregas[proy.entregas.length-1].terminado) {
                     case null:
                         state.pending.push({
@@ -62,10 +58,9 @@
                     
                     case 0:
                     case 1:
-                        console.log("en el case 0 y 1");
                         state.completed.push({
                             title: proy.nombre,
-                            completed: '2025-10-10',//TODO, mejor le quito esto luego
+                            completed: '',//TODO, mejor le quito esto luego
                             logRoute: ruta,
                             verdict: proy.entregas[proy.entregas.length-1].aceptado ? 'Aceptado' : 'Rechazado',
                             id: proy.id
@@ -74,7 +69,6 @@
                 }
                 
             });
-            console.log(state);
             renderAll();
         } else {
             console.error('Error al obtener proyectos:', data.message);

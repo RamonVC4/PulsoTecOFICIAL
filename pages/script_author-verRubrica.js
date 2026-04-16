@@ -97,7 +97,6 @@ async function cargarRevisores() {
         
         const jsonStrIdRubricas = await responseIdRubricas.text();
         const datosIdRubricas = JSON.parse(jsonStrIdRubricas);
-        console.log('Datos de ID de rúbricas:', datosIdRubricas);
         
         if (!datosIdRubricas.success || !datosIdRubricas.rubricas || datosIdRubricas.rubricas.length === 0) {
             const selector = document.getElementById('revisor-select');
@@ -123,16 +122,11 @@ async function cargarRevisores() {
             
             const jsonStrDatos = await responseDatos.text();
             const datosEnJSON = JSON.parse(jsonStrDatos);
-
-            console.log('Datos de rúbrica para entrega', idEntrega, datosEnJSON);
             
             if (datosEnJSON.success && datosEnJSON.revisores && datosEnJSON.revisores.length > 0) {
-                console.log("AQUI ENTRE");
                 // Agregar todos los revisores de esta entrega
                 todosLosRevisores.push(...datosEnJSON.revisores);
             }
-
-            console.log("despues del if");
         }
 
         // Si no hay datos, salir

@@ -1,9 +1,4 @@
 <?php
-//colonia, pais, institución
-// Desactivar reporte de errores HTML
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-
 require_once 'db.php';
 header('Content-Type: application/json');
 
@@ -43,29 +38,23 @@ if($tabla == 'revisor'){
         exit;
     }
     $stmt->bind_param("sssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['curp'], $cuerpo['areaDeConocimiento']);
+
+    //ejecuto la query        
+    if (!$stmt->execute()) {
+        echo json_encode(['success' => false, 'message' => 'Error al registrar: ' . $stmt->error]);
+        exit;
+    }
+
+    //tambien hago insert a la tabla de revisor_areaDeConocimiento
+    q("INSERT INTO revisor_areaDeConocimiento (idRevisor,idAreaDeConocimiento) VALUES (?,?)", "ii", [$conn->insert_id,$cuerpo['areaDeConocimiento']]);
 }  
 else{
-    // Compatibilidad: hay instancias donde "autor" no tiene la columna "pais"
-    if (autorTieneColumnaPais($conn)) {
-        $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-        if (!$stmt) {
-            echo json_encode(['success' => false, 'message' => 'Error al preparar consulta: ' . $conn->error]);
-            exit;
-        }
-        $stmt->bind_param("sssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia'], $pais);
-    } else {
-        $stmt = $conn->prepare("INSERT INTO autor (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-        if (!$stmt) {
-            echo json_encode(['success' => false, 'message' => 'Error al preparar consulta: ' . $conn->error]);
-            exit;
-        }
-        $stmt->bind_param("ssssssssssss", $cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia']);
-    }
-}
-    
-if (!$stmt->execute()) {
-    echo json_encode(['success' => false, 'message' => 'Error al registrar: ' . $stmt->error]);
-    exit;
+    q("INSERT INTO autor 
+    (nombre, correo, contra, primerApellido, segundoApellido, institucion, ORCID, estado, ciudad, calle, numeroDeCalle, colonia, pais) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+    "sssssssssssss",
+    [$cuerpo['nombre'], $cuerpo['correo'], $contrarParaMeter, $cuerpo['apellidoPaterno'], $cuerpo['apellidoMaterno'], $cuerpo['institucion'], $cuerpo['orcid'], $cuerpo['estado'], $cuerpo['ciudad'], $cuerpo['calle'], $cuerpo['numeroDeCalle'], $cuerpo['colonia'], $pais]
+    );
 }
 
 echo json_encode(['success' => true]);

@@ -71,12 +71,8 @@
                 return;
             }
 
-            sessionStorage.setItem("user_data", JSON.stringify(data));
-            window.location.href = data.redirect;
-        } catch (error) {
-            console.error("Error en login:", error);
-            alert("No se pudo iniciar sesión. Inténtalo de nuevo.");
-        }
+        sessionStorage.setItem("user_data", JSON.stringify(data));
+        window.location.href = data.redirect;
     }
 
 

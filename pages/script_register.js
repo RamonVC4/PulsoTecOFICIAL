@@ -27,8 +27,6 @@
     })();
 
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM cargado');
-    
         function updateVisibility() {
             const role = document.querySelector('input[name="role"]:checked').value;
     
@@ -47,8 +45,6 @@
                 elements.orcidDiv.classList.add('hidden');
                 elements.institucionDiv.classList.add('hidden');
                 elements.direccionDiv.classList.add('hidden');
-
-                console.log('Todo bien')
             } else {
                 elements.curpDiv.classList.add('hidden');
                 elements.areaConocimientoDiv.classList.add('hidden');
@@ -56,7 +52,6 @@
                 elements.orcidDiv.classList.remove('hidden');
                 elements.institucionDiv.classList.remove('hidden');
                 elements.direccionDiv.classList.remove('hidden');
-                console.log('Todo bien')
             }
         }
     
@@ -123,7 +118,6 @@
         //verifico que las contraseñas sean iguales
         const password = document.querySelector('#password').value;
         const passwordConfirm = document.querySelector('#password-confirm').value;
-        console.log("passwords", password, passwordConfirm);
         if (password !== passwordConfirm) {
             alert("Las contraseñas no coinciden.");
             return;
@@ -190,21 +184,34 @@
             }
 
         }
-        console.log(areaDeConocimiento);
 
         //ahora que tengo todo, lo envio al backend
-        //TODO VERIFICAR QUE NO HAYA UN USUARIO CON LA MISMA CURP PORQUE ESO SIGNIFICA QUE YA SE REGISTRO
-        const role = roleElegido.value;
+        role = roleElegido.value;
         const jsonAMandar = JSON.stringify({role, correo, password, nombre, apellidoPaterno, apellidoMaterno, curp, areaDeConocimiento, orcid, estado, ciudad, calle, numeroDeCalle, colonia, pais, institucion });
-        console.log("jsonAMandar", jsonAMandar);
 
-        try {
-            const res = await fetch("../php/registro.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: jsonAMandar,
-                credentials: "same-origin" // para enviar cookies de la sesion
-            });
+        //checo que no este registrado ya
+        const respuestaCorreo = await fetch('../php/checarSiYaEstaRegistrado.php',
+            {
+                method: 'POST',
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({correo:correo,rol:role}),
+                credentials: "same-origin"
+            }
+        );
+        jsonRespuesta = await respuestaCorreo.json();
+        
+        if (jsonRespuesta.registrado){
+            alert(`Ese correo ya esta registrado como "${role}"`)
+            return
+        }
+        
+        //lo registro
+        res = await fetch("../php/registro.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: jsonAMandar,
+            credentials: "same-origin" // para enviar cookies de la sesion
+        });
 
             const data = await res.json();
             if (!data.success) {
@@ -218,8 +225,4 @@
             console.error("Error al registrar:", error);
             alert("No se pudo completar el registro. Inténtalo de nuevo.");
         }
-
-        //valido el email mandando un correo TODO no se si necesito hacer esto
-            //si es valido, lo envio al backend
-            //si no es valido, muestro error
     }
