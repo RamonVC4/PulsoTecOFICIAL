@@ -109,17 +109,6 @@
                         <div class="field" id="areaConocimientoDiv">
                             <label for="area-conocimiento">Área de conocimiento principal</label>
                                 <select id="area-conocimiento" name="area-conocimiento" required>
-                                    <option value="0" selected>Seleccione una opción</option>
-                                    <option value="1">Ingeniería Química y Bioquímica</option>
-                                    <option value="2">Ingeniería Industrial</option>
-                                    <option value="3">Sistemas Computacionales y TI</option>
-                                    <option value="4">Ingeniería en Gestión Empresarial</option>
-                                    <option value="5">Ingeniería Eléctrica y Electrónica</option>
-                                    <option value="6">Ingeniería Mecánica y Mecatrónica</option>
-                                    <option value="7">Ingeniería en Energías Renovables</option>
-                                    <option value="8">Ingeniería en Semiconductores</option>
-                                    <option value="9">Administración</option>
-                                    <option value="10">Investigación Educativa</option>
                                 </select>
                                 <small style="color: #888;">(No te preocupes, podrás agregar y/o eliminar areas de conocimiento más adelante)</small>
 
@@ -173,7 +162,7 @@
 
     <!-- SCRIPT PARA EL REGISTRO -->
     <script src="../pages/script_register.js"></script>
-
+    <script type="module" src="../pages/module_register.js"></script>
 </body>
 </html>
 
