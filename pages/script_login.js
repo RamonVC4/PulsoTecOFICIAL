@@ -73,6 +73,10 @@
 
         sessionStorage.setItem("user_data", JSON.stringify(data));
         window.location.href = data.redirect;
+        }
+        catch(e) {
+            console.error(e);
+        }
     }
 
 

@@ -213,6 +213,7 @@
             credentials: "same-origin" // para enviar cookies de la sesion
         });
 
+        try {
             const data = await res.json();
             if (!data.success) {
                 alert("Algo salió mal: " + (data.message || "No se pudo registrar."));
