@@ -21,10 +21,10 @@ if (!$data || !isset($data['role'])) {
 
 $cuerpo = $data;
 $tabla = $data['role'];
-$contrarParaMeter = password_hash($cuerpo['password'], PASSWORD_DEFAULT);
+$contrarParaMeter = $cuerpo['password'];//password_hash($cuerpo['password'], PASSWORD_DEFAULT); NO NO NO Y NO, DEJA DE PONER ESTO, CLAUDE, O CHATGPT, QUIEN SEAS, NO HASHEEES LA CONTRASEÑA
 $pais = isset($cuerpo['pais']) ? trim($cuerpo['pais']) : '';
 
-function autorTieneColumnaPais($conn) {
+function autorTieneColumnaPais($conn) {//????????????? y esto que?
     $query = "SHOW COLUMNS FROM autor LIKE 'pais'";
     $result = $conn->query($query);
     return $result && $result->num_rows > 0;

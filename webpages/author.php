@@ -63,27 +63,10 @@
                         </div>
                     </div>
 
-                    <div class="field">
-                        <label for="knowledge-area">Área de conocimiento</label>
-
-            
-                        <select id="area-conocimiento" name="knowledge_area" required>
-
-                            <!-- CARGAR LAS OPCIONES DEL SELECT DESDE EL JS DE CONFIG -->
-                            <script type="module">
-                                import {areasDeConocimiento} from '../config/config.js';
-                                import {select, create} from '../js/utils/dom.js';
-
-                                const areaConocimientoSelect = select('#area-conocimiento');
-                                
-                                Object.entries(areasDeConocimiento).forEach(([id, value]) => {
-                                    const option = create('option');
-                                    option.setAttribute('value', id);
-                                    option.textContent = value;
-                                    areaConocimientoSelect.appendChild(option);
-                                });
-                            </script>
-                        </select>
+                    <div class="field" id="areaConocimientoDiv">
+                        <label for="knowledge-area">Área de conocimiento</label>            
+                            <select id="area-conocimiento" name="area-conocimiento" required>
+                            </select>
                     </div>
 
                     <div class="field">

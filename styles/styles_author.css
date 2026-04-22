@@ -111,6 +111,7 @@
     font-size: 15px;
     line-height: 1.4;
     color: var(--text);
+    min-width: 0;
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 

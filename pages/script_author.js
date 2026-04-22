@@ -2,10 +2,10 @@
 
     //console.log("script_author.js cargado");  //este es un buen mensaje, no lo quiten, solo comentenlo
 
-    import {select} from '../js/utils/dom.js';
+    import {select, create} from '../js/utils/dom.js';
     import {createHeaderTop, createHeaderNav} from '../components/header.js';
 
-
+    import {areasDeConocimiento} from '../config/config.js';
     // =============================================
     //               CARGAR EL HEADER
     // =============================================
@@ -945,3 +945,15 @@
     window.loadProjects = loadProjects;
     window.buscarAutores = buscarAutores;
     window.subirSegundaEntrega = subirSegundaEntrega;
+
+     //cargo las areas de conocimientos desde el archivo que las tiene en vez de hardcodearlas
+    const areasDeConocimientoSelectField = document.querySelector("#area-conocimiento")
+    for(let areaKey in areasDeConocimiento){
+        let currOption = document.createElement("option")
+        if (areaKey == 0){
+            currOption.selected = true
+        }
+        currOption.value = areaKey
+        currOption.text = areasDeConocimiento[areaKey]
+        areasDeConocimientoSelectField.appendChild(currOption)
+    }
