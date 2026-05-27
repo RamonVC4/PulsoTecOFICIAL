@@ -1,4 +1,4 @@
-// Este js carga la vista de autor (revisión de su articulo) de PulsoTec.
+// Este js carga la vista de autor (revisión de su articulo) de SIREC.
 
 
 

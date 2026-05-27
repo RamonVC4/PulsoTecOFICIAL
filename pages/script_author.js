@@ -1,4 +1,4 @@
-    // Este js carga la vista de autor (panel principal) de PulsoTec.
+    // Este js carga la vista de autor (panel principal) de SIREC.
 
     //console.log("script_author.js cargado");  //este es un buen mensaje, no lo quiten, solo comentenlo
 

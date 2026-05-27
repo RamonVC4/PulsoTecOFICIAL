@@ -17,7 +17,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PULSOTEC</title>
+    <title>SIREC</title>
     <link rel="stylesheet" href="../styles/styles_general.css">
     <link rel="stylesheet" href="../styles/styles_index.css">
     <link rel="stylesheet" href="../styles/styles_login.css">
@@ -28,8 +28,7 @@
     <header class="site-header">
         <div class="header-top">
             <div class="container">
-                <div class="logo-text"><span class="gold"></span></div>
-                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+                <h1 class="title">SIREC</h1>
             </div>
         </div>
         <nav class="nav-bar">
@@ -84,7 +83,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PULSOTEC</title>
+    <title>SIREC</title>
     <link rel="stylesheet" href="../styles/styles_general.css">
     <link rel="stylesheet" href="../styles/styles_index.css">
     <link rel="stylesheet" href="../styles/styles_login.css">
@@ -95,8 +94,7 @@
     <header class="site-header">
         <div class="header-top">
             <div class="container">
-                <div class="logo-text"><span class="gold"></span></div>
-                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+                <h1 class="title">SIREC</h1>
             </div>
         </div>
         <nav class="nav-bar">

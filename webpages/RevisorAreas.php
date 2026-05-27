@@ -16,8 +16,7 @@
 
         <div class="header-top">
             <div class="container">
-                <div class="logo-text"></div>
-                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+                <h1 class="title">SIREC</h1>
             </div>
         </div>
         <nav class="nav-bar">

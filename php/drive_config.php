@@ -3,7 +3,7 @@
  * Configuración de Google Drive con OAuth
  */
 
-// ID de la carpeta "PULSOTEC" en Google Drive
+// ID de la carpeta "SIREC" en Google Drive
 define('DRIVE_FOLDER_ID', '1KCsuyqyn6G6YQdnhRRKeJUuFcPbrSCv6');
 
 // Ruta al archivo de credenciales OAuth (se creará después de autenticarse)

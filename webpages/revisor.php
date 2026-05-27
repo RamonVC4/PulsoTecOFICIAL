@@ -14,8 +14,8 @@
     <header class="site-header">
         <div class="header-top">
             <div class="container">
-                <div class="logo-text"></div>
-                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+                <!-- <h1 class="title">SIREC</h1> -->
+                   <h1 class="title" style="font-size: 30px !important;">{Nombre de la Revista}</h1>
             </div>
         </div>
         <nav class="nav-bar">

@@ -16,8 +16,7 @@
     <header class="site-header">
         <div class="header-top">
             <div class="container">
-                <div class="logo-text"></div>
-                <h1 class="title">PULSO<span class="gold">TEC</span></h1>
+                <h1 class="title">SIREC</h1>
             </div>
         </div>
         <nav class="nav-bar">
@@ -73,7 +72,7 @@
 
                     <!-- CABECERA -->
                     <div class="rubric-head">
-                        <h3>Evaluación de Artículo de Revista PulsoTec</h3>
+                        <h3>Evaluación de Artículo de Revista SIREC</h3>
                         <button type="button" class="btn-close" id="close-rubric" aria-label="Cerrar rúbrica">×</button>
                     </div>
                     

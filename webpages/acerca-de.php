@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PULSOTEC</title>
+    <title>SIREC</title>
     <link rel="stylesheet" href="../styles/styles_general.css">
     <link rel="stylesheet" href="../styles/styles_index.css">
     <link rel="stylesheet" href="../styles/styles_acerca-de.css">

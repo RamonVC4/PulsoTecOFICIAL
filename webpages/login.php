@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceder - PULSOTEC</title>
+    <title>Acceder - SIREC</title>
     <link rel="stylesheet" href="../styles/styles_login.css">
 </head>
 

@@ -1,4 +1,4 @@
-// Este js crea la rúbrica de evaluación de articulos de PulsoTec.
+// Este js crea la rúbrica de evaluación de articulos de SIREC.
 // Hacerlo componente nos borra miles de lineas de código duplicado
 
 
@@ -39,7 +39,7 @@ export function createRubric(role = 'author', showCloseButton = true) {
 
             <!-- CABECERA -->
             <div class="rubric-head">
-                <h3>Evaluación de Artículo de Revista PulsoTec</h3>
+                <h3>Evaluación de Artículo de Revista SIREC</h3>
                 ${showCloseButton ? `<button type="button" class="btn-close" id="close-rubric" aria-label="Cerrar rúbrica">×</button>` : ''}    
             </div>
             

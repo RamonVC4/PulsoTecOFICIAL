@@ -67,7 +67,7 @@ function uploadToDrive($filePath, $fileName, $folderId = null) {
     if (!$folderId) {
         return [
             'success' => false,
-            'error' => 'No se ha configurado el ID de la carpeta PULSOTEC. Por favor, configura DRIVE_FOLDER_ID en drive_config.php'
+            'error' => 'No se ha configurado el ID de la carpeta SIREC. Por favor, configura DRIVE_FOLDER_ID en drive_config.php'
         ];
     }
     
@@ -115,7 +115,7 @@ function uploadToDrive($filePath, $fileName, $folderId = null) {
             
             return [
                 'success' => false,
-                'error' => 'No se pudo acceder a la carpeta PULSOTEC: ' . $errorMsg . '. Verifica que: 1) El ID de la carpeta sea correcto, 2) Estés autenticado correctamente (visita php/drive_auth.php)'
+                'error' => 'No se pudo acceder a la carpeta SIREC: ' . $errorMsg . '. Verifica que: 1) El ID de la carpeta sea correcto, 2) Estés autenticado correctamente (visita php/drive_auth.php)'
             ];
         }
         
@@ -145,7 +145,7 @@ function uploadToDrive($filePath, $fileName, $folderId = null) {
         // Crear metadata del archivo
         $fileMetadata = new DriveFile([
             'name' => $fileName,
-            'parents' => [$folderId] // Subir directamente a la carpeta PULSOTEC
+            'parents' => [$folderId] // Subir directamente a la carpeta SIREC
         ]);
         
         // Subir el archivo a la carpeta compartida
